@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-/* <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> */
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Inner Peace & Happiness Guide</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap');
@@ -19,7 +18,11 @@
       justify-content: center;
     }
 
-    .container { max-width: 1100px; width: 100%; padding: 20px; }
+    .container { 
+      max-width: 1100px; 
+      width: 100%; 
+      padding: 20px; 
+    }
 
     .header {
       text-align: center;
@@ -28,10 +31,24 @@
       border-radius: 50px;
       margin-bottom: 30px;
       border: 1px solid rgba(255,255,255,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
-    h1 { font-family: 'Playfair Display', serif; font-size: 3.2rem; margin: 0; color: #f8fafc; text-shadow: 0 4px 20px rgba(0,0,0,0.6); }
-    .subtitle { font-size: 1.2rem; opacity: 0.9; margin: 8px 0 0 0; color: #cbd5e1; }
+    h1 { 
+      font-family: 'Playfair Display', serif; 
+      font-size: 3.2rem; 
+      margin: 0; 
+      color: #f8fafc; 
+      text-shadow: 0 4px 20px rgba(0,0,0,0.6); 
+    }
+    .subtitle { 
+      font-size: 1.2rem; 
+      opacity: 0.9; 
+      margin: 8px 0 0 0; 
+      color: #cbd5e1; 
+    }
 
     .card {
       background: linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.85)), 
@@ -51,7 +68,13 @@
     }
 
     .form-group { flex: 0 0 auto; }
-    label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 1.02rem; color: #cbd5e1; }
+    label { 
+      display: block; 
+      margin-bottom: 8px; 
+      font-weight: 600; 
+      font-size: 1.02rem; 
+      color: #cbd5e1; 
+    }
 
     #domain   { width: 240px; }
     #trigger  { width: 390px; }
@@ -68,25 +91,31 @@
       height: 52px;
     }
 
-    select:focus, .generate-btn:focus { outline: none; border-color: #93c5fd; }
-    select option { background: #1e2937; color: white; }
+    select:focus, .generate-btn:focus { 
+      outline: none; 
+      border-color: #93c5fd; 
+    }
+    select option { 
+      background: #1e2937; 
+      color: white; 
+    }
 
-     .generate-btn {
-        background: linear-gradient(135deg, #fed7aa, #fb923c);
-        color: #1e2937;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        border: 2px solid rgba(251, 191, 36, 0.5);
-        white-space: nowrap;
-        min-width: 170px;
-        height: 52px;
-     }
+    .generate-btn {
+      background: linear-gradient(135deg, #fed7aa, #fb923c);
+      color: #1e2937;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid rgba(251, 191, 36, 0.5);
+      white-space: nowrap;
+      min-width: 170px;
+      height: 52px;
+    }
 
-     .generate-btn:hover {
-       background: linear-gradient(135deg, #fb923c, #f97316);
-       transform: translateY(-1px);
-     }
+    .generate-btn:hover {
+      background: linear-gradient(135deg, #fb923c, #f97316);
+      transform: translateY(-1px);
+    }
 
     .save-btn {
       padding: 14px 32px;
@@ -102,10 +131,10 @@
     }
 
     .save-btn:hover {
-       background: linear-gradient(135deg, #475569, #334155);   /* Slightly deeper, richer grey */
-       transform: translateY(-2px);
-       box-shadow: 0 8px 20px rgba(71, 85, 105, 0.4);
-       color: #f1f5f9;
+      background: linear-gradient(135deg, #475569, #334155);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(71, 85, 105, 0.4);
+      color: #f1f5f9;
     }
 
     .result, .history {
@@ -117,44 +146,34 @@
 
     .result { min-height: 260px; }
     .history { 
-      min-height: 155px;     /* Compact oval - comfortably holds ~2 plans */
+      min-height: 155px;
       max-height: 235px; 
       overflow-y: auto;
     }
 
-    .gita-placeholder {
-      text-align: center;
-      padding: 60px 20px;
-      color: #cbd5e1;
-      font-style: italic;
-      font-size: 1.15rem;
-      line-height: 1.6;
+    .result table { 
+      width: 100%; 
+      border-collapse: separate; 
+      border-spacing: 0 18px;
     }
 
-  .result table { 
-  width: 100%; 
-  border-collapse: separate; 
-  border-spacing: 0 18px;     /* Increased spacing */
-}
+    .result td {
+      padding: 8px 0;
+      vertical-align: top;
+    }
 
-.result td {
-  padding: 8px 0;
-  vertical-align: top;
-}
+    .result .label { 
+      width: 190px; 
+      font-weight: 600; 
+      color: #bae6fd; 
+      padding-right: 28px; 
+    }
 
-.result .label { 
-  width: 190px; 
-  font-weight: 600; 
-  color: #bae6fd; 
-  padding-right: 28px; 
-}
-
-.result .content {
-  color: #e2e8f0;
-  line-height: 1.7;
-  padding-top: 3px;
-}
-
+    .result .content {
+      color: #e2e8f0;
+      line-height: 1.7;
+      padding-top: 3px;
+    }
 
     .history-header {
       display: flex;
@@ -172,9 +191,8 @@
       padding: 14px;
       font-size: 1.02rem;
       resize: vertical;
-      height: 65px;
       min-height: 65px;
-     font-weight: 500;
+      font-weight: 500;
     }
 
     .history-item {
@@ -186,20 +204,16 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      color: #e2e8f0;           /* Light readable text */
-      /*color: #cbd5e1;*/
-
-
-
+      color: #e2e8f0;
     }
 
     .history-item strong {
-      color: #f1f5f9;           /* Even brighter for the main title */
-      /*color: #f8fafc;*/
+      color: #f1f5f9;
     }
 
-
-    .history-item:hover { background: rgba(255,255,255,0.2); }
+    .history-item:hover { 
+      background: rgba(255,255,255,0.2); 
+    }
 
     .wisdom {
       margin-top: 45px;
@@ -209,165 +223,144 @@
       text-align: center;
       color: #cbd5e1;
       font-size: 1.05rem;
-      display: none;   /* Hidden on initial load */
+      display: none;
     }
 
+    .avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #fed7aa, #fdba74);
+      color: #1e2937;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 29px;
+      font-weight: bold;
+      border: 3px solid rgba(251, 191, 36, 0.75);
+      box-shadow: 0 0 16px rgba(251, 191, 36, 0.4);
+      flex-shrink: 0;
+    }
 
-.header {
-  text-align: center;
-  background: rgba(255,255,255,0.08);
-  padding: 18px 40px;
-  border-radius: 50px;
-  margin-bottom: 30px;
-  border: 1px solid rgba(255,255,255,0.15);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
+    .settings-btn {
+      background: none;
+      border: none;
+      color: #cbd5e1;
+      font-size: 1.7rem;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+      transition: all 0.3s;
+    }
 
-.avatar {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #fed7aa, #fdba74);   /* Very soft, mild saffron */
-  color: #1e2937;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 29px;
-  font-weight: bold;
-  border: 3px solid rgba(251, 191, 36, 0.75);
-  box-shadow: 0 0 16px rgba(251, 191, 36, 0.4);
-  flex-shrink: 0;
-}
+    .settings-btn:hover {
+      color: #facc15;
+      transform: rotate(30deg);
+    }
 
-.settings-btn {
-  background: none;
-  border: none;
-  color: #cbd5e1;
-  font-size: 1.7rem;
-  cursor: pointer;
-  padding: 8px;
-  border-radius: 50%;
-  transition: all 0.3s;
-}
+    .header-content {
+      flex: 1;
+      text-align: center;
+    }
 
-.settings-btn:hover {
-  color: #facc15;
-  transform: rotate(30deg);
-}
+    /* ==================== MOBILE RESPONSIVE ==================== */
+    @media (max-width: 768px) {
+      .container {
+        padding: 10px 8px;
+        max-width: 100%;
+      }
 
+      h1 {
+        font-size: 2.25rem !important;
+      }
 
-.header-content {
-  flex: 1;
-  text-align: center;
-}
+      .subtitle {
+        font-size: 1.1rem;
+      }
 
-/* Mobile-first improvements */
-@media (max-width: 768px) {
-  .container {
-    padding: 8px;
-    max-width: 100%;
-  }
+      .header {
+        padding: 16px 20px;
+        gap: 12px;
+        border-radius: 30px;
+      }
 
-  h1 {
-    font-size: 2.1rem !important;
-  }
+      .avatar {
+        width: 46px;
+        height: 46px;
+        font-size: 26px;
+      }
 
-  .subtitle {
-    font-size: 1.05rem;
-  }
+      .card {
+        padding: 28px 20px;
+        border-radius: 20px;
+      }
 
-  .header {
-    padding: 14px 20px;
-    flex-direction: row;
-    gap: 12px;
-    border-radius: 30px;
-  }
+      .form-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 18px;
+      }
 
-  .avatar {
-    width: 42px;
-    height: 42px;
-    font-size: 24px;
-  }
+      #domain, #trigger, #impact {
+        width: 100% !important;
+      }
 
-  .card {
-    padding: 24px 20px;
-    border-radius: 20px;
-  }
+      .generate-btn {
+        width: 100%;
+        min-width: auto;
+        height: 58px;
+        font-size: 1.15rem;
+      }
 
-  .form-row {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 16px;
-  }
+      .result, .history {
+        padding: 22px 18px;
+      }
 
-  #domain, #trigger, #impact {
-    width: 100% !important;
-    min-width: auto;
-  }
+      .result table, .result td {
+        display: block;
+        width: 100%;
+      }
 
-  .generate-btn {
-    width: 100%;
-    min-width: auto;
-    height: 56px;
-    font-size: 1.1rem;
-  }
+      .result .label {
+        width: auto;
+        padding-right: 0;
+        padding-bottom: 8px;
+      }
 
-  .result, .history {
-    padding: 20px;
-    border-radius: 16px;
-  }
+      .history-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
 
-  .result table, .result td {
-    display: block;
-    width: 100%;
-  }
+      textarea {
+        min-height: 85px;
+      }
+    }
 
-  .result .label {
-    width: auto;
-    padding-right: 0;
-    padding-bottom: 6px;
-    font-size: 1.05rem;
-  }
+    /* iPhone safe areas (notch & Dynamic Island) */
+    body {
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
 
-  .history-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-}
-
-/* iPhone safe areas (notch/Dynamic Island) */
-@supports (padding: max(0px)) {
-  body {
-    padding-top: max(20px, env(safe-area-inset-top));
-    padding-bottom: max(20px, env(safe-area-inset-bottom));
-  }
-}
-
-/* Better touch targets */
-select, button, textarea {
-  min-height: 48px; /* Apple recommends */
-}
-
-
-}
+    /* Better touch targets for iOS */
+    select, button, .save-btn, textarea {
+      min-height: 54px;
+    }
   </style>
 </head>
 <body>
   <div class="container">
 
-<div class="header">
-  <div class="avatar">ॐ</div>
-
-  <div class="header-content">
-    <h1>Inner Peace & Happiness</h1>
-    <p class="subtitle">Create calm, clear resolutions to difficult situations</p>
-  </div>
-
-  <button class="settings-btn" onclick="alert('Settings coming soon ✨')">⚙️</button>
-</div>
+    <div class="header">
+      <div class="avatar">ॐ</div>
+      <div class="header-content">
+        <h1>Inner Peace & Happiness</h1>
+        <p class="subtitle">Create calm, clear resolutions to difficult situations</p>
+      </div>
+      <button class="settings-btn" onclick="alert('Settings coming soon ✨')">⚙️</button>
+    </div>
   
     <div class="card">
       <div class="form-row">
@@ -418,6 +411,7 @@ select, button, textarea {
   </div>
 
   <script>
+    // Your full script (unchanged)
     const backgrounds = [
       'https://images.unsplash.com/photo-1506905925346-21bda4d32df4',
       'https://images.unsplash.com/photo-1518837695005-2083093ee35b',
@@ -433,16 +427,16 @@ select, button, textarea {
     };
 
     const gitaWisdom = [
-       "You have a right to perform your prescribed duty, but you are not entitled to the fruits of action. — Bhagavad Gita 2.47",
-       "Perform your duty equipoised, abandoning all attachment to success or failure. Such equanimity is called Yoga. — Bhagavad Gita 2.48",
-       "A person who is not disturbed by the incessant flow of desires — like rivers entering the ocean which is ever being filled but is always still — can alone achieve peace. — Bhagavad Gita 2.70",
-       "Whenever there is a decline of righteousness, I descend Myself... to protect the virtuous and destroy evil. — Bhagavad Gita 4.7-8",
-       "The contacts of the senses with their objects, O Arjuna, give rise to sensations of cold and heat, pleasure and pain. They come and go and are impermanent. — Bhagavad Gita 2.14",
-       "With the mind unattached to external contacts, one finds happiness within. — Bhagavad Gita 5.21",
-       "One must deliver and elevate oneself by one’s own mind. Do not degrade oneself. — Bhagavad Gita 6.5",
-       "Whatever you do, whatever you eat, whatever you offer or give away, and whatever austerities you perform — do it as an offering to Me. — Bhagavad Gita 9.27",
-       "Abandon all varieties of dharma and simply surrender unto Me. I shall deliver you from all sinful reactions. Do not fear. — Bhagavad Gita 18.66",
-       "As a person puts on new garments, giving up old ones, the soul similarly accepts new material bodies, giving up the old and useless ones. — Bhagavad Gita 2.22"
+      "You have a right to perform your prescribed duty, but you are not entitled to the fruits of action. — Bhagavad Gita 2.47",
+      "Perform your duty equipoised, abandoning all attachment to success or failure. Such equanimity is called Yoga. — Bhagavad Gita 2.48",
+      "A person who is not disturbed by the incessant flow of desires — like rivers entering the ocean which is ever being filled but is always still — can alone achieve peace. — Bhagavad Gita 2.70",
+      "Whenever there is a decline of righteousness, I descend Myself... to protect the virtuous and destroy evil. — Bhagavad Gita 4.7-8",
+      "The contacts of the senses with their objects, O Arjuna, give rise to sensations of cold and heat, pleasure and pain. They come and go and are impermanent. — Bhagavad Gita 2.14",
+      "With the mind unattached to external contacts, one finds happiness within. — Bhagavad Gita 5.21",
+      "One must deliver and elevate oneself by one’s own mind. Do not degrade oneself. — Bhagavad Gita 6.5",
+      "Whatever you do, whatever you eat, whatever you offer or give away, and whatever austerities you perform — do it as an offering to Me. — Bhagavad Gita 9.27",
+      "Abandon all varieties of dharma and simply surrender unto Me. I shall deliver you from all sinful reactions. Do not fear. — Bhagavad Gita 18.66",
+      "As a person puts on new garments, giving up old ones, the soul similarly accepts new material bodies, giving up the old and useless ones. — Bhagavad Gita 2.22"
     ];
 
     let currentPlan = null;
@@ -453,49 +447,38 @@ select, button, textarea {
     const impactSelect = document.getElementById('impact');
     const wisdomDiv = document.getElementById('wisdom');
 
-/*
-    function showGitaPlaceholder() {
+    function showTemplate() {
+      currentVerse = gitaWisdom[Math.floor(Math.random() * gitaWisdom.length)];
+
       const resultDiv = document.getElementById('result');
       resultDiv.innerHTML = `
-        <div class="gita-placeholder">
-          "Whenever there is decline of righteousness, I descend Myself..."<br>
-          — Bhagavad Gita
+        <h2 style="color:#f8fafc; margin-bottom:35px; opacity:0.65; text-align:center;">
+          Your Resolution Plan will appear here...
+        </h2>
+        
+        <table style="width:100%; border-collapse:collapse;">
+          <tr><td class="label">Impact</td><td class="content"></td></tr>
+          <tr><td class="label">How to Detach</td><td class="content"></td></tr>
+          <tr><td class="label">Recommended Actions</td><td class="content"></td></tr>
+          <tr><td class="label">Team / Support Ideas</td><td class="content"></td></tr>
+        </table>
+
+        <div style="margin-top: 45px; padding-top: 25px; border-top: 1px solid rgba(148,163,184,0.25); text-align:center; font-style:italic; color:#cbd5e1; line-height:1.65;">
+          ${currentVerse}
         </div>
       `;
     }
-*/
-
- function showTemplate() {
-  currentVerse = gitaWisdom[Math.floor(Math.random() * gitaWisdom.length)];
-
-  const resultDiv = document.getElementById('result');
-  resultDiv.innerHTML = `
-    <h2 style="color:#f8fafc; margin-bottom:35px; opacity:0.65; text-align:center;">
-      Your Resolution Plan will appear here...
-    </h2>
-    
-    <table style="width:100%; border-collapse:collapse;">
-      <tr><td class="label">Impact</td><td class="content"></td></tr>
-      <tr><td class="label">How to Detach</td><td class="content"></td></tr>
-      <tr><td class="label">Recommended Actions</td><td class="content"></td></tr>
-      <tr><td class="label">Team / Support Ideas</td><td class="content"></td></tr>
-    </table>
-
-    <div style="margin-top: 45px; padding-top: 25px; border-top: 1px solid rgba(148,163,184,0.25); text-align:center; font-style:italic; color:#cbd5e1; line-height:1.65;">
-      ${currentVerse}
-    </div>
-  `;
-}
 
     function clearResult() {
-	showTemplate();
+      showTemplate();
     }
 
     domainSelect.addEventListener('change', () => {
       triggerSelect.innerHTML = '<option value="">Select Trigger</option>';
       (triggers[domainSelect.value] || []).forEach(opt => {
         const o = document.createElement('option');
-        o.value = opt; o.textContent = opt;
+        o.value = opt; 
+        o.textContent = opt;
         triggerSelect.appendChild(o);
       });
       clearResult();
@@ -515,50 +498,50 @@ select, button, textarea {
         if (triggerSelect.options.length > 1) triggerSelect.value = triggerSelect.options[1].value;
       }, 100);
 
-      /* showGitaPlaceholder();   */ // Quote only in results area on load
-      showTemplate();   // instead of showGitaPlaceholder()
+      showTemplate();
       loadHistory();
     };
 
+    // ... rest of your functions (generateGuidance, saveCurrentPlan, etc.) remain the same
     function generateGuidance() {
-  const domain = domainSelect.value;
-  const trigger = triggerSelect.value;
-  const impact = impactSelect.value;
+      const domain = domainSelect.value;
+      const trigger = triggerSelect.value;
+      const impact = impactSelect.value;
 
-  if (!domain || !trigger || !impact) {
-    alert("Please select Domain, Trigger, and Impact");
-    return;
-  }
+      if (!domain || !trigger || !impact) {
+        alert("Please select Domain, Trigger, and Impact");
+        return;
+      }
 
-  let suggestion = (domain === "Professional" || domain === "Both") 
-    ? (trigger.includes("layoff") || trigger.includes("insecurity") ? "Skill-building + Resume updates + Networking + Side projects" : "Document everything + Focus only on what you can control")
-    : "Acceptance + Self-Compassion + Witness the emotion without judgment";
+      let suggestion = (domain === "Professional" || domain === "Both") 
+        ? (trigger.includes("layoff") || trigger.includes("insecurity") ? "Skill-building + Resume updates + Networking + Side projects" : "Document everything + Focus only on what you can control")
+        : "Acceptance + Self-Compassion + Witness the emotion without judgment";
 
-  currentPlan = { domain, trigger, impact, suggestion, supportIdeas: "", date: new Date().toLocaleString() };
+      currentPlan = { domain, trigger, impact, suggestion, supportIdeas: "", date: new Date().toLocaleString() };
 
-  if (currentVerse) {
-  wisdomDiv.innerHTML = currentVerse;
-  wisdomDiv.style.display = 'block';
-}
+      if (currentVerse) {
+        wisdomDiv.innerHTML = currentVerse;
+        wisdomDiv.style.display = 'block';
+      }
 
-  const html = `
-    <h2 style="color:#f8fafc; margin-bottom:20px;">${domain} — ${trigger}</h2>
-    <table style="width:100%; border-collapse:collapse;">
-      <tr><td class="label">Impact:</td><td class="content"><span style="color:${impact==='High'?'#ef4444':impact==='Medium'?'#eab308':'#22c55e'}">● ${impact}</span></td></tr>
-      <tr><td class="label">How to Detach</td><td class="content"><strong>STOP → Pause & Breathe deeply.</strong><br>
-         ${impact === "High" ? "Fully allow the emotion + Witness it as a passing cloud." : "Observe your thoughts and physical sensations calmly."}</td></tr>
-      <tr><td class="label">Recommended Actions</td><td class="content">${suggestion}</td></tr>
-      <tr><td class="label">Team / Support Ideas</td><td>
-        <div style="display:flex; gap:12px; align-items:flex-end;">
-          <textarea id="supportTextarea" rows="2" style="flex:1" placeholder="Yoga, Journaling, Talk to mentor..."></textarea>
-          <button class="save-btn" onclick="saveCurrentPlan()">Save Plan</button>
-        </div>
-      </td></tr>
-    </table>
-  `;
+      const html = `
+        <h2 style="color:#f8fafc; margin-bottom:20px;">${domain} — ${trigger}</h2>
+        <table style="width:100%; border-collapse:collapse;">
+          <tr><td class="label">Impact:</td><td class="content"><span style="color:${impact==='High'?'#ef4444':impact==='Medium'?'#eab308':'#22c55e'}">● ${impact}</span></td></tr>
+          <tr><td class="label">How to Detach</td><td class="content"><strong>STOP → Pause & Breathe deeply.</strong><br>
+             ${impact === "High" ? "Fully allow the emotion + Witness it as a passing cloud." : "Observe your thoughts and physical sensations calmly."}</td></tr>
+          <tr><td class="label">Recommended Actions</td><td class="content">${suggestion}</td></tr>
+          <tr><td class="label">Team / Support Ideas</td><td>
+            <div style="display:flex; gap:12px; align-items:flex-end;">
+              <textarea id="supportTextarea" rows="2" style="flex:1" placeholder="Yoga, Journaling, Talk to mentor..."></textarea>
+              <button class="save-btn" onclick="saveCurrentPlan()">Save Plan</button>
+            </div>
+          </td></tr>
+        </table>
+      `;
 
-  document.getElementById('result').innerHTML = html;
-}
+      document.getElementById('result').innerHTML = html;
+    }
 
     function saveCurrentPlan() {
       if (!currentPlan) return;
@@ -585,77 +568,75 @@ select, button, textarea {
     function loadHistory() {
       const list = document.getElementById('historyList');
       let plans = JSON.parse(localStorage.getItem('detachmentPlans') || '[]');
-  
       const sortBy = document.getElementById('sortSelect').value;
 
       if (sortBy === 'domain') plans.sort((a,b) => a.domain.localeCompare(b.domain));
       else if (sortBy === 'impact') {
-       const order = {High: 3, Medium: 2, Low: 1};
-       plans.sort((a,b) => order[b.impact] - order[a.impact]);
+        const order = {High: 3, Medium: 2, Low: 1};
+        plans.sort((a,b) => order[b.impact] - order[a.impact]);
       } else if (sortBy === 'trigger') {
-      plans.sort((a,b) => a.trigger.localeCompare(b.trigger));
+        plans.sort((a,b) => a.trigger.localeCompare(b.trigger));
       } else {
-         plans.sort((a,b) => new Date(b.date) - new Date(a.date));
-        }
+        plans.sort((a,b) => new Date(b.date) - new Date(a.date));
+      }
 
-     if (plans.length === 0) {
-      list.innerHTML = '<p style="color:#94a3b8;">No saved plans yet.</p>';
-      return;
-     }
+      if (plans.length === 0) {
+        list.innerHTML = '<p style="color:#94a3b8;">No saved plans yet.</p>';
+        return;
+      }
 
-    list.innerHTML = plans.map((plan, i) => {
-     const color = plan.impact === 'High' ? '#ef4444' : plan.impact === 'Medium' ? '#eab308' : '#22c55e';
-     const notesPreview = plan.supportIdeas ? plan.supportIdeas.substring(0, 60) + (plan.supportIdeas.length > 60 ? '...' : '') : '';
-     return `
-       <div class="history-item" onclick="loadSavedPlan(${i})">
-         <div>
-           <strong>${plan.domain} — ${plan.trigger} 
-             <span style="color:${color}; margin-left:8px;">● ${plan.impact}</span>
-           </strong><br>
-           <small>${plan.date}</small>
-           ${notesPreview ? `<br><small style="color:#94a3b8;">${notesPreview}</small>` : ''}
-         </div>
-         <button onclick="event.stopImmediatePropagation(); deletePlan(${i});" style="background:none;border:none;color:#ef4444;font-size:1.4rem;">×</button>
-       </div>
-    ` ;
-     }).join('');
-   }
-
+      list.innerHTML = plans.map((plan, i) => {
+        const color = plan.impact === 'High' ? '#ef4444' : plan.impact === 'Medium' ? '#eab308' : '#22c55e';
+        const notesPreview = plan.supportIdeas ? plan.supportIdeas.substring(0, 60) + (plan.supportIdeas.length > 60 ? '...' : '') : '';
+        return `
+          <div class="history-item" onclick="loadSavedPlan(${i})">
+            <div>
+              <strong>${plan.domain} — ${plan.trigger} 
+                <span style="color:${color}; margin-left:8px;">● ${plan.impact}</span>
+              </strong><br>
+              <small>${plan.date}</small>
+              ${notesPreview ? `<br><small style="color:#94a3b8;">${notesPreview}</small>` : ''}
+            </div>
+            <button onclick="event.stopImmediatePropagation(); deletePlan(${i});" style="background:none;border:none;color:#ef4444;font-size:1.4rem;">×</button>
+          </div>
+        `;
+      }).join('');
+    }
 
     function loadSavedPlan(index) {
-  const plans = JSON.parse(localStorage.getItem('detachmentPlans') || '[]');
-  const plan = plans[index];
-  if (!plan) return;
+      const plans = JSON.parse(localStorage.getItem('detachmentPlans') || '[]');
+      const plan = plans[index];
+      if (!plan) return;
 
-  domainSelect.value = plan.domain;
-  domainSelect.dispatchEvent(new Event('change'));
-  setTimeout(() => { triggerSelect.value = plan.trigger || ""; }, 100);
-  document.getElementById('impact').value = plan.impact;
+      domainSelect.value = plan.domain;
+      domainSelect.dispatchEvent(new Event('change'));
+      setTimeout(() => { triggerSelect.value = plan.trigger || ""; }, 100);
+      document.getElementById('impact').value = plan.impact;
 
-  currentPlan = {...plan};
+      currentPlan = {...plan};
 
-  if (currentVerse) {
-  wisdomDiv.innerHTML = currentVerse;
-  wisdomDiv.style.display = 'block';
-}
+      if (currentVerse) {
+        wisdomDiv.innerHTML = currentVerse;
+        wisdomDiv.style.display = 'block';
+      }
 
-  const html = `
-    <h2 style="color:#f8fafc; margin-bottom:20px;">${plan.domain} — ${plan.trigger}</h2>
-    <table style="width:100%; border-collapse:collapse;">
-      <tr><td class="label">Impact</td><td class="content"><span style="color:${plan.impact==='High'?'#ef4444':plan.impact==='Medium'?'#eab308':'#22c55e'}">● ${plan.impact}</span></td></tr>
-      <tr><td class="label">How to Detach</td><td class="content"><strong>STOP → Pause & Breathe deeply.</strong><br>Observe your thoughts and physical sensations calmly.</td></tr>
-      <tr><td class="label">Recommended Actions</td><td class="content">${plan.suggestion}</td></tr>
-      <tr><td class="label">Team / Support Ideas</td><td>
-        <div style="display:flex; gap:12px; align-items:flex-end;">
-          <textarea id="supportTextarea" rows="2" style="flex:1">${plan.supportIdeas || ''}</textarea>
-          <button class="save-btn" onclick="saveCurrentPlan()">Save Plan</button>
-        </div>
-      </td></tr>
-    </table>
-  `;
+      const html = `
+        <h2 style="color:#f8fafc; margin-bottom:20px;">${plan.domain} — ${plan.trigger}</h2>
+        <table style="width:100%; border-collapse:collapse;">
+          <tr><td class="label">Impact</td><td class="content"><span style="color:${plan.impact==='High'?'#ef4444':plan.impact==='Medium'?'#eab308':'#22c55e'}">● ${plan.impact}</span></td></tr>
+          <tr><td class="label">How to Detach</td><td class="content"><strong>STOP → Pause & Breathe deeply.</strong><br>Observe your thoughts and physical sensations calmly.</td></tr>
+          <tr><td class="label">Recommended Actions</td><td class="content">${plan.suggestion}</td></tr>
+          <tr><td class="label">Team / Support Ideas</td><td>
+            <div style="display:flex; gap:12px; align-items:flex-end;">
+              <textarea id="supportTextarea" rows="2" style="flex:1">${plan.supportIdeas || ''}</textarea>
+              <button class="save-btn" onclick="saveCurrentPlan()">Save Plan</button>
+            </div>
+          </td></tr>
+        </table>
+      `;
 
-  document.getElementById('result').innerHTML = html;
-}
+      document.getElementById('result').innerHTML = html;
+    }
 
     function deletePlan(index) {
       let plans = JSON.parse(localStorage.getItem('detachmentPlans') || '[]');
