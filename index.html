@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+/* <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> */
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Inner Peace & Happiness Guide</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap');
@@ -261,6 +262,95 @@
   flex: 1;
   text-align: center;
 }
+
+/* Mobile-first improvements */
+@media (max-width: 768px) {
+  .container {
+    padding: 8px;
+    max-width: 100%;
+  }
+
+  h1 {
+    font-size: 2.1rem !important;
+  }
+
+  .subtitle {
+    font-size: 1.05rem;
+  }
+
+  .header {
+    padding: 14px 20px;
+    flex-direction: row;
+    gap: 12px;
+    border-radius: 30px;
+  }
+
+  .avatar {
+    width: 42px;
+    height: 42px;
+    font-size: 24px;
+  }
+
+  .card {
+    padding: 24px 20px;
+    border-radius: 20px;
+  }
+
+  .form-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  #domain, #trigger, #impact {
+    width: 100% !important;
+    min-width: auto;
+  }
+
+  .generate-btn {
+    width: 100%;
+    min-width: auto;
+    height: 56px;
+    font-size: 1.1rem;
+  }
+
+  .result, .history {
+    padding: 20px;
+    border-radius: 16px;
+  }
+
+  .result table, .result td {
+    display: block;
+    width: 100%;
+  }
+
+  .result .label {
+    width: auto;
+    padding-right: 0;
+    padding-bottom: 6px;
+    font-size: 1.05rem;
+  }
+
+  .history-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+
+/* iPhone safe areas (notch/Dynamic Island) */
+@supports (padding: max(0px)) {
+  body {
+    padding-top: max(20px, env(safe-area-inset-top));
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+  }
+}
+
+/* Better touch targets */
+select, button, textarea {
+  min-height: 48px; /* Apple recommends */
+}
+
 
 }
   </style>
