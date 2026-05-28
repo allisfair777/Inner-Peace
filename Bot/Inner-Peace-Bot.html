@@ -12,45 +12,46 @@
       font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     }
     .chat-container {
-      background: rgba(15, 23, 42, 0.93);
-      backdrop-filter: blur(25px);
+      background: rgba(9, 9, 11, 0.88);
+      backdrop-filter: blur(30px);
     }
     .message-user {
-      background: #2563eb;
+      background: #1d4ed8;
       color: white;
       border-radius: 20px 20px 6px 20px;
     }
     .message-bot {
-      background: #1e2937;
+      background: #18181b;
       border-radius: 20px 20px 20px 6px;
-      border: 1px solid rgba(245, 158, 11, 0.05);
+      border: 1px solid rgba(245, 158, 11, 0.08);
     }
     .prompt-btn {
       padding: 11px 18px;
       margin-bottom: 8px;
-      background: #334155;
+      background: #27272a;
       border-radius: 9999px;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
+      border: 1px solid rgba(255,255,255,0.03);
     }
     .prompt-btn:hover {
-      background: #475569;
-      transform: translateX(6px);
+      background: #3f3f46;
+      transform: translateX(4px);
     }
     .faint-overlay {
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at 50% 30%, rgba(245, 158, 11, 0.08), transparent 70%);
+      background: radial-gradient(circle at 50% 25%, rgba(245, 158, 11, 0.05), transparent 75%);
       pointer-events: none;
       z-index: 0;
     }
     .oval-header {
       border-radius: 9999px;
-      background: rgba(15, 23, 42, 0.95);
+      background: rgba(24, 24, 27, 0.95);
     }
     #chat {
       scrollbar-width: thin;
-      scrollbar-color: #475569 #111827;
+      scrollbar-color: #3f3f46 #09090b;
     }
     .sanskrit-verse {
       display: block;
@@ -61,39 +62,43 @@
       line-height: 1.6;
       font-size: 1.05em;
     }
-    /* Smooth sidebar transition */
     .sidebar-transition {
-      transition: width 0.3s ease-in-out, opacity 0.3s ease-in-out, padding 0.3s ease-in-out;
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease, border-color 0.3s ease;
+    }
+    .animate-spin-slow {
+      animation: spin 12s linear infinite;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body class="h-screen w-screen text-gray-100 flex overflow-hidden bg-cover bg-center bg-no-repeat bg-fixed">
 
-  <div id="sidebar" class="w-72 bg-zinc-950/95 backdrop-blur-md border-r border-zinc-800 flex flex-col h-full z-20 sidebar-transition overflow-hidden shrink-0">
-    <div class="p-5 flex items-center justify-between border-b border-zinc-800 shrink-0">
+  <div id="sidebar" class="w-72 bg-zinc-950/95 border-r border-zinc-800 flex flex-col h-full z-20 sidebar-transition overflow-hidden shrink-0">
+    <div class="p-5 flex items-center justify-between border-b border-zinc-800 shrink-0 w-72">
       <div class="font-semibold text-xl tracking-tight text-zinc-200">Resolution Planner</div>
-      <button onclick="toggleSidebar()" class="text-zinc-400 hover:text-amber-400 lg:hidden">
-        <i class="fas fa-times"></i>
+      <button onclick="toggleSidebar()" class="text-zinc-400 hover:text-amber-400">
+        <i class="fas fa-chevron-left text-sm"></i>
       </button>
     </div>
 
-    <div class="p-4 shrink-0">
+    <div class="p-4 shrink-0 w-72">
       <button onclick="newChat()" class="w-full bg-amber-500 hover:bg-amber-600 text-black font-semibold py-3.5 rounded-2xl flex items-center justify-center gap-2 transition-all">
         <i class="fas fa-plus"></i> New Conversation
       </button>
     </div>
 
-    <div class="px-4 flex-1 overflow-y-auto pb-4">
-      <p class="text-amber-400 text-xs mb-3 px-3 font-semibold tracking-wider">QUICK PROMPTS</p>
-      <div onclick="sendPrompt('Explain Karma from Gita')" class="prompt-btn text-sm">Karma explained</div>
-      <div onclick="sendPrompt('What is Dharma?')" class="prompt-btn text-sm">Dharma meaning</div>
-      <div onclick="sendPrompt('Verse on equanimity and inner balance')" class="prompt-btn text-sm">Verse on balance</div>
-      <div onclick="sendPrompt('How to handle fear and anxiety')" class="prompt-btn text-sm">Handling anxiety</div>
+    <div class="px-4 flex-1 overflow-y-auto pb-4 w-72">
+      <p class="text-amber-400/80 text-xs mb-3 px-3 font-semibold tracking-wider">QUICK PROMPTS</p>
+      <div onclick="sendPrompt('Explain Karma from Gita')" class="prompt-btn text-sm text-zinc-300">Karma explained</div>
+      <div onclick="sendPrompt('What is Dharma?')" class="prompt-btn text-sm text-zinc-300">Dharma meaning</div>
+      <div onclick="sendPrompt('Verse on equanimity and inner balance')" class="prompt-btn text-sm text-zinc-300">Verse on balance</div>
+      <div onclick="sendPrompt('How to handle fear and anxiety')" class="prompt-btn text-sm text-zinc-300">Handling anxiety</div>
 
       <div class="mt-8">
-        <p class="text-amber-400 text-xs mb-3 px-3 font-semibold tracking-wider flex justify-between items-center">
-          SAVED PROMPTS
-        </p>
+        <p class="text-amber-400/80 text-xs mb-3 px-3 font-semibold tracking-wider">SAVED PROMPTS</p>
         <div id="saved-prompts-list" class="space-y-2">
           </div>
       </div>
@@ -102,15 +107,15 @@
 
   <div class="flex-1 flex flex-col chat-container relative h-full min-w-0">
     
-    <div class="oval-header mx-4 mt-4 px-6 py-4 flex items-center justify-between border border-amber-400/10 shadow-lg z-10">
+    <div class="oval-header mx-4 mt-4 px-6 py-4 flex items-center justify-between border border-zinc-800/60 shadow-xl z-10">
       <div class="flex items-center gap-4">
         <button onclick="toggleSidebar()" class="w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-amber-300 rounded-3xl hover:bg-zinc-800 transition-all">
-          <i class="fas fa-bars text-xl"></i>
+          <i class="fas fa-bars text-lg"></i>
         </button>
         <div class="w-10 h-10 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl flex items-center justify-center text-2xl font-bold text-zinc-950 shadow-md">ॐ</div>
         <div class="hidden sm:block">
           <div class="text-xl font-bold tracking-tight text-zinc-100">Inner Peace &amp; Happiness</div>
-          <div class="text-xs text-amber-200/70">Create calm, clear resolutions to difficult situations</div>
+          <div class="text-xs text-amber-200/60">Create calm, clear resolutions to difficult situations</div>
         </div>
       </div>
       <div class="flex items-center gap-3">
@@ -129,10 +134,10 @@
       <div class="faint-overlay"></div>
     </div>
 
-    <div class="p-5 border-t border-zinc-800/80 bg-zinc-900/95 z-10">
+    <div class="p-5 border-t border-zinc-800/50 bg-zinc-950/80 z-10">
       <form onsubmit="sendMessage(event)" class="relative max-w-4xl mx-auto">
         <input id="userInput" type="text" autocomplete="off"
-               class="w-full bg-zinc-800 border border-zinc-700/80 rounded-3xl px-7 py-4.5 pr-16 focus:outline-none focus:border-amber-400 text-base placeholder-zinc-500 text-zinc-100 shadow-inner transition-all"
+               class="w-full bg-zinc-900 border border-zinc-800 rounded-3xl px-7 py-4.5 pr-16 focus:outline-none focus:border-amber-500 text-base placeholder-zinc-500 text-zinc-100 shadow-inner transition-all"
                placeholder="Describe your situation or ask a question...">
         <button type="submit" 
                 class="absolute right-3 top-1/2 -translate-y-1/2 bg-amber-500 hover:bg-amber-600 active:scale-95 text-black w-11 h-11 rounded-2xl flex items-center justify-center transition-all shadow-md">
@@ -145,7 +150,6 @@
   <script>
     const chat = document.getElementById('chat');
 
-    // Updated DB to contain arrays so quick prompts have variety
     const wisdomDb = {
       karma: [
         {
@@ -179,7 +183,7 @@
         },
         {
           title: "The Peaceful Mind", ch: 2, verse: 70,
-          slok: "आपूर्यमाणमचलप्रतिष्ठं समुद्रमापः प्रविशन्ति यद्वत्।\nतद्वत्कामा यं प्रविशन्ति सर्वे स शान्तिमाप्नोति न कामकामी॥",
+          slok: "आपूर्यमाणमचलप्रतिष्ठं समुद्रमापः परविशन्ति यद्वत्।\nतद्वत्कामा यं परविशन्ति सर्वे स शान्तिमाप्नोति न कामकामी॥",
           translation: "Just as the ocean remains undisturbed by the continuous flow of rivers entering it, a person who remains unmoved by the torrent of desires achieves deep peace."
         }
       ],
@@ -202,31 +206,31 @@
       { ch: 5, verse: 21, slok: "बाह्यस्पर्शेष्वसक्तात्मा विन्दत्यात्मनि यत्सुखम्।\nस ब्रह्मयोगयुक्तात्मा सुखमक्षयमश्नुते॥", translation: "One who is unattached to external sensory pleasures finds true happiness within. Self-connected, they experience endless joy." }
     ];
 
-    /* Sidebar Toggle Logic */
+    /* 1) Seamless Sidebar Toggle Switch Logic */
     function toggleSidebar() {
       const sidebar = document.getElementById('sidebar');
       if (sidebar.classList.contains('w-72')) {
-        sidebar.classList.remove('w-72', 'border-r');
-        sidebar.classList.add('w-0', 'border-transparent', 'opacity-0');
+        sidebar.className = "w-0 border-transparent opacity-0 flex flex-col h-full z-20 sidebar-transition overflow-hidden shrink-0";
       } else {
-        sidebar.classList.remove('w-0', 'border-transparent', 'opacity-0');
-        sidebar.classList.add('w-72', 'border-r');
+        sidebar.className = "w-72 bg-zinc-950/95 border-r border-zinc-800 flex flex-col h-full z-20 sidebar-transition overflow-hidden shrink-0";
       }
     }
 
-    /* Saved Prompts Logic utilizing LocalStorage */
+    /* 2) Structured LocalStorage Engine for Custom Saved Prompts */
     let savedPrompts = JSON.parse(localStorage.getItem('gitaSavedPrompts')) || [];
 
     function renderSavedPrompts() {
       const container = document.getElementById('saved-prompts-list');
       if (savedPrompts.length === 0) {
-        container.innerHTML = '<div class="text-zinc-600 text-xs px-3 italic">No prompts saved yet.</div>';
+        container.innerHTML = '<div class="text-zinc-600 text-xs px-3 italic">No saved prompts yet.</div>';
         return;
       }
       container.innerHTML = savedPrompts.map((p, index) => `
-        <div class="prompt-btn text-sm flex justify-between items-center group relative overflow-hidden" title="${p.prompt}">
-          <div class="truncate flex-1" onclick="sendPrompt('${p.prompt.replace(/'/g, "\\'")}')">${p.name}</div>
-          <button onclick="deleteSavedPrompt(${index})" class="text-zinc-500 hover:text-red-400 ml-2 z-10 transition-colors">
+        <div class="prompt-btn text-sm flex justify-between items-center relative overflow-hidden group" title="${p.prompt}">
+          <div class="truncate flex-1 pr-2 py-0.5" onclick="sendPrompt('${p.prompt.replace(/'/g, "\\'")}')">
+            ${p.name}
+          </div>
+          <button onclick="event.stopPropagation(); deleteSavedPrompt(${index})" class="text-zinc-500 hover:text-red-400 transition-colors px-1 z-10">
             <i class="fas fa-trash-alt text-xs"></i>
           </button>
         </div>
@@ -234,47 +238,45 @@
     }
 
     function bookmarkPrompt(promptText) {
-      const name = prompt("Give this prompt a short name to save it:");
+      const name = prompt("Give this prompt a descriptive name to save it:");
       if (name && name.trim() !== "") {
         savedPrompts.push({ name: name.trim(), prompt: promptText });
         localStorage.setItem('gitaSavedPrompts', JSON.stringify(savedPrompts));
         renderSavedPrompts();
-        
-        // Make sure sidebar is open so they can see it saved
-        const sidebar = document.getElementById('sidebar');
-        if (sidebar.classList.contains('w-0')) toggleSidebar();
       }
     }
 
     function deleteSavedPrompt(index) {
-      if(confirm("Delete this saved prompt?")) {
+      if (confirm("Remove this configuration from saved items?")) {
         savedPrompts.splice(index, 1);
         localStorage.setItem('gitaSavedPrompts', JSON.stringify(savedPrompts));
         renderSavedPrompts();
       }
     }
 
+    /* 4 & 5) Optimized Muted Calming Wallpapers */
     function setupDynamicBackground() {
       const backgroundImages = [
-        'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=2000&q=80',
-        'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&w=2000&q=80'
+        'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1400&q=60',
+        'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&w=1400&q=60',
+        'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1400&q=60'
       ];
       const selectedImg = backgroundImages[Math.floor(Math.random() * backgroundImages.length)];
-      document.body.style.backgroundImage = `linear-gradient(rgba(9, 9, 11, 0.82), rgba(9, 9, 11, 0.94)), url('${selectedImg}')`;
+      // Applied highly muted overlay mix (0.88 to 0.94) to match the elegant backdrop style
+      document.body.style.backgroundImage = `linear-gradient(rgba(9, 9, 11, 0.88), rgba(9, 9, 11, 0.94)), url('${selectedImg}')`;
     }
 
     function appendMessage(sender, html, rawPromptText = null) {
       const div = document.createElement('div');
-      div.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'} w-full group`;
+      div.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'} w-full`;
       
-      // If it's a user message, append the "Save" icon button next to the text
-      let saveIconHTML = '';
+      let bookmarkBtnHTML = '';
       if (sender === 'user' && rawPromptText) {
         const safeText = rawPromptText.replace(/'/g, "\\'").replace(/"/g, "&quot;");
-        saveIconHTML = `
-          <div class="mt-2 text-right">
-            <button onclick="bookmarkPrompt('${safeText}')" class="text-xs text-blue-200 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity">
-              <i class="fas fa-bookmark mr-1"></i> Save Prompt
+        bookmarkBtnHTML = `
+          <div class="mt-2 pt-1.5 border-t border-white/10 flex justify-end">
+            <button onclick="bookmarkPrompt('${safeText}')" class="text-[11px] text-amber-300/80 hover:text-amber-300 flex items-center gap-1 bg-white/5 px-2 py-0.5 rounded-md transition-all">
+              <i class="fas fa-bookmark text-[10px]"></i> Save Action
             </button>
           </div>
         `;
@@ -282,15 +284,14 @@
 
       div.innerHTML = `
         <div class="max-w-[82%] ${sender === 'user' ? 'message-user' : 'message-bot'} px-6 py-4 text-[15.5px] leading-relaxed shadow-md">
-          ${html}
-          ${saveIconHTML}
+          <div>${html}</div>
+          ${bookmarkBtnHTML}
         </div>
       `;
       chat.appendChild(div);
       chat.scrollTop = chat.scrollHeight;
     }
 
-    // Resolves matching structural configurations based on direct input parsing
     function matchIntentData(text) {
       const lower = text.toLowerCase();
       let matchedArray = null;
@@ -300,12 +301,10 @@
       else if (lower.includes('equanimity') || lower.includes('balance') || lower.includes('peace') || lower.includes('calm')) matchedArray = wisdomDb.balance;
       else if (lower.includes('fear') || lower.includes('anxious') || lower.includes('worry') || lower.includes('panic') || lower.includes('stress')) matchedArray = wisdomDb.anxiety;
 
-      // If we found a matching category, pick a RANDOM verse from that array
       if (matchedArray) {
         return matchedArray[Math.floor(Math.random() * matchedArray.length)];
       }
 
-      // Fallback
       const randomFallback = randomVersePool[Math.floor(Math.random() * randomVersePool.length)];
       return {
         title: "Personalized Guidance Reflection",
@@ -332,13 +331,8 @@
       const msg = explicitText ? explicitText.trim() : input.value.trim();
       if (!msg) return;
 
-      if (!explicitText) {
-        appendMessage('user', msg, msg);
-        input.value = '';
-      } else {
-        // Even if it was clicked via a quick prompt, allow saving it
-        appendMessage('user', msg, msg);
-      }
+      appendMessage('user', msg, msg);
+      if (!explicitText) input.value = '';
 
       const thinking = document.createElement('div');
       thinking.className = 'flex justify-start w-full';
@@ -362,8 +356,7 @@
     }
 
     function sendPrompt(promptText) {
-      // Small delay to ensure clean interface threading transitions
-      setTimeout(() => sendMessage(null, promptText), 100);
+      setTimeout(() => sendMessage(null, promptText), 80);
     }
 
     async function fetchRandomGitaVerse() {
@@ -391,13 +384,26 @@
       }
     }
 
+    /* 3) Custom Dynamic Dashboard initialized with classic Chariot Backdrop artwork overlay */
     function newChat() {
       chat.innerHTML = `
         <div class="faint-overlay"></div>
-        <div class="text-center text-zinc-500 py-20 flex flex-col items-center justify-center gap-2">
-          <i class="fas fa-comment-alt text-3xl text-zinc-700 mb-2"></i>
-          <div>New conversation initialized.</div>
-          <div class="text-sm text-zinc-600">Share your current configuration or struggle to view relevant guidance.</div>
+        <div class="max-w-xl mx-auto mt-10 p-8 rounded-3xl bg-zinc-900/80 border border-zinc-800/80 backdrop-blur-md text-center relative overflow-hidden shadow-2xl">
+          <div class="absolute inset-0 opacity-10 bg-cover bg-center mix-blend-luminosity pointer-events-none" 
+               style="background-image: url('https://images.unsplash.com/photo-1609137144813-7d7881005ca7?auto=format&fit=crop&w=800&q=50');">
+          </div>
+          <div class="relative z-10 flex flex-col items-center justify-center gap-4">
+            <div class="w-14 h-14 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-2xl flex items-center justify-center text-2xl shadow-inner">
+              <i class="fas fa-dharmachakra animate-spin-slow"></i>
+            </div>
+            <h3 class="text-xl font-bold text-zinc-100 tracking-tight">New Conversation Initialized</h3>
+            <p class="text-zinc-400 text-sm leading-relaxed max-w-sm">
+              Share your current configuration, dilemma, or structural struggle to pull balanced action items directly from the open Gita ledger.
+            </p>
+            <div class="mt-3 text-[11.5px] text-amber-400/50 italic border-t border-zinc-800/80 pt-4 w-full">
+              "Faced with crisis on the battlefield of life, the dialogue between the soul and higher consciousness begins."
+            </div>
+          </div>
         </div>
       `;
     }
