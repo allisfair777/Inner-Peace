@@ -291,4 +291,126 @@
     }
 
     // Resolves matching structural configurations based on direct input parsing
-    function matchIntentData(
+    function matchIntentData(text) {
+      const lower = text.toLowerCase();
+      let matchedArray = null;
+
+      if (lower.includes('karma') || lower.includes('action') || lower.includes('deeds')) matchedArray = wisdomDb.karma;
+      else if (lower.includes('dharma') || lower.includes('duty') || lower.includes('purpose')) matchedArray = wisdomDb.dharma;
+      else if (lower.includes('equanimity') || lower.includes('balance') || lower.includes('peace') || lower.includes('calm')) matchedArray = wisdomDb.balance;
+      else if (lower.includes('fear') || lower.includes('anxious') || lower.includes('worry') || lower.includes('panic') || lower.includes('stress')) matchedArray = wisdomDb.anxiety;
+
+      // If we found a matching category, pick a RANDOM verse from that array
+      if (matchedArray) {
+        return matchedArray[Math.floor(Math.random() * matchedArray.length)];
+      }
+
+      // Fallback
+      const randomFallback = randomVersePool[Math.floor(Math.random() * randomVersePool.length)];
+      return {
+        title: "Personalized Guidance Reflection",
+        ch: randomFallback.ch,
+        verse: randomFallback.verse,
+        slok: randomFallback.slok,
+        translation: `Reflecting on "${text}": ${randomFallback.translation}`
+      };
+    }
+
+    function buildVerseHTML(title, chapter, verse, slok, translation) {
+      const formattedSlok = slok ? `<span class="sanskrit-verse">${slok.replace(/\n/g, '<br>')}</span>` : '';
+      return `
+        <strong class="text-amber-400 block mb-2">${title} (Chapter ${chapter}, Verse ${verse})</strong>
+        ${formattedSlok}
+        <div class="text-zinc-300 italic border-l-2 border-amber-500/40 pl-3 mt-3">"${translation}"</div>
+      `;
+    }
+
+    async function sendMessage(e, explicitText = null) {
+      if (e && e.preventDefault) e.preventDefault();
+      
+      const input = document.getElementById('userInput');
+      const msg = explicitText ? explicitText.trim() : input.value.trim();
+      if (!msg) return;
+
+      if (!explicitText) {
+        appendMessage('user', msg, msg);
+        input.value = '';
+      } else {
+        // Even if it was clicked via a quick prompt, allow saving it
+        appendMessage('user', msg, msg);
+      }
+
+      const thinking = document.createElement('div');
+      thinking.className = 'flex justify-start w-full';
+      thinking.innerHTML = `<div class="message-bot px-6 py-4 text-amber-400 font-medium animate-pulse">Contemplating the verses...</div>`;
+      chat.appendChild(thinking);
+      chat.scrollTop = chat.scrollHeight;
+
+      const matched = matchIntentData(msg);
+
+      try {
+        const res = await fetch(`https://bhagavadgitaapi.in/slok/${matched.ch}/${matched.verse}/`);
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        
+        thinking.remove();
+        appendMessage('bot', buildVerseHTML(matched.title, matched.ch, matched.verse, data.slok, data.siva?.et || data.purohit?.et || data.tej?.ht || matched.translation));
+      } catch (err) {
+        thinking.remove();
+        appendMessage('bot', buildVerseHTML(matched.title, matched.ch, matched.verse, matched.slok, matched.translation));
+      }
+    }
+
+    function sendPrompt(promptText) {
+      // Small delay to ensure clean interface threading transitions
+      setTimeout(() => sendMessage(null, promptText), 100);
+    }
+
+    async function fetchRandomGitaVerse() {
+      const totalChapterVerses = { 1:47, 2:72, 3:43, 4:42, 5:29, 6:47, 7:30, 8:28, 9:34, 10:42, 11:55, 12:20, 13:35, 14:27, 15:20, 16:24, 17:28, 18:78 };
+      const randomChapter = Math.floor(Math.random() * 18) + 1;
+      const randomVerse = Math.floor(Math.random() * totalChapterVerses[randomChapter]) + 1;
+
+      const loadingMsg = document.createElement('div');
+      loadingMsg.className = 'flex justify-start w-full';
+      loadingMsg.innerHTML = `<div class="message-bot px-6 py-4 text-amber-400 font-medium animate-pulse">Opening a random chapter...</div>`;
+      chat.appendChild(loadingMsg);
+      chat.scrollTop = chat.scrollHeight;
+
+      try {
+        const res = await fetch(`https://bhagavadgitaapi.in/slok/${randomChapter}/${randomVerse}/`);
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        
+        loadingMsg.remove();
+        appendMessage('bot', buildVerseHTML("Random Verse Selection", randomChapter, randomVerse, data.slok, data.siva?.et || data.purohit?.et || data.tej?.ht || "Wisdom is unfolding."));
+      } catch (e) {
+        loadingMsg.remove();
+        const structuralFallback = randomVersePool[Math.floor(Math.random() * randomVersePool.length)];
+        appendMessage('bot', buildVerseHTML("Random Verse Selection (Local Archive)", structuralFallback.ch, structuralFallback.verse, structuralFallback.slok, structuralFallback.translation));
+      }
+    }
+
+    function newChat() {
+      chat.innerHTML = `
+        <div class="faint-overlay"></div>
+        <div class="text-center text-zinc-500 py-20 flex flex-col items-center justify-center gap-2">
+          <i class="fas fa-comment-alt text-3xl text-zinc-700 mb-2"></i>
+          <div>New conversation initialized.</div>
+          <div class="text-sm text-zinc-600">Share your current configuration or struggle to view relevant guidance.</div>
+        </div>
+      `;
+    }
+
+    function openSettings() {
+      alert("System Settings - Resolution Planner Engine is running optimally.");
+    }
+
+    window.onload = () => {
+      setupDynamicBackground();
+      renderSavedPrompts();
+      appendMessage('bot', `Welcome to <strong>Inner Peace &amp; Happiness</strong>.<br>Describe whatever challenges or transitions you are balancing right now. I will query the open Gita ledger dynamically to build your custom action resolutions.`);
+    };
+  </script>
+</body>
+</html>
