@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resolution Planner</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <style>
+    body {
+      background-color: #09090b;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .chat-container {
+      background: rgba(15, 23, 42, 0.93);
+      backdrop-filter: blur(25px);
+    }
+    .message-user {
+      background: #2563eb;
+      color: white;
+      border-radius: 20px 20px 6px 20px;
+    }
+    .message-bot {
+      background: #1e2937;
+      border-radius: 20px 20px 20px 6px;
+      border: 1px solid rgba(245, 158, 11, 0.05);
+    }
+    .prompt-btn {
+      padding: 11px 18px;
+      margin-bottom: 8px;
+      background: #334155;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .prompt-btn:hover {
+      background: #475569;
+      transform: translateX(6px);
+    }
+    .faint-overlay {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 30%, rgba(245, 158, 11, 0.08), transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .oval-header {
+      border-radius: 9999px;
+      background: rgba(15, 23, 42, 0.95);
+    }
+    #chat {
+      scrollbar-width: thin;
+      scrollbar-color: #475569 #111827;
+    }
+    .sanskrit-verse {
+      display: block;
+      color: #fbbf24;
+      font-weight: 600;
+      margin-top: 6px;
+      margin-bottom: 6px;
+      line-height: 1.6;
+      font-size: 1.05em;
+    }
+  </style>
+</head>
+<body class="h-screen w-screen text-gray-100 flex overflow-hidden bg-cover bg-center bg-no-repeat bg-fixed">
+
+  <div class="w-72 bg-zinc-950/95 backdrop-blur-md border-r border-zinc-800 flex flex-col h-full z-10">
+    <div class="p-5 flex items-center gap-3 border-b border-zinc-800">
+      <div class="font-semibold text-xl tracking-tight text-zinc-200">Resolution Planner</div>
+    </div>
+
+    <div class="p-4">
+      <button onclick="newChat()" class="w-full bg-amber-500 hover:bg-amber-600 text-black font-semibold py-3.5 rounded-2xl flex items-center justify-center gap-2 transition-all">
+        <i class="fas fa-plus"></i> New Conversation
+      </button>
+    </div>
+
+    <div class="px-4 flex-1 overflow-y-auto">
+      <p class="text-amber-400 text-xs mb-3 px-3 font-semibold tracking-wider">QUICK PROMPTS</p>
+      <div onclick="sendPrompt('Explain Karma from Gita')" class="prompt-btn text-sm">Karma explained</div>
+      <div onclick="sendPrompt('What is Dharma?')" class="prompt-btn text-sm">Dharma meaning</div>
+      <div onclick="sendPrompt('Verse on equanimity and inner balance')" class="prompt-btn text-sm">Verse on balance</div>
+      <div onclick="sendPrompt('How to handle fear and anxiety')" class="prompt-btn text-sm">Handling anxiety</div>
+    </div>
+  </div>
+
+  <div class="flex-1 flex flex-col chat-container relative h-full">
+    
+    <div class="oval-header mx-4 mt-4 px-6 py-4 flex items-center justify-between border border-amber-400/10 shadow-lg z-10">
+      <div class="flex items-center gap-4">
+        <div class="w-10 h-10 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl flex items-center justify-center text-2xl font-bold text-zinc-950 shadow-md">ॐ</div>
+        <div>
+          <div class="text-xl font-bold tracking-tight text-zinc-100">Inner Peace &amp; Happiness</div>
+          <div class="text-xs text-amber-200/70">Create calm, clear resolutions to difficult situations</div>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <button onclick="fetchRandomGitaVerse()" 
+                class="flex items-center gap-2 bg-zinc-800 hover:bg-zinc-700 hover:text-amber-300 px-5 py-2.5 rounded-3xl text-sm font-medium transition-all">
+          <i class="fas fa-book"></i>
+          Random Verse
+        </button>
+        <button onclick="openSettings()" class="w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-amber-300 rounded-3xl hover:bg-zinc-800 transition-all">
+          <i class="fas fa-cog text-xl"></i>
+        </button>
+      </div>
+    </div>
+
+    <div id="chat" class="flex-1 p-6 overflow-y-auto space-y-5 relative min-h-0">
+      <div class="faint-overlay"></div>
+    </div>
+
+    <div class="p-5 border-t border-zinc-800/80 bg-zinc-900/95 z-10">
+      <form onsubmit="sendMessage(event)" class="relative max-w-4xl mx-auto">
+        <input id="userInput" type="text" autocomplete="off"
+               class="w-full bg-zinc-800 border border-zinc-700/80 rounded-3xl px-7 py-4.5 pr-16 focus:outline-none focus:border-amber-400 text-base placeholder-zinc-500 text-zinc-100 shadow-inner transition-all"
+               placeholder="Describe your situation or ask a question...">
+        <button type="submit" 
+                class="absolute right-3 top-1/2 -translate-y-1/2 bg-amber-500 hover:bg-amber-600 active:scale-95 text-black w-11 h-11 rounded-2xl flex items-center justify-center transition-all shadow-md">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const chat = document.getElementById('chat');
+
+    // Integrated client-side backup database to solve local browser CORS/network blocks completely
+    const wisdomDb = {
+      karma: {
+        title: "Wisdom on Action & Purpose", ch: 3, verse: 19,
+        slok: "तस्मादसक्तः सततम् कार्यम् कर्म समाचर।\nअसक्तो ह्याचरन्कर्म परमाप्नोति पूरुषः॥",
+        translation: "Therefore, without attachment, always perform the actions that ought to be done; for by performing actions without attachment, one attains the supreme state."
+      },
+      dharma: {
+        title: "Wisdom on Natural Duty", ch: 18, verse: 47,
+        slok: "श्रेयानस्वधर्मो विगुणः परधर्मात्स्वनुष्ठितात्।\nस्वभावनियतं कर्म कुर्वन्नाप्नोति किल्बिषम्॥",
+        translation: "It is far better to perform one’s own natural duties, even if imperfectly, than to master the duties of another. Engaging in work mapped to your true nature brings no internal conflict."
+      },
+      balance: {
+        title: "Wisdom on Equanimity", ch: 2, verse: 48,
+        slok: "योगस्थः कुरु कर्माणि सङ्गं त्यक्त्वा धनञ्जय।\nसिद्ध्यसिद्ध्योः समो भूत्वा समत्वं योग उच्यते॥",
+        translation: "Be steadfast in your path, abandoning all anxious attachment to success or failure. Such balance and evenness of mind is the true essence of Yoga."
+      },
+      anxiety: {
+        title: "Wisdom on Overcoming Anxiety", ch: 2, verse: 14,
+        slok: "मात्रास्पर्शास्तु कौन्तेय शीतोष्णसुखदुःखदाः।\nआगमापायिनोऽनित्यास्तांस्तितिक्षस्व भारत॥",
+        translation: "The sensory contacts with external things give rise to temporary feelings of pleasure and pain. They come and go like the changing seasons. Observe and tolerate them without letting them shake your core."
+      },
+      grief: {
+        title: "Wisdom on Handling Loss", ch: 2, verse: 22,
+        slok: "वासांसि जीर्णानि यथा विहाय नवानि गृह्णाति नरोऽपराणि।\nतथा शरीराणि विहाय जीर्णान्यन्यानि संयाति नवानि देही॥",
+        translation: "Just as an individual casts off worn-out garments to put on new ones, the eternal soul discards worn-out physical frames to enter new manifestations."
+      }
+    };
+
+    // Deep pool of fully structured random verses for true offline/fallback variety
+    const randomVersePool = [
+      { ch: 2, verse: 47, slok: "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।\nमा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥", translation: "You have a right to perform your prescribed duties, but you are never entitled to the fruits of your actions." },
+      { ch: 6, verse: 5, slok: "उद्धरेदात्मनात्मानं नात्मानमवसादयेत्।\nआत्मैव ह्यात्मनो बन्धुरात्मैव रिपुरात्मनः॥", translation: "Let a man lift himself up by his own mind; let him not degrade himself. For the mind is the friend of the self, and the mind can be the enemy of the self." },
+      { ch: 5, verse: 21, slok: "बाह्यस्पर्शेष्वसक्तात्मा विन्दत्यात्मनि यत्सुखम्।\nस ब्रह्मयोगयुक्तात्मा सुखमक्षयमश्नुते॥", translation: "One who is unattached to external sensory pleasures finds true happiness within. Self-connected, they experience endless joy." },
+      { ch: 18, verse: 66, slok: "सर्वधर्मान्परित्यज्य मामेकं शरणं व्रज।\nअहं त्वां सर्वपापेभ्यो मोक्षयिष्यामि मा शुचः॥", translation: "Abandon all varieties of operational anxieties and simply surrender into the cosmic flow. Do not fear, do not grieve." },
+      { ch: 2, verse: 70, slok: "आपूर्यमाणमचलप्रतिष्ठं समुद्रमापः प्रविशन्ति यद्वत्।\nतद्वत्कामा यं प्रविशन्ति सर्वे स शान्तिमाप्नोति न कामकामी॥", translation: "Just as the ocean remains undisturbed by the continuous flow of rivers entering it, a person who remains unmoved by the torrent of desires achieves deep peace." }
+    ];
+
+    function setupDynamicBackground() {
+      const backgroundImages = [
+        'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=2000&q=80',
+        'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&w=2000&q=80',
+        'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=2000&q=80',
+        'https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?auto=format&fit=crop&w=2000&q=80',
+        'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2000&q=80'
+      ];
+      const selectedImg = backgroundImages[Math.floor(Math.random() * backgroundImages.length)];
+      document.body.style.backgroundImage = `linear-gradient(rgba(9, 9, 11, 0.82), rgba(9, 9, 11, 0.94)), url('${selectedImg}')`;
+    }
+
+    function appendMessage(sender, html) {
+      const div = document.createElement('div');
+      div.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'} w-full`;
+      div.innerHTML = `
+        <div class="max-w-[82%] ${sender === 'user' ? 'message-user' : 'message-bot'} px-6 py-4 text-[15.5px] leading-relaxed shadow-md">
+          ${html}
+        </div>
+      `;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    // Resolves matching structural configurations based on direct input parsing
+    function matchIntentData(text) {
+      const lower = text.toLowerCase();
+      if (lower.includes('karma') || lower.includes('action') || lower.includes('deeds')) return wisdomDb.karma;
+      if (lower.includes('dharma') || lower.includes('duty') || lower.includes('purpose')) return wisdomDb.dharma;
+      if (lower.includes('equanimity') || lower.includes('balance') || lower.includes('peace') || lower.includes('calm')) return wisdomDb.balance;
+      if (lower.includes('fear') || lower.includes('anxious') || lower.includes('worry') || lower.includes('panic') || lower.includes('stress')) return wisdomDb.anxiety;
+      if (lower.includes('grief') || lower.includes('loss') || lower.includes('sad') || lower.includes('death')) return wisdomDb.grief;
+      
+      // Dynamic fallback if standard categories aren't directly specified
+      return {
+        title: "Personalized Guidance Reflection",
+        ch: 6, verse: 5,
+        slok: wisdomDb.balance.slok,
+        translation: `Focus deeply on processing "${text}". Cultivate an internal space of non-attachment, dedicating yourself completely to execution today while dropping all future variables.`
+      };
+    }
+
+    // Uniform UI template generator requiring full metadata representation
+    function buildVerseHTML(title, chapter, verse, slok, translation) {
+      const formattedSlok = slok ? `<span class="sanskrit-verse">${slok.replace(/\n/g, '<br>')}</span>` : '';
+      return `
+        <strong class="text-amber-400 block mb-2">${title} (Chapter ${chapter}, Verse ${verse})</strong>
+        ${formattedSlok}
+        <div class="text-zinc-300 italic border-l-2 border-amber-500/40 pl-3 mt-3">"${translation}"</div>
+      `;
+    }
+
+    async function sendMessage(e, explicitText = null) {
+      if (e && e.preventDefault) e.preventDefault();
+      
+      const input = document.getElementById('userInput');
+      const msg = explicitText ? explicitText.trim() : input.value.trim();
+      if (!msg) return;
+
+      // Only print text to screen if user manually wrote it or via prompts
+      if (!explicitText) {
+        appendMessage('user', msg);
+        input.value = '';
+      }
+
+      const thinking = document.createElement('div');
+      thinking.className = 'flex justify-start w-full';
+      thinking.innerHTML = `<div class="message-bot px-6 py-4 text-amber-400 font-medium animate-pulse">Contemplating the verses...</div>`;
+      chat.appendChild(thinking);
+      chat.scrollTop = chat.scrollHeight;
+
+      const matched = matchIntentData(msg);
+
+      try {
+        const res = await fetch(`https://bhagavadgitaapi.in/slok/${matched.ch}/${matched.verse}/`);
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        
+        thinking.remove();
+        appendMessage('bot', buildVerseHTML(matched.title, matched.ch, matched.verse, data.slok, data.siva?.et || data.purohit?.et || data.tej?.ht || matched.translation));
+      } catch (err) {
+        // Safe database bypass rendering targeted content gracefully on CORS/Network failure
+        thinking.remove();
+        appendMessage('bot', buildVerseHTML(matched.title, matched.ch, matched.verse, matched.slok, matched.translation));
+      }
+    }
+
+    function sendPrompt(promptText) {
+      appendMessage('user', promptText);
+      // Brief delay to ensure clean interface threading transitions
+      setTimeout(() => sendMessage(null, promptText), 200);
+    }
+
+    async function fetchRandomGitaVerse() {
+      // Calculate coordinates dynamically
+      const totalChapterVerses = { 1:47, 2:72, 3:43, 4:42, 5:29, 6:47, 7:30, 8:28, 9:34, 10:42, 11:55, 12:20, 13:35, 14:27, 15:20, 16:24, 17:28, 18:78 };
+      const randomChapter = Math.floor(Math.random() * 18) + 1;
+      const randomVerse = Math.floor(Math.random() * totalChapterVerses[randomChapter]) + 1;
+
+      const loadingMsg = document.createElement('div');
+      loadingMsg.className = 'flex justify-start w-full';
+      loadingMsg.innerHTML = `<div class="message-bot px-6 py-4 text-amber-400 font-medium animate-pulse">Opening a random chapter...</div>`;
+      chat.appendChild(loadingMsg);
+      chat.scrollTop = chat.scrollHeight;
+
+      try {
+        const res = await fetch(`https://bhagavadgitaapi.in/slok/${randomChapter}/${randomVerse}/`);
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        
+        loadingMsg.remove();
+        appendMessage('bot', buildVerseHTML("Random Verse Selection", randomChapter, randomVerse, data.slok, data.siva?.et || data.purohit?.et || data.tej?.ht || "Wisdom is unfolding."));
+      } catch (e) {
+        loadingMsg.remove();
+        // True random sampling from fallback arrays to prevent duplicate static iterations
+        const structuralFallback = randomVersePool[Math.floor(Math.random() * randomVersePool.length)];
+        appendMessage('bot', buildVerseHTML("Random Verse Selection (Local Archive)", structuralFallback.ch, structuralFallback.verse, structuralFallback.slok, structuralFallback.translation));
+      }
+    }
+
+    function newChat() {
+      chat.innerHTML = `
+        <div class="faint-overlay"></div>
+        <div class="text-center text-zinc-500 py-20 flex flex-col items-center justify-center gap-2">
+          <i class="fas fa-comment-alt text-3xl text-zinc-700 mb-2"></i>
+          <div>New conversation initialized.</div>
+          <div class="text-sm text-zinc-600">Share your current configuration or struggle to view relevant guidance.</div>
+        </div>
+      `;
+    }
+
+    function openSettings() {
+      alert("System Settings - Resolution Planner Engine is running optimally.");
+    }
+
+    window.onload = () => {
+      setupDynamicBackground();
+      appendMessage('bot', `Welcome to <strong>Inner Peace &amp; Happiness</strong>.<br>Describe whatever challenges or transitions you are balancing right now. I will query the open Gita ledger dynamically to build your custom action resolutions.`);
+    };
+  </script>
+</body>
+</html>
