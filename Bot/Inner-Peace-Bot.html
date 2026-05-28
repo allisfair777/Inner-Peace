@@ -127,8 +127,15 @@
           <i class="fas fa-search absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 text-xs"></i>
         </div>
 
+        <button onclick="stopAudio()" title="Stop Audio" class="w-8 h-8 flex items-center justify-center text-zinc-400 hover:text-red-400 rounded-full hover:bg-zinc-800 transition-all">
+          <i class="fas fa-volume-mute"></i>
+        </button>
+        <button id="langToggleBtn" onclick="toggleAudioLang()" title="Toggle EN/SA Audio" class="w-8 h-8 flex items-center justify-center text-xs font-bold text-amber-500 border border-amber-500/30 rounded-lg hover:bg-amber-500/10 transition-all">
+          EN
+        </button>
+
         <button onclick="fetchRandomGitaVerse()" 
-                class="flex items-center gap-2 bg-zinc-800 hover:bg-zinc-700 hover:text-amber-300 px-5 py-2.5 rounded-3xl text-sm font-medium transition-all">
+                class="flex items-center gap-2 bg-zinc-800 hover:bg-zinc-700 hover:text-amber-300 px-5 py-2.5 rounded-3xl text-sm font-medium transition-all ml-2">
           <i class="fas fa-book"></i>
           <span class="hidden sm:inline">Random</span>
         </button>
@@ -157,11 +164,11 @@
 
   <script>
     const chat = document.getElementById('chat');
+    let audioLang = 'en'; // Default audio language
     
-    // Total verses per chapter for bounds checking
     const chapterBounds = { 1:47, 2:72, 3:43, 4:42, 5:29, 6:47, 7:30, 8:28, 9:34, 10:42, 11:55, 12:20, 13:35, 14:27, 15:20, 16:24, 17:28, 18:78 };
 
-    // Deep local dataset expansion
+    // Expanded dataset with Relationship / Work conflict keywords
     const wisdomDb = {
       karma: [
         { title: "Wisdom on Action & Purpose", ch: 3, verse: 19, slok: "तस्मादसक्तः सततम् कार्यम् कर्म समाचर।\nअसक्तो ह्याचरन्कर्म परमाप्नोति पूरुषः॥", translation: "Therefore, without attachment, always perform the actions that ought to be done; for by performing actions without attachment, one attains the supreme state." },
@@ -191,23 +198,27 @@
       doubt: [
         { title: "Slaying Doubt", ch: 4, verse: 42, slok: "तस्मादज्ञानसम्भूतं हृत्स्थं ज्ञानासिनात्मनः।\nछित्त्वैनं संशयं योगमातिष्ठोत्तिष्ठ भारत॥", translation: "Therefore, the doubts which have arisen in your heart out of ignorance should be slashed by the weapon of knowledge. Armed with yoga, stand and fight." },
         { title: "Clarity Restored", ch: 18, verse: 73, slok: "नष्टो मोहः स्मृतिर्लब्धा त्वत्प्रसादान्मयाच्युत।\nस्थितोऽस्मि गतसन्देहः करिष्ये वचनं तव॥", translation: "My illusion is now gone. I have regained my memory by Your mercy. I am now firm and free from doubt and am prepared to act according to Your instructions." }
+      ],
+      relationships: [
+        { title: "Transcending Envy", ch: 12, verse: 13, slok: "अद्वेष्टा सर्वभूतानां मैत्रः करुण एव च।\nनिर्ममो निरहङ्कारः समदुःखसुखः क्षमी॥", translation: "One who is not envious but is a kind friend to all living entities, who does not think himself a proprietor and is free from false ego, who is equal in both happiness and distress, and tolerant, is very dear to Me." },
+        { title: "Dealing with Difficult Traits", ch: 16, verse: 4, slok: "दम्भो दर्पोऽभिमानश्च क्रोधः पारुष्यमेव च।\nअज्ञानं चाभिजातस्य पार्थ सम्पदमासुरीम्॥", translation: "Pride, arrogance, conceit, anger, harshness and ignorance—these qualities belong to those of demoniac nature. Recognize these traits without letting them disturb your own balance." }
       ]
     };
 
-    // Gigantic Fallback Reservoir
+    // Fixed fallback reservoir containing slok definitions
     const randomVersePool = [
-      { ch: 6, verse: 5, translation: "Let a man lift himself up by his own mind; let him not degrade himself. For the mind is the friend of the self, and the mind can be the enemy of the self." },
-      { ch: 5, verse: 21, translation: "One who is unattached to external sensory pleasures finds true happiness within. Self-connected, they experience endless joy." },
-      { ch: 13, verse: 28, translation: "Seeing the presence of truth equally everywhere, one does not destroy the self by the mind, thus attaining the supreme state." },
-      { ch: 9, verse: 22, translation: "But those who worship with exclusive devotion, meditating on the Cosmic Whole, to them I carry what they lack and preserve what they already have." },
-      { ch: 4, verse: 38, translation: "In this world, there is nothing so sublime and pure as transcendental knowledge. Such knowledge is the mature fruit of all mysticism." },
-      { ch: 12, verse: 13, translation: "One who is not envious but is a kind friend to all living entities, who does not think himself a proprietor and is free from false ego, is dear to Me." },
-      { ch: 6, verse: 34, translation: "For the mind is restless, turbulent, obstinate and very strong, O Krishna, and to subdue it, I think, is more difficult than controlling the wind." },
-      { ch: 2, verse: 50, translation: "A man engaged in devotional service rids himself of both good and bad actions even in this life. Therefore strive for yoga, which is the art of all work." },
-      { ch: 16, verse: 1, translation: "Fearlessness; purification of one's existence; cultivation of spiritual knowledge; charity; self-control; performance of sacrifice; study of the Vedas; austerity and simplicity; these belong to the godly men." },
-      { ch: 3, verse: 27, translation: "All aspects of actions are carried out by the complex intertwining of nature's qualities. The soul, bewildered by the ego, thinks 'I am the doer.'" },
-      { ch: 14, verse: 22, translation: "He who does not hate illumination, attachment and delusion when they are present or long for them when they disappear... is firmly situated." },
-      { ch: 8, verse: 7, translation: "Therefore, at all times you should think of Me and carry out your prescribed duty. With your activities dedicated to Me and your mind and intelligence fixed on Me, you will attain Me without doubt." }
+      { ch: 6, verse: 5, slok: "उद्धरेदात्मनात्मानं नात्मानमवसादयेत्।\nआत्मैव ह्यात्मनो बन्धुरात्मैव रिपुरात्मनः॥", translation: "Let a man lift himself up by his own mind; let him not degrade himself. For the mind is the friend of the self, and the mind can be the enemy of the self." },
+      { ch: 5, verse: 21, slok: "बाह्यस्पर्शेष्वसक्तात्मा विन्दत्यात्मनि यत्सुखम्।\nस ब्रह्मयोगयुक्तात्मा सुखमक्षयमश्नुते॥", translation: "One who is unattached to external sensory pleasures finds true happiness within. Self-connected, they experience endless joy." },
+      { ch: 13, verse: 28, slok: "समं पश्यन्हि सर्वत्र समवस्थितमीश्वरम्।\nन हिनस्त्यात्मनात्मानं ततो याति परां गतिम्॥", translation: "Seeing the presence of truth equally everywhere, one does not destroy the self by the mind, thus attaining the supreme state." },
+      { ch: 9, verse: 22, slok: "अनन्याश्चिन्तयन्तो मां ये जनाः पर्युपासते।\nतेषां नित्याभियुक्तानां योगक्षेमं वहाम्यहम्॥", translation: "But those who worship with exclusive devotion, meditating on the Cosmic Whole, to them I carry what they lack and preserve what they already have." },
+      { ch: 4, verse: 38, slok: "न हि ज्ञानेन सदृशं पवित्रमिह विद्यते।\nतत्स्वयं योगसंसिद्धः कालेनात्मनि विन्दति॥", translation: "In this world, there is nothing so sublime and pure as transcendental knowledge. Such knowledge is the mature fruit of all mysticism." },
+      { ch: 12, verse: 13, slok: "अद्वेष्टा सर्वभूतानां मैत्रः करुण एव च।\nनिर्ममो निरहङ्कारः समदुःखसुखः क्षमी॥", translation: "One who is not envious but is a kind friend to all living entities, who does not think himself a proprietor and is free from false ego, is dear to Me." },
+      { ch: 6, verse: 34, slok: "चञ्चलं हि मनः कृष्ण प्रमाथि बलवद्दृढम्।\nतस्याहं निग्रहं मन्ये वायोरिव सुदुष्करम्॥", translation: "For the mind is restless, turbulent, obstinate and very strong, O Krishna, and to subdue it, I think, is more difficult than controlling the wind." },
+      { ch: 2, verse: 50, slok: "बुद्धियुक्तो जहातीह उभे सुकृतदुष्कृते।\nतस्माद्योगाय युज्यस्व योगः कर्मसु कौशलम्॥", translation: "A man engaged in devotional service rids himself of both good and bad actions even in this life. Therefore strive for yoga, which is the art of all work." },
+      { ch: 16, verse: 1, slok: "अभयं सत्त्वसंशुद्धिर्ज्ञानयोगव्यवस्थितिः।\nदानं दमश्च यज्ञश्च स्वाध्यायस्तप आर्जवम्॥", translation: "Fearlessness; purification of one's existence; cultivation of spiritual knowledge; charity; self-control; performance of sacrifice; study of the Vedas; austerity and simplicity; these belong to the godly men." },
+      { ch: 3, verse: 27, slok: "प्रकृतेः क्रियमाणानि गुणैः कर्माणि सर्वशः।\nअहङ्कारविमूढात्मा कर्ताहमिति मन्यते॥", translation: "All aspects of actions are carried out by the complex intertwining of nature's qualities. The soul, bewildered by the ego, thinks 'I am the doer.'" },
+      { ch: 14, verse: 22, slok: "प्रकाशं च प्रवृत्तिं च मोहमेव च पाण्डव।\nन द्वेष्टि सम्प्रवृत्तानि न निवृत्तानि काङ्क्षति॥", translation: "He who does not hate illumination, attachment and delusion when they are present or long for them when they disappear... is firmly situated." },
+      { ch: 8, verse: 7, slok: "तस्मात्सर्वेषु कालेषु मामनुस्मर युध्य च।\nमय्यर्पितमनोबुद्धिर्मामेवैष्यस्यसंशयम्॥", translation: "Therefore, at all times you should think of Me and carry out your prescribed duty. With your activities dedicated to Me and your mind and intelligence fixed on Me, you will attain Me without doubt." }
     ];
 
     function toggleSidebar() {
@@ -300,33 +311,49 @@
       return div.querySelector('.message-bot') || div.querySelector('.message-user');
     }
 
-    // --- Enhanced Keyword Engine ---
+    // Expanded Intent Matcher
     function matchIntentData(text) {
       const lower = text.toLowerCase();
       let matchedArray = null;
 
-      if (/karma|action|deeds|work|career|job/i.test(lower)) matchedArray = wisdomDb.karma;
-      else if (/dharma|duty|purpose|meaning/i.test(lower)) matchedArray = wisdomDb.dharma;
-      else if (/equanimity|balance|peace|calm|focus/i.test(lower)) matchedArray = wisdomDb.balance;
-      else if (/fear|anxious|worry|panic|stress/i.test(lower)) matchedArray = wisdomDb.anxiety;
-      else if (/anger|frustration|rage|mad|annoyed/i.test(lower)) matchedArray = wisdomDb.anger;
-      else if (/grief|heartbreak|sad|loss|sorrow/i.test(lower)) matchedArray = wisdomDb.grief;
-      else if (/doubt|confusion|lost|unsure|stuck/i.test(lower)) matchedArray = wisdomDb.doubt;
+      if (/karma|action|deeds|work|career|job|office|project/i.test(lower)) matchedArray = wisdomDb.karma;
+      else if (/dharma|duty|purpose|meaning|path/i.test(lower)) matchedArray = wisdomDb.dharma;
+      else if (/equanimity|balance|peace|calm|focus|still/i.test(lower)) matchedArray = wisdomDb.balance;
+      else if (/fear|anxious|worry|panic|stress|overwhelm/i.test(lower)) matchedArray = wisdomDb.anxiety;
+      else if (/anger|frustration|rage|mad|annoyed|temper/i.test(lower)) matchedArray = wisdomDb.anger;
+      else if (/grief|heartbreak|sad|loss|sorrow|depress/i.test(lower)) matchedArray = wisdomDb.grief;
+      else if (/doubt|confusion|lost|unsure|stuck|decision/i.test(lower)) matchedArray = wisdomDb.doubt;
+      else if (/jealous|envy|boss|toxic|coworker|manager|colleague|hate|resent|betray/i.test(lower)) matchedArray = wisdomDb.relationships;
 
       if (matchedArray) return matchedArray[Math.floor(Math.random() * matchedArray.length)];
 
       const fallback = randomVersePool[Math.floor(Math.random() * randomVersePool.length)];
-      return { title: "Reflective Insight", ch: fallback.ch, verse: fallback.verse, translation: fallback.translation };
+      return { title: "Reflective Insight", ch: fallback.ch, verse: fallback.verse, slok: fallback.slok, translation: fallback.translation };
     }
 
-    // --- Acoustic Shanti Mode (TTS) ---
-    function readAloud(btn, text) {
+    // Audio Controls
+    function toggleAudioLang() {
+      audioLang = audioLang === 'en' ? 'sa' : 'en';
+      document.getElementById('langToggleBtn').innerText = audioLang.toUpperCase();
+    }
+
+    function stopAudio() {
+      window.speechSynthesis.cancel();
+    }
+
+    function readAloud(btn, enText, saText) {
       window.speechSynthesis.cancel(); // Stop anything currently playing
-      const msg = new SpeechSynthesisUtterance(text);
-      msg.rate = 0.9; // Calm, deliberate pace
-      msg.pitch = 1.0;
       
-      // Optional UI feedback
+      const textToPlay = audioLang === 'en' ? enText : (saText || enText);
+      const msg = new SpeechSynthesisUtterance(textToPlay);
+      msg.rate = 0.85; 
+      
+      if (audioLang === 'sa') {
+        msg.lang = 'hi-IN'; // Closest dialect available in default TTS engines for Sanskrit
+      } else {
+        msg.lang = 'en-US';
+      }
+      
       const icon = btn.querySelector('i');
       icon.classList.remove('fa-volume-up');
       icon.classList.add('fa-volume-control-phone', 'text-amber-500');
@@ -343,34 +370,28 @@
       const formattedSlok = slok ? `<span class="sanskrit-verse">${slok.replace(/\n/g, '<br>')}</span>` : '';
       let toolsHTML = '';
       
-      if (associatedPrompt !== null) {
-        const safeTitle = title.replace(/'/g, "\\'").replace(/"/g, "&quot;");
-        const safeSlok = slok ? slok.replace(/'/g, "\\'").replace(/\n/g, "\\n") : '';
-        const safeTrans = translation.replace(/'/g, "\\'").replace(/"/g, "&quot;");
-        const safePrompt = associatedPrompt.replace(/'/g, "\\'").replace(/"/g, "&quot;");
-        
-        toolsHTML = `
-          <div class="mt-3 pt-2 border-t border-zinc-800/60 flex justify-between items-center">
-            <button onclick="readAloud(this, '${safeTrans}')" class="text-zinc-400 hover:text-amber-400 transition-colors p-1" title="Read Aloud">
-              <i class="fas fa-volume-up"></i>
-            </button>
-            <button onclick="bookmarkExactVerse('${safePrompt}', '${safeTitle}', ${chapter}, ${verse}, '${safeSlok}', '${safeTrans}')" 
-                    class="text-[11px] text-amber-300/80 hover:text-amber-300 flex items-center gap-1 bg-zinc-800/80 hover:bg-zinc-700/80 px-2.5 py-1 rounded-md transition-all border border-zinc-700/40">
-              <i class="fas fa-bookmark text-[10px]"></i> Save Action
-            </button>
+      const safeTitle = title.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+      const safeSlok = slok ? slok.replace(/'/g, "\\'").replace(/\n/g, "\\n") : '';
+      const safeTrans = translation.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+      const safePrompt = associatedPrompt ? associatedPrompt.replace(/'/g, "\\'").replace(/"/g, "&quot;") : '';
+
+      let bookmarkBtn = associatedPrompt ? `
+        <button onclick="bookmarkExactVerse('${safePrompt}', '${safeTitle}', ${chapter}, ${verse}, '${safeSlok}', '${safeTrans}')" 
+                class="text-[11px] text-amber-300/80 hover:text-amber-300 flex items-center gap-1 bg-zinc-800/80 hover:bg-zinc-700/80 px-2.5 py-1 rounded-md transition-all border border-zinc-700/40">
+          <i class="fas fa-bookmark text-[10px]"></i> Save Action
+        </button>
+      ` : '';
+      
+      toolsHTML = `
+        <div class="mt-3 pt-2 border-t border-zinc-800/60 flex justify-between items-center">
+          <div class="flex gap-2">
+             <button onclick="readAloud(this, '${safeTrans}', '${safeSlok}')" class="text-zinc-400 hover:text-amber-400 transition-colors p-1" title="Read Aloud">
+               <i class="fas fa-volume-up"></i>
+             </button>
           </div>
-        `;
-      } else {
-        // Just provide the read-aloud tool for retrieved saved notes
-        const safeTrans = translation.replace(/'/g, "\\'").replace(/"/g, "&quot;");
-        toolsHTML = `
-          <div class="mt-3 pt-2 border-t border-zinc-800/60 flex justify-start items-center">
-            <button onclick="readAloud(this, '${safeTrans}')" class="text-zinc-400 hover:text-amber-400 transition-colors p-1" title="Read Aloud">
-              <i class="fas fa-volume-up"></i>
-            </button>
-          </div>
-        `;
-      }
+          ${bookmarkBtn}
+        </div>
+      `;
 
       return `
         <strong class="text-amber-400 block mb-2">${title} (Chapter ${chapter}, Verse ${verse})</strong>
@@ -380,13 +401,10 @@
       `;
     }
 
-    // --- Local Caching Logic ---
     async function getVerseData(ch, verse) {
       const cacheKey = `gita_cache_${ch}_${verse}`;
       const cached = localStorage.getItem(cacheKey);
-      if (cached) {
-        return JSON.parse(cached); // 0ms Instant Load
-      }
+      if (cached) return JSON.parse(cached);
       
       const res = await fetch(`https://bhagavadgitaapi.in/slok/${ch}/${verse}/`);
       if (!res.ok) throw new Error();
@@ -413,7 +431,8 @@
         const data = await getVerseData(matched.ch, matched.verse);
         thinking.parentElement.remove();
         const extractedTranslation = data.siva?.et || data.purohit?.et || data.tej?.ht || matched.translation;
-        appendMessage('bot', buildVerseHTML(matched.title, matched.ch, matched.verse, data.slok, extractedTranslation, msg));
+        const extractedSlok = data.slok || matched.slok || "";
+        appendMessage('bot', buildVerseHTML(matched.title, matched.ch, matched.verse, extractedSlok, extractedTranslation, msg));
       } catch (err) {
         thinking.parentElement.remove();
         appendMessage('bot', buildVerseHTML(matched.title, matched.ch, matched.verse, matched.slok, matched.translation, msg));
@@ -424,7 +443,6 @@
       setTimeout(() => sendMessage(null, promptText), 80);
     }
 
-    // --- Specific Verse Search Alternative ---
     async function handleDirectSearch(e) {
       if (e.key === 'Enter') {
         const val = e.target.value.trim();
@@ -435,7 +453,7 @@
           const v = parseInt(parts[1]);
           
           if (!isNaN(ch) && !isNaN(v) && ch >= 1 && ch <= 18 && v >= 1 && v <= chapterBounds[ch]) {
-            e.target.value = ''; // clear input
+            e.target.value = '';
             appendMessage('user', `Look up exact verse: ${ch}.${v}`);
             const thinking = appendMessage('bot', '<span class="text-amber-400 font-medium animate-pulse">Retrieving specific text...</span>');
             
@@ -467,7 +485,8 @@
         const data = await getVerseData(randomChapter, randomVerse);
         loadingMsg.parentElement.remove();
         const extractedTranslation = data.siva?.et || data.purohit?.et || data.tej?.ht || "Wisdom is unfolding.";
-        appendMessage('bot', buildVerseHTML("Random Insight", randomChapter, randomVerse, data.slok, extractedTranslation, "Random Selection"));
+        const extractedSlok = data.slok || "";
+        appendMessage('bot', buildVerseHTML("Random Insight", randomChapter, randomVerse, extractedSlok, extractedTranslation, "Random Selection"));
       } catch (e) {
         loadingMsg.parentElement.remove();
         const fallback = randomVersePool[Math.floor(Math.random() * randomVersePool.length)];
