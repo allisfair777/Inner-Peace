@@ -16,9 +16,10 @@
       backdrop-filter: blur(30px);
     }
     .message-user {
-      background: #1d4ed8;
-      color: white;
+      background: #f4efe2;
+      color: #1c1917;
       border-radius: 20px 20px 6px 20px;
+      font-weight: 500;
     }
     .message-bot {
       background: #18181b;
@@ -66,7 +67,7 @@
       transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease, border-color 0.3s ease;
     }
     .animate-spin-slow {
-      animation: spin 12s linear infinite;
+      animation: spin 16s linear infinite;
     }
     @keyframes spin {
       from { transform: rotate(0deg); }
@@ -98,9 +99,8 @@
       <div onclick="sendPrompt('How to handle fear and anxiety')" class="prompt-btn text-sm text-zinc-300">Handling anxiety</div>
 
       <div class="mt-8">
-        <p class="text-amber-400/80 text-xs mb-3 px-3 font-semibold tracking-wider">SAVED PROMPTS</p>
-        <div id="saved-prompts-list" class="space-y-2">
-          </div>
+        <p class="text-amber-400/80 text-xs mb-3 px-3 font-semibold tracking-wider">SAVED ACTION SOLUTIONS</p>
+        <div id="saved-prompts-list" class="space-y-2"></div>
       </div>
     </div>
   </div>
@@ -150,63 +150,43 @@
   <script>
     const chat = document.getElementById('chat');
 
+    // Deep local dataset expansion covering multiple key baseline options per vector
     const wisdomDb = {
       karma: [
-        {
-          title: "Wisdom on Action & Purpose", ch: 3, verse: 19,
-          slok: "तस्मादसक्तः सततम् कार्यम् कर्म समाचर।\nअसक्तो ह्याचरन्कर्म परमाप्नोति पूरुषः॥",
-          translation: "Therefore, without attachment, always perform the actions that ought to be done; for by performing actions without attachment, one attains the supreme state."
-        },
-        {
-          title: "The Path of Action", ch: 2, verse: 47,
-          slok: "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।\nमा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥",
-          translation: "You have a right to perform your prescribed duties, but you are never entitled to the fruits of your actions. Never consider yourself to be the cause of the results of your activities, nor be attached to inaction."
-        }
+        { title: "Wisdom on Action & Purpose", ch: 3, verse: 19, slok: "तस्मादसक्तः सततम् कार्यम् कर्म समाचर।\nअसक्तो ह्याचरन्कर्म परमाप्नोति पूरुषः॥", translation: "Therefore, without attachment, always perform the actions that ought to be done; for by performing actions without attachment, one attains the supreme state." },
+        { title: "The Path of Action", ch: 2, verse: 47, slok: "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।\nमा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥", translation: "You have a right to perform your prescribed duties, but you are never entitled to the fruits of your actions. Never consider yourself to be the cause of the results of your activities, nor be attached to inaction." },
+        { title: "Sacrifice and Action", ch: 3, verse: 9, slok: "यज्ञार्थात्कर्मणोऽन्यत्र लोकोऽयं कर्मबन्धनः।\nतदर्थं कर्म कौन्तेय मुक्तसङ्गः समाचर॥", translation: "Work must be done as a sacrifice to the Supreme, otherwise it binds one to this material world. Therefore, perform your duties for satisfaction without attachment." },
+        { title: "Pure and Balanced Labor", ch: 18, verse: 23, slok: "नियतं सङ्गरहितमरागद्वेषतः कृतम्।\nअफलप्रेप्सुना कर्म यत्तत्सात्त्विकमुच्यते॥", translation: "Action which is ordained, which is free from attachment, which is done without love or hatred by one not desirous of the fruit, that is declared to be pure." }
       ],
       dharma: [
-        {
-          title: "Wisdom on Natural Duty", ch: 18, verse: 47,
-          slok: "श्रेयानस्वधर्मो विगुणः परधर्मात्स्वनुष्ठितात्।\nस्वभावनियतं कर्म कुर्वन्नाप्नोति किल्बिषम्॥",
-          translation: "It is far better to perform one’s own natural duties, even if imperfectly, than to master the duties of another. Engaging in work mapped to your true nature brings no internal conflict."
-        },
-        {
-          title: "Upholding Righteousness", ch: 4, verse: 8,
-          slok: "परित्राणाय साधूनां विनाशाय च दुष्कृताम्।\nधर्मसंस्थापनार्थाय सम्भवामि युगे युगे॥",
-          translation: "To deliver the pious and to annihilate the miscreants, as well as to reestablish the principles of religion, I Myself appear, millennium after millennium."
-        }
+        { title: "Wisdom on Natural Duty", ch: 18, verse: 47, slok: "श्रेयानस्वधर्मो विगुणः परधर्मात्स्वनुष्ठितात्।\nस्वभावनियतं कर्म कुर्वन्नाप्नोति किल्बिषम्॥", translation: "It is far better to perform one’s own natural duties, even if imperfectly, than to master the duties of another. Engaging in work mapped to your true nature brings no internal conflict." },
+        { title: "Upholding Righteousness", ch: 4, verse: 8, slok: "परित्राणाय साधूनां विनाशाय च दुष्कृताम्।\nधर्मसंस्थापनार्थाय सम्भवामि युगे युगे॥", translation: "To deliver the pious and to annihilate the miscreants, as well as to reestablish the principles of righteousness, I manifest generation after generation." },
+        { title: "Identity and Path", ch: 3, verse: 35, slok: "श्रेयान्स्वधर्मो विगुणः परधर्मात्स्वनुष्ठितात्।\nस्वधर्मे निधनं श्रेयः परधर्मो भयावहः॥", translation: "It is far better to follow one's own path, even if flawed, than to perfectly copy another's blueprint. Even destruction on your own natural path brings alignment." },
+        { title: "The Descending Light", ch: 4, verse: 7, slok: "यदा यदा हि धर्मस्य ग्लानिर्भवति भारत।\nअभ्युत्थानमधर्मस्य तदात्मानं सृजाम्यहम्॥", translation: "Whenever and wherever there is a decline in righteousness and a predominant rise of chaos, at that time I manifest My presence to restore order." }
       ],
       balance: [
-        {
-          title: "Wisdom on Equanimity", ch: 2, verse: 48,
-          slok: "योगस्थः कुरु कर्माणि सङ्गं त्यक्त्वा धनञ्जय।\nसिद्ध्यसिद्ध्योः समो भूत्वा समत्वं योग उच्यते॥",
-          translation: "Be steadfast in your path, abandoning all anxious attachment to success or failure. Such balance and evenness of mind is the true essence of Yoga."
-        },
-        {
-          title: "The Peaceful Mind", ch: 2, verse: 70,
-          slok: "आपूर्यमाणमचलप्रतिष्ठं समुद्रमापः परविशन्ति यद्वत्।\nतद्वत्कामा यं परविशन्ति सर्वे स शान्तिमाप्नोति न कामकामी॥",
-          translation: "Just as the ocean remains undisturbed by the continuous flow of rivers entering it, a person who remains unmoved by the torrent of desires achieves deep peace."
-        }
+        { title: "Wisdom on Equanimity", ch: 2, verse: 48, slok: "योगस्थः कुरु कर्माणि सङ्गं त्यक्त्वा धनञ्जय।\nसिद्ध्यसिद्ध्योः समो भूत्वा समत्वं योग उच्यते॥", translation: "Be steadfast in your path, abandoning all anxious attachment to success or failure. Such balance and evenness of mind is the true essence of Yoga." },
+        { title: "The Peaceful Mind", ch: 2, verse: 70, slok: "आपूर्यमाणमचलप्रतिष्ठं समुद्रमापः प्रविशन्ति यद्वत्।\nतद्वत्कामा यं प्रविशन्ति सर्वे स शान्तिमाप्नोति न कामकामी॥", translation: "Just as the ocean remains undisturbed by the continuous flow of torrents entering it, a person who remains unmoved by the incoming rush of desires achieves deep peace." },
+        { title: "Mastery of the Higher Self", ch: 6, verse: 7, slok: "जितात्मनः प्रशान्तस्य परमात्मा समाहितः।\nशीतोष्णसुखदुःखेषु तथा मानापमानयोः॥", translation: "For one who has conquered the mind, the Higher Self is already reached, for they have attained tranquility. To such a person heat and cold, pleasure and pain, honor and dishonor are all the same." },
+        { title: "Harmonious Interactions", ch: 12, verse: 15, slok: "यस्मान्नोद्विजते लोको लोकान्नोद्विजते च यः।\nहर्षामर्षभयोद्वेगैर्मुक्तो यः स च मे प्रियः॥", translation: "He by whom the world is not agitated and who cannot be agitated by the world, who is completely free from worldly joy, envy, fear, and anxiety, is close to true peace." }
       ],
       anxiety: [
-        {
-          title: "Wisdom on Overcoming Anxiety", ch: 2, verse: 14,
-          slok: "मात्रास्पर्शास्तु कौन्तेय शीतोष्णसुखदुःखदाः।\nआगमापायिनोऽनित्यास्तांस्तितिक्षस्व भारत॥",
-          translation: "The sensory contacts with external things give rise to temporary feelings of pleasure and pain. They come and go like the changing seasons. Observe and tolerate them without letting them shake your core."
-        },
-        {
-          title: "Freedom from Fear", ch: 18, verse: 66,
-          slok: "सर्वधर्मान्परित्यज्य मामेकं शरणं व्रज।\nअहं त्वां सर्वपापेभ्यो मोक्षयिष्यामि मा शुचः॥",
-          translation: "Abandon all varieties of operational anxieties and simply surrender into the cosmic flow. Do not fear, do not grieve."
-        }
+        { title: "Wisdom on Overcoming Anxiety", ch: 2, verse: 14, slok: "मात्रास्पर्शास्तु कौन्तेय शीतोष्णसुखदुःखदाः।\nआगमापायिनोऽनित्यास्तांस्तितिक्षस्व भारत॥", translation: "The sensory contacts with external things give rise to temporary feelings of pleasure and pain. They come and go like changing seasons. Observe and tolerate them without letting them shake your internal core." },
+        { title: "Freedom from Fear", ch: 18, verse: 66, slok: "सर्वधर्मान्परित्यज्य मामेकं शरणं व्रज।\nअहं त्वां सर्वपापेभ्यो मोक्षयिष्यामि मा शुचः॥", translation: "Abandon all varieties of operational anxieties and surrender completely into the cosmic flow. Do not fear, do not grieve." },
+        { title: "Anchoring the Wandering Focus", ch: 6, verse: 26, slok: "यतो यतो निश्चरति मनश्चञ्चलमस्थिरम्।\nततस्ततो नियम्यैतदात्मन्येव वशं नयेत्॥", translation: "From whatever direction the flickering and unstable mind wanders due to its restless nature, look closely, pull it back, and safely secure it inside the baseline Center." },
+        { title: "The Mind as a Tool", ch: 6, verse: 5, slok: "उद्धरेदात्मनात्मानं नात्मानमवसादयेत्।\nआत्मैव ह्यात्मनो बन्धुरात्मैव रिपुरात्मनः॥", translation: "Let a person lift themselves up by their own mind; let them not degrade themselves. For the mind can act as the best of friends, or the absolute worst of enemies." }
       ]
     };
 
+    // Significantly expanded random fallback archive pool
     const randomVersePool = [
       { ch: 6, verse: 5, slok: "उद्धरेदात्मनात्मानं नात्मानमवसादयेत्।\nआत्मैव ह्यात्मनो बन्धुरात्मैव रिपुरात्मनः॥", translation: "Let a man lift himself up by his own mind; let him not degrade himself. For the mind is the friend of the self, and the mind can be the enemy of the self." },
-      { ch: 5, verse: 21, slok: "बाह्यस्पर्शेष्वसक्तात्मा विन्दत्यात्मनि यत्सुखम्।\nस ब्रह्मयोगयुक्तात्मा सुखमक्षयमश्नुते॥", translation: "One who is unattached to external sensory pleasures finds true happiness within. Self-connected, they experience endless joy." }
+      { ch: 5, verse: 21, slok: "बाह्यस्पर्शेष्वसक्तात्मा विन्दत्यात्मनि यत्सुखम्।\nस ब्रह्मयोगयुक्तात्मा सुखमक्षयमश्नुते॥", translation: "One who is unattached to external sensory pleasures finds true happiness within. Self-connected, they experience endless joy." },
+      { ch: 6, verse: 19, slok: "यथा दीपो निवातस्थो नेङ्गते सोपमा स्मृता।\nयोगिनो यतचित्तस्य युञ्जतो योगमात्मनः॥", translation: "As a lamp in a windless place does not flicker, to such is compared the spiritual practitioner whose mind is restrained." },
+      { ch: 13, verse: 28, slok: "समं पश्यन्हि सर्वत्र समवस्थितमीश्वरम्।\nन हिनस्त्यात्मनात्मानं ततो याति परां गतिम्॥", translation: "Seeing the presence of truth equally everywhere, one does not destroy the self by the mind, thus attaining the supreme state." },
+      { ch: 9, verse: 22, slok: "अनन्याश्चिन्तयन्तो मां ये जनाः पर्युपासते।\nतेषां नित्याभियुक्तानां योगक्षेमं वहाम्यहम्॥", translation: "But those who worship with exclusive devotion, meditating on the Cosmic Whole, to them I carry what they lack and preserve what they already have." }
     ];
 
-    /* 1) Seamless Sidebar Toggle Switch Logic */
     function toggleSidebar() {
       const sidebar = document.getElementById('sidebar');
       if (sidebar.classList.contains('w-72')) {
@@ -216,18 +196,17 @@
       }
     }
 
-    /* 2) Structured LocalStorage Engine for Custom Saved Prompts */
     let savedPrompts = JSON.parse(localStorage.getItem('gitaSavedPrompts')) || [];
 
     function renderSavedPrompts() {
       const container = document.getElementById('saved-prompts-list');
       if (savedPrompts.length === 0) {
-        container.innerHTML = '<div class="text-zinc-600 text-xs px-3 italic">No saved prompts yet.</div>';
+        container.innerHTML = '<div class="text-zinc-600 text-xs px-3 italic">No configurations saved yet.</div>';
         return;
       }
       container.innerHTML = savedPrompts.map((p, index) => `
-        <div class="prompt-btn text-sm flex justify-between items-center relative overflow-hidden group" title="${p.prompt}">
-          <div class="truncate flex-1 pr-2 py-0.5" onclick="sendPrompt('${p.prompt.replace(/'/g, "\\'")}')">
+        <div class="prompt-btn text-sm flex justify-between items-center relative overflow-hidden group" title="${p.prompt || p.title}">
+          <div class="truncate flex-1 pr-2 py-0.5 text-zinc-300 hover:text-amber-300" onclick="loadSavedVerse(${index})">
             ${p.name}
           </div>
           <button onclick="event.stopPropagation(); deleteSavedPrompt(${index})" class="text-zinc-500 hover:text-red-400 transition-colors px-1 z-10">
@@ -237,24 +216,56 @@
       `).join('');
     }
 
-    function bookmarkPrompt(promptText) {
-      const name = prompt("Give this prompt a descriptive name to save it:");
-      if (name && name.trim() !== "") {
-        savedPrompts.push({ name: name.trim(), prompt: promptText });
-        localStorage.setItem('gitaSavedPrompts', JSON.stringify(savedPrompts));
-        renderSavedPrompts();
+    // Loads preserved text snapshots instantly onto screen without re-triggering random loops
+    function loadSavedVerse(index) {
+      const item = savedPrompts[index];
+      if (!item) return;
+
+      if (item.prompt && item.prompt !== "Random Selection") {
+        appendMessage('user', item.prompt);
+      } else {
+        appendMessage('user', `Reviewed Saved Entry: "${item.name}"`);
       }
+
+      // Re-renders the saved historical layout data
+      const html = buildVerseHTML(item.title, item.ch, item.verse, item.slok, item.translation, null);
+      appendMessage('bot', html);
+    }
+
+    function bookmarkExactVerse(promptText, title, ch, verse, slok, translation) {
+      let name = prompt("Give this resolution entry a unique name:");
+      if (!name || name.trim() === "") return;
+      name = name.trim();
+
+      // Check if title identifier is already taken
+      const nameExists = savedPrompts.some(p => p.name.toLowerCase() === name.toLowerCase());
+      if (nameExists) {
+        alert("A configuration with this name already exists. Please choose a unique name to prevent overrides.");
+        return;
+      }
+
+      savedPrompts.push({
+        name: name,
+        prompt: promptText,
+        title: title,
+        ch: ch,
+        verse: verse,
+        slok: slok.replace(/\\n/g, '\n'),
+        translation: translation
+      });
+
+      localStorage.setItem('gitaSavedPrompts', JSON.stringify(savedPrompts));
+      renderSavedPrompts();
     }
 
     function deleteSavedPrompt(index) {
-      if (confirm("Remove this configuration from saved items?")) {
+      if (confirm("Remove this exact resolution layout from storage?")) {
         savedPrompts.splice(index, 1);
         localStorage.setItem('gitaSavedPrompts', JSON.stringify(savedPrompts));
         renderSavedPrompts();
       }
     }
 
-    /* 4 & 5) Optimized Muted Calming Wallpapers */
     function setupDynamicBackground() {
       const backgroundImages = [
         'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1400&q=60',
@@ -262,30 +273,16 @@
         'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1400&q=60'
       ];
       const selectedImg = backgroundImages[Math.floor(Math.random() * backgroundImages.length)];
-      // Applied highly muted overlay mix (0.88 to 0.94) to match the elegant backdrop style
-      document.body.style.backgroundImage = `linear-gradient(rgba(9, 9, 11, 0.88), rgba(9, 9, 11, 0.94)), url('${selectedImg}')`;
+      document.body.style.backgroundImage = `linear-gradient(rgba(9, 9, 11, 0.90), rgba(9, 9, 11, 0.95)), url('${selectedImg}')`;
     }
 
-    function appendMessage(sender, html, rawPromptText = null) {
+    function appendMessage(sender, html) {
       const div = document.createElement('div');
       div.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'} w-full`;
       
-      let bookmarkBtnHTML = '';
-      if (sender === 'user' && rawPromptText) {
-        const safeText = rawPromptText.replace(/'/g, "\\'").replace(/"/g, "&quot;");
-        bookmarkBtnHTML = `
-          <div class="mt-2 pt-1.5 border-t border-white/10 flex justify-end">
-            <button onclick="bookmarkPrompt('${safeText}')" class="text-[11px] text-amber-300/80 hover:text-amber-300 flex items-center gap-1 bg-white/5 px-2 py-0.5 rounded-md transition-all">
-              <i class="fas fa-bookmark text-[10px]"></i> Save Action
-            </button>
-          </div>
-        `;
-      }
-
       div.innerHTML = `
         <div class="max-w-[82%] ${sender === 'user' ? 'message-user' : 'message-bot'} px-6 py-4 text-[15.5px] leading-relaxed shadow-md">
           <div>${html}</div>
-          ${bookmarkBtnHTML}
         </div>
       `;
       chat.appendChild(div);
@@ -311,16 +308,35 @@
         ch: randomFallback.ch,
         verse: randomFallback.verse,
         slok: randomFallback.slok,
-        translation: `Reflecting on "${text}": ${randomFallback.translation}`
+        translation: randomFallback.translation
       };
     }
 
-    function buildVerseHTML(title, chapter, verse, slok, translation) {
+    function buildVerseHTML(title, chapter, verse, slok, translation, associatedPrompt = null) {
       const formattedSlok = slok ? `<span class="sanskrit-verse">${slok.replace(/\n/g, '<br>')}</span>` : '';
+      
+      let saveIconHTML = '';
+      if (associatedPrompt !== null) {
+        const safeTitle = title.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+        const safeSlok = slok ? slok.replace(/'/g, "\\'").replace(/\n/g, "\\n") : '';
+        const safeTrans = translation.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+        const safePrompt = associatedPrompt.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+        
+        saveIconHTML = `
+          <div class="mt-3 pt-2 border-t border-zinc-800/60 flex justify-end">
+            <button onclick="bookmarkExactVerse('${safePrompt}', '${safeTitle}', ${chapter}, ${verse}, '${safeSlok}', '${safeTrans}')" 
+                    class="text-[11px] text-amber-300/80 hover:text-amber-300 flex items-center gap-1 bg-zinc-800/80 hover:bg-zinc-700/80 px-2.5 py-1 rounded-md transition-all border border-zinc-700/40">
+              <i class="fas fa-bookmark text-[10px]"></i> Save Action &amp; Verse
+            </button>
+          </div>
+        `;
+      }
+
       return `
         <strong class="text-amber-400 block mb-2">${title} (Chapter ${chapter}, Verse ${verse})</strong>
         ${formattedSlok}
         <div class="text-zinc-300 italic border-l-2 border-amber-500/40 pl-3 mt-3">"${translation}"</div>
+        ${saveIconHTML}
       `;
     }
 
@@ -331,7 +347,7 @@
       const msg = explicitText ? explicitText.trim() : input.value.trim();
       if (!msg) return;
 
-      appendMessage('user', msg, msg);
+      appendMessage('user', msg);
       if (!explicitText) input.value = '';
 
       const thinking = document.createElement('div');
@@ -348,10 +364,11 @@
         const data = await res.json();
         
         thinking.remove();
-        appendMessage('bot', buildVerseHTML(matched.title, matched.ch, matched.verse, data.slok, data.siva?.et || data.purohit?.et || data.tej?.ht || matched.translation));
+        const extractedTranslation = data.siva?.et || data.purohit?.et || data.tej?.ht || matched.translation;
+        appendMessage('bot', buildVerseHTML(matched.title, matched.ch, matched.verse, data.slok, extractedTranslation, msg));
       } catch (err) {
         thinking.remove();
-        appendMessage('bot', buildVerseHTML(matched.title, matched.ch, matched.verse, matched.slok, matched.translation));
+        appendMessage('bot', buildVerseHTML(matched.title, matched.ch, matched.verse, matched.slok, matched.translation, msg));
       }
     }
 
@@ -376,31 +393,31 @@
         const data = await res.json();
         
         loadingMsg.remove();
-        appendMessage('bot', buildVerseHTML("Random Verse Selection", randomChapter, randomVerse, data.slok, data.siva?.et || data.purohit?.et || data.tej?.ht || "Wisdom is unfolding."));
+        const extractedTranslation = data.siva?.et || data.purohit?.et || data.tej?.ht || "Wisdom is unfolding.";
+        appendMessage('bot', buildVerseHTML("Random Verse Selection", randomChapter, randomVerse, data.slok, extractedTranslation, "Random Selection"));
       } catch (e) {
         loadingMsg.remove();
-        const structuralFallback = randomVersePool[Math.floor(Math.random() * randomVersePool.length)];
-        appendMessage('bot', buildVerseHTML("Random Verse Selection (Local Archive)", structuralFallback.ch, structuralFallback.verse, structuralFallback.slok, structuralFallback.translation));
+        const fallback = randomVersePool[Math.floor(Math.random() * randomVersePool.length)];
+        appendMessage('bot', buildVerseHTML("Random Verse Selection (Local Archive)", fallback.ch, fallback.verse, fallback.slok, fallback.translation, "Random Selection"));
       }
     }
 
-    /* 3) Custom Dynamic Dashboard initialized with classic Chariot Backdrop artwork overlay */
     function newChat() {
       chat.innerHTML = `
         <div class="faint-overlay"></div>
-        <div class="max-w-xl mx-auto mt-10 p-8 rounded-3xl bg-zinc-900/80 border border-zinc-800/80 backdrop-blur-md text-center relative overflow-hidden shadow-2xl">
+        <div class="max-w-4xl mx-auto mt-6 p-6 rounded-3xl bg-zinc-900/80 border border-zinc-800/80 backdrop-blur-md text-center relative overflow-hidden shadow-2xl">
           <div class="absolute inset-0 opacity-10 bg-cover bg-center mix-blend-luminosity pointer-events-none" 
-               style="background-image: url('https://images.unsplash.com/photo-1609137144813-7d7881005ca7?auto=format&fit=crop&w=800&q=50');">
+               style="background-image: url('https://images.unsplash.com/photo-1609137144813-7d7881005ca7?auto=format&fit=crop&w=1200&q=50');">
           </div>
-          <div class="relative z-10 flex flex-col items-center justify-center gap-4">
-            <div class="w-14 h-14 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-2xl flex items-center justify-center text-2xl shadow-inner">
+          <div class="relative z-10 flex flex-col items-center justify-center gap-3">
+            <div class="w-12 h-12 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-2xl flex items-center justify-center text-xl shadow-inner">
               <i class="fas fa-dharmachakra animate-spin-slow"></i>
             </div>
-            <h3 class="text-xl font-bold text-zinc-100 tracking-tight">New Conversation Initialized</h3>
-            <p class="text-zinc-400 text-sm leading-relaxed max-w-sm">
+            <h3 class="text-lg font-bold text-zinc-100 tracking-tight">New Conversation Initialized</h3>
+            <p class="text-zinc-400 text-sm leading-relaxed max-w-2xl">
               Share your current configuration, dilemma, or structural struggle to pull balanced action items directly from the open Gita ledger.
             </p>
-            <div class="mt-3 text-[11.5px] text-amber-400/50 italic border-t border-zinc-800/80 pt-4 w-full">
+            <div class="text-[11px] text-amber-400/50 italic border-t border-zinc-800/80 pt-3 w-full">
               "Faced with crisis on the battlefield of life, the dialogue between the soul and higher consciousness begins."
             </div>
           </div>
