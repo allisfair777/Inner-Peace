@@ -265,6 +265,12 @@
     }
 
     function clearAllSavedData() {
+      // Fix: Alert if there is nothing to clear before confirming
+      if (savedPrompts.length === 0) {
+        alert("You don't have any saved Action Solutions to clear.");
+        return;
+      }
+
       if(confirm("Are you sure you want to delete all your saved Action Solutions? This cannot be undone.")) {
         localStorage.removeItem('gitaSavedPrompts');
         savedPrompts = [];
@@ -445,8 +451,9 @@
         });
     }
 
-    let utteranceQueue = []; // Global array to prevent speech cut-offs
+    let utteranceQueue = []; 
 
+    // FIX: Completely isolate sentences and numbers to prevent range merging and run-ons
     async function toggleAudio(btn, enText, saText, chapter, verse) {
       const icon = btn.querySelector('i');
       const isCurrentlyPlaying = icon.classList.contains('fa-volume-up');
@@ -458,42 +465,51 @@
       if (isCurrentlyPlaying) return;
 
       const isSanskrit = audioLang === 'sa';
-      
-      // FIX: Use commas instead of periods. This prevents the voice engine from
-      // misinterpreting decimals (9.22) or making harsh, unnatural stops.
-      const spokenCitation = isSanskrit 
-        ? `Adhyay ${chapter}, Shloka ${verse}.` 
-        : `Chapter ${chapter}, Verse ${verse}.`;
+      const langCode = isSanskrit ? 'hi-IN' : 'en-US';
+      const defaultRate = isSanskrit ? 0.75 : 0.85;
 
-      const rawContent = isSanskrit ? (saText || enText) : enText;
-      let segments = [];
+      // 1. Build an array of completely independent speech segments
+      let chunks = [];
       
       if (isSanskrit) {
-        segments = rawContent.replace(/\|\|/g, '.').replace(/\|/g, '.').split('.').filter(s => s.trim() !== '');
+          // Push Chapter and Verse as separate objects to force a complete stop between them
+          chunks.push({ text: `Adhyay ${chapter}`, delay: 600 });
+          chunks.push({ text: `Shloka ${verse}`, delay: 1000 });
+          
+          const rawContent = (saText || enText);
+          const verses = rawContent.replace(/\|\|/g, '.').replace(/\|/g, '.').split('.');
+          verses.forEach(v => {
+              if (v.trim()) chunks.push({ text: v.trim(), delay: 600 });
+          });
       } else {
-        // Safe regex to split English by punctuation without breaking older browsers
-        segments = rawContent.replace(/([.?!;])/g, "$1|").split("|").map(s => s.trim()).filter(s => s !== '');
+          chunks.push({ text: `Chapter ${chapter}`, delay: 600 });
+          chunks.push({ text: `Verse ${verse}`, delay: 1000 });
+          
+          const sentences = enText.replace(/([.?!;])/g, "$1|").split("|");
+          sentences.forEach(s => {
+              if (s.trim()) chunks.push({ text: s.trim(), delay: 600 });
+          });
       }
 
       icon.classList.remove('fa-volume-mute', 'text-zinc-400');
       icon.classList.add('fa-volume-up', 'text-amber-500');
 
-      const speak = (text, defaultRate, lang) => new Promise((resolve) => {
+      // 2. Playback helper with strict resolution
+      const speak = (text) => new Promise((resolve) => {
         if (!text) return resolve();
         const msg = new SpeechSynthesisUtterance(text);
         
-        // Apply Settings from the Modal
         msg.rate = defaultRate * (appSettings.speechSpeed || 1.0);
         
-        const targetVoiceURI = lang.startsWith('hi') || lang.startsWith('sa') ? appSettings.saVoiceURI : appSettings.enVoiceURI;
+        const targetVoiceURI = isSanskrit ? appSettings.saVoiceURI : appSettings.enVoiceURI;
         if (targetVoiceURI && systemVoices.length > 0) {
           const selectedVoice = systemVoices.find(v => v.voiceURI === targetVoiceURI);
           if (selectedVoice) msg.voice = selectedVoice;
         } else {
-           msg.lang = lang;
+           msg.lang = langCode;
         }
         
-        utteranceQueue.push(msg); // Fixes the Chrome/Safari garbage collection bug
+        utteranceQueue.push(msg); 
 
         msg.onend = () => {
            utteranceQueue = utteranceQueue.filter(u => u !== msg);
@@ -503,13 +519,10 @@
         window.speechSynthesis.speak(msg);
       });
 
-      // Play audio sequentially
-      await speak(spokenCitation, 0.85, isSanskrit ? 'hi-IN' : 'en-US');
-      await new Promise(r => setTimeout(r, 600)); // Natural breath
-
-      for (const seg of segments) {
-        await speak(seg, isSanskrit ? 0.75 : 0.85, isSanskrit ? 'hi-IN' : 'en-US'); 
-        await new Promise(r => setTimeout(r, 400)); // Natural breath between sentences
+      // 3. Sequentially process chunks with explicit physical pauses
+      for (const chunk of chunks) {
+          await speak(chunk.text);
+          await new Promise(r => setTimeout(r, chunk.delay)); 
       }
 
       resetAllSpeakers();
@@ -681,7 +694,6 @@
       setupDynamicBackground();
       renderSavedPrompts();
       chat.innerHTML = getOvalHTML();
-      // Ensure settings populate if voices load instantly
       if (window.speechSynthesis.getVoices().length > 0) {
         populateVoiceList();
       }
