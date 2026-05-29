@@ -327,40 +327,55 @@
     }
 
   async function toggleAudio(btn, enText, saText) {
-  const icon = btn.querySelector('i');
-  const isCurrentlyPlaying = icon.classList.contains('fa-volume-up');
-  
-  window.speechSynthesis.cancel();
-  resetAllSpeakers();
+      const icon = btn.querySelector('i');
+      const isCurrentlyPlaying = icon.classList.contains('fa-volume-up');
+      
+      window.speechSynthesis.cancel();
+      resetAllSpeakers();
 
-  if (isCurrentlyPlaying) return;
+      if (isCurrentlyPlaying) return;
 
-  // 1. Determine content and prepare "Chunks" for natural pausing
-  const textToPlay = audioLang === 'en' ? enText : (saText || enText);
-  const isSanskrit = audioLang === 'sa';
-  
-  // Create an array of text parts to read with deliberate pauses
-  // If Sanskrit, we replace '||' with a period to force the engine to pause
-  const chunks = isSanskrit 
-    ? textToPlay.replace(/\|\|/g, '.').split('.') 
-    : [textToPlay];
+      // 1. Identify the citation text (e.g., "Chapter 2, Verse 47")
+      // This looks for the strong tag directly above the current button
+      const citationText = btn.closest('.message-bot').querySelector('strong').innerText;
+      
+      // 2. Prepare content
+      const content = audioLang === 'en' ? enText : (saText || enText);
+      
+      // For Sanskrit, we split by '||' to create natural line breaks
+      const chunks = audioLang === 'sa' 
+        ? content.split('||').map(c => c.trim()) 
+        : [content];
 
-  icon.classList.remove('fa-volume-mute', 'text-zinc-400');
-  icon.classList.add('fa-volume-up', 'text-amber-500');
+      icon.classList.remove('fa-volume-mute', 'text-zinc-400');
+      icon.classList.add('fa-volume-up', 'text-amber-500');
 
-  // 2. Play chunks sequentially
-  for (let i = 0; i < chunks.length; i++) {
-    if (i > 0) await new Promise(resolve => setTimeout(resolve, 800)); // 800ms pause
-    
-    await new Promise((resolve) => {
-      const msg = new SpeechSynthesisUtterance(chunks[i].trim());
-      msg.rate = 0.8; // Slightly slower for better clarity
-      msg.lang = isSanskrit ? 'hi-IN' : 'en-US';
-      msg.onend = resolve;
-      window.speechSynthesis.speak(msg);
-    });
-  }
+      // Helper function to handle individual speech segments
+      const speak = (text, rate) => new Promise((resolve) => {
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.rate = rate;
+        msg.lang = audioLang === 'sa' ? 'hi-IN' : 'en-US';
+        msg.onend = resolve;
+        window.speechSynthesis.speak(msg);
+      });
 
+      // 3. Play sequentially with forced pauses
+      // A: Speak Citation
+      await speak(citationText, 0.9);
+      
+      // B: Hard pause (700ms) - This prevents the "run-on" effect
+      await new Promise(r => setTimeout(r, 700));
+
+      // C: Speak Content Chunks
+      for (const chunk of chunks) {
+        if (chunk) {
+          await speak(chunk, 0.8);
+          await new Promise(r => setTimeout(r, 400)); // Short pause between verse lines
+        }
+      }
+
+      resetAllSpeakers();
+    }
   resetAllSpeakers();
 }
     function buildVerseHTML(title, chapter, verse, slok, translation, associatedPrompt = null) {
