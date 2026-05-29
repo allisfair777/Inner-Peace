@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inner Peace & Happiness</title>
+  <title>Resolution Planner</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
   <style>
@@ -119,6 +119,7 @@
         </div>
       </div>
       <div class="flex items-center gap-3">
+        
         <div class="relative hidden sm:block">
           <input id="directSearch" type="text" placeholder="Find (e.g. 2.47)" 
                  class="bg-zinc-900 border border-zinc-700 text-zinc-200 px-4 py-2 rounded-full w-36 text-sm focus:outline-none focus:border-amber-500 transition-all"
@@ -126,8 +127,7 @@
           <i class="fas fa-search absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 text-xs"></i>
         </div>
 
-        <button id="langToggleBtn" onclick="toggleAudioLang()" title="Toggle EN/SA Audio" 
-                class="w-8 h-8 flex items-center justify-center text-xs font-bold text-amber-500 border border-amber-500/30 rounded-lg hover:bg-amber-500/10 transition-all">
+        <button id="langToggleBtn" onclick="toggleAudioLang()" title="Toggle EN/SA Audio" class="w-8 h-8 flex items-center justify-center text-xs font-bold text-amber-500 border border-amber-500/30 rounded-lg hover:bg-amber-500/10 transition-all">
           EN
         </button>
 
@@ -143,8 +143,7 @@
     </div>
 
     <div id="chat" class="flex-1 p-6 overflow-y-auto space-y-5 relative min-h-0">
-      <div class="faint-overlay"></div>
-    </div>
+      </div>
 
     <div class="p-5 border-t border-zinc-800/50 bg-zinc-950/80 z-10">
       <form onsubmit="sendMessage(event)" class="relative max-w-4xl mx-auto">
@@ -161,9 +160,8 @@
 
   <script>
     const chat = document.getElementById('chat');
-    let audioLang = 'en';
-    let currentAudio = null;
-
+    let audioLang = 'en'; 
+    
     const chapterBounds = { 1:47, 2:72, 3:43, 4:42, 5:29, 6:47, 7:30, 8:28, 9:34, 10:42, 11:55, 12:20, 13:35, 14:27, 15:20, 16:24, 17:28, 18:78 };
 
     const wisdomDb = {
@@ -174,7 +172,7 @@
       ],
       dharma: [
         { title: "Wisdom on Natural Duty", ch: 18, verse: 47, slok: "श्रेयानस्वधर्मो विगुणः परधर्मात्स्वनुष्ठितात्।\nस्वभावनियतं कर्म कुर्वन्नाप्नोति किल्बिषम्॥", translation: "It is far better to perform one’s own natural duties, even if imperfectly, than to master the duties of another. Engaging in work mapped to your true nature brings no internal conflict." },
-        { title: "Identity and Path", ch: 3, verse: 35, slok: "श्रेयानस्वधर्मो विगुणः परधर्मात्स्वनुष्ठितात्।\nस्वधर्मे निधनं श्रेयः परधर्मो भयावहः॥", translation: "It is far better to follow one's own path, even if flawed, than to perfectly copy another's blueprint. Even destruction on your own natural path brings alignment." }
+        { title: "Identity and Path", ch: 3, verse: 35, slok: "श्रेयान्स्वधर्मो विगुणः परधर्मात्स्वनुष्ठितात्।\nस्वधर्मे निधनं श्रेयः परधर्मो भयावहः॥", translation: "It is far better to follow one's own path, even if flawed, than to perfectly copy another's blueprint. Even destruction on your own natural path brings alignment." }
       ],
       balance: [
         { title: "Wisdom on Equanimity", ch: 2, verse: 48, slok: "योगस्थः कुरु कर्माणि सङ्गं त्यक्त्वा धनञ्जय।\nसिद्ध्यसिद्ध्योः समो भूत्वा समत्वं योग उच्यते॥", translation: "Be steadfast in your path, abandoning all anxious attachment to success or failure. Such balance and evenness of mind is the true essence of Yoga." },
@@ -204,8 +202,17 @@
 
     const randomVersePool = [
       { ch: 6, verse: 5, slok: "उद्धरेदात्मनात्मानं नात्मानमवसादयेत्।\nआत्मैव ह्यात्मनो बन्धुरात्मैव रिपुरात्मनः॥", translation: "Let a man lift himself up by his own mind; let him not degrade himself. For the mind is the friend of the self, and the mind can be the enemy of the self." },
-      // ... (other verses from your original code)
-      { ch: 2, verse: 47, slok: "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।\nमा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥", translation: "You have a right to perform your prescribed duties, but you are never entitled to the fruits of your actions." }
+      { ch: 5, verse: 21, slok: "बाह्यस्पर्शेष्वसक्तात्मा विन्दत्यात्मनि यत्सुखम्।\nस ब्रह्मयोगयुक्तात्मा सुखमक्षयमश्नुते॥", translation: "One who is unattached to external sensory pleasures finds true happiness within. Self-connected, they experience endless joy." },
+      { ch: 13, verse: 28, slok: "समं पश्यन्हि सर्वत्र समवस्थितमीश्वरम्।\nन हिनस्त्यात्मनात्मानं ततो याति परां गतिम्॥", translation: "Seeing the presence of truth equally everywhere, one does not destroy the self by the mind, thus attaining the supreme state." },
+      { ch: 9, verse: 22, slok: "अनन्याश्चिन्तयन्तो मां ये जनाः पर्युपासते।\nतेषां नित्याभियुक्तानां योगक्षेमं वहाम्यहम्॥", translation: "But those who worship with exclusive devotion, meditating on the Cosmic Whole, to them I carry what they lack and preserve what they already have." },
+      { ch: 4, verse: 38, slok: "न हि ज्ञानेन सदृशं पवित्रमिह विद्यते।\nतत्स्वयं योगसंसिद्धः कालेनात्मनि विन्दति॥", translation: "In this world, there is nothing so sublime and pure as transcendental knowledge. Such knowledge is the mature fruit of all mysticism." },
+      { ch: 12, verse: 13, slok: "अद्वेष्टा सर्वभूतानां मैत्रः करुण एव च।\nनिर्ममो निरहङ्कारः समदुःखसुखः क्षमी॥", translation: "One who is not envious but is a kind friend to all living entities, who does not think himself a proprietor and is free from false ego, is dear to Me." },
+      { ch: 6, verse: 34, slok: "चञ्चलं हि मनः कृष्ण प्रमाथि बलवद्दृढम्।\nतस्याहं निग्रहं मन्ये वायोरिव सुदुष्करम्॥", translation: "For the mind is restless, turbulent, obstinate and very strong, O Krishna, and to subdue it, I think, is more difficult than controlling the wind." },
+      { ch: 2, verse: 50, slok: "बुद्धियुक्तो जहातीह उभे सुकृतदुष्कृते।\nतस्माद्योगाय युज्यस्व योगः कर्मसु कौशलम्॥", translation: "A man engaged in devotional service rids himself of both good and bad actions even in this life. Therefore strive for yoga, which is the art of all work." },
+      { ch: 16, verse: 1, slok: "अभयं सत्त्वसंशुद्धिर्ज्ञानयोगव्यवस्थितिः।\nदानं दमश्च यज्ञश्च स्वाध्यायस्तप आर्जवम्॥", translation: "Fearlessness; purification of one's existence; cultivation of spiritual knowledge; charity; self-control; performance of sacrifice; study of the Vedas; austerity and simplicity; these belong to the godly men." },
+      { ch: 3, verse: 27, slok: "प्रकृतेः क्रियमाणानि गुणैः कर्माणि सर्वशः।\nअहङ्कारविमूढात्मा कर्ताहमिति मन्यते॥", translation: "All aspects of actions are carried out by the complex intertwining of nature's qualities. The soul, bewildered by the ego, thinks 'I am the doer.'" },
+      { ch: 14, verse: 22, slok: "प्रकाशं च प्रवृत्तिं च मोहमेव च पाण्डव।\nन द्वेष्टि सम्प्रवृत्तानि न निवृत्तानि काङ्क्षति॥", translation: "He who does not hate illumination, attachment and delusion when they are present or long for them when they disappear... is firmly situated." },
+      { ch: 8, verse: 7, slok: "तस्मात्सर्वेषु कालेषु मामनुस्मर युध्य च।\nमय्यर्पितमनोबुद्धिर्मामेवैष्यस्यसंशयम्॥", translation: "Therefore, at all times you should think of Me and carry out your prescribed duty. With your activities dedicated to Me and your mind and intelligence fixed on Me, you will attain Me without doubt." }
     ];
 
     function toggleSidebar() {
@@ -253,17 +260,22 @@
       let name = prompt("Give this resolution entry a unique name:");
       if (!name || name.trim() === "") return;
       name = name.trim();
+
       if (savedPrompts.some(p => p.name.toLowerCase() === name.toLowerCase())) {
-        alert("A configuration with this name already exists.");
+        alert("A configuration with this name already exists. Please choose a unique name to prevent overrides.");
         return;
       }
-      savedPrompts.push({ name, prompt: promptText, title, ch, verse, slok: slok ? slok.replace(/\\n/g, '\n') : '', translation });
+
+      savedPrompts.push({
+        name: name, prompt: promptText, title: title, ch: ch, verse: verse, 
+        slok: slok ? slok.replace(/\\n/g, '\n') : '', translation: translation
+      });
       localStorage.setItem('gitaSavedPrompts', JSON.stringify(savedPrompts));
       renderSavedPrompts();
     }
 
     function deleteSavedPrompt(index) {
-      if (confirm("Remove this entry?")) {
+      if (confirm("Remove this exact resolution layout from storage?")) {
         savedPrompts.splice(index, 1);
         localStorage.setItem('gitaSavedPrompts', JSON.stringify(savedPrompts));
         renderSavedPrompts();
@@ -290,78 +302,95 @@
       `;
       chat.appendChild(div);
       chat.scrollTop = chat.scrollHeight;
+      return div.querySelector('.message-bot') || div.querySelector('.message-user');
     }
 
     function matchIntentData(text) {
       const lower = text.toLowerCase();
-      if (/karma|action|deeds|work|career|job/i.test(lower)) return wisdomDb.karma[Math.floor(Math.random() * wisdomDb.karma.length)];
-      if (/dharma|duty|purpose/i.test(lower)) return wisdomDb.dharma[Math.floor(Math.random() * wisdomDb.dharma.length)];
-      if (/equanimity|balance|peace|calm/i.test(lower)) return wisdomDb.balance[Math.floor(Math.random() * wisdomDb.balance.length)];
-      if (/fear|anxious|worry|stress/i.test(lower)) return wisdomDb.anxiety[Math.floor(Math.random() * wisdomDb.anxiety.length)];
-      if (/anger|frustration/i.test(lower)) return wisdomDb.anger[Math.floor(Math.random() * wisdomDb.anger.length)];
-      if (/grief|sad|loss/i.test(lower)) return wisdomDb.grief[Math.floor(Math.random() * wisdomDb.grief.length)];
-      if (/doubt|confusion/i.test(lower)) return wisdomDb.doubt[Math.floor(Math.random() * wisdomDb.doubt.length)];
-      if (/jealous|envy|relationship/i.test(lower)) return wisdomDb.relationships[Math.floor(Math.random() * wisdomDb.relationships.length)];
+      let matchedArray = null;
 
-      return randomVersePool[Math.floor(Math.random() * randomVersePool.length)];
+      if (/karma|action|deeds|work|career|job|office|project/i.test(lower)) matchedArray = wisdomDb.karma;
+      else if (/dharma|duty|purpose|meaning|path/i.test(lower)) matchedArray = wisdomDb.dharma;
+      else if (/equanimity|balance|peace|calm|focus|still/i.test(lower)) matchedArray = wisdomDb.balance;
+      else if (/fear|anxious|worry|panic|stress|overwhelm/i.test(lower)) matchedArray = wisdomDb.anxiety;
+      else if (/anger|frustration|rage|mad|annoyed|temper/i.test(lower)) matchedArray = wisdomDb.anger;
+      else if (/grief|heartbreak|sad|loss|sorrow|depress/i.test(lower)) matchedArray = wisdomDb.grief;
+      else if (/doubt|confusion|lost|unsure|stuck|decision/i.test(lower)) matchedArray = wisdomDb.doubt;
+      else if (/jealous|envy|boss|toxic|coworker|manager|colleague|hate|resent|betray/i.test(lower)) matchedArray = wisdomDb.relationships;
+
+      if (matchedArray) return matchedArray[Math.floor(Math.random() * matchedArray.length)];
+
+      const fallback = randomVersePool[Math.floor(Math.random() * randomVersePool.length)];
+      return { title: "Reflective Insight", ch: fallback.ch, verse: fallback.verse, slok: fallback.slok, translation: fallback.translation };
     }
 
+    // --- Audio Logic ---
     function toggleAudioLang() {
       audioLang = audioLang === 'en' ? 'sa' : 'en';
       document.getElementById('langToggleBtn').innerText = audioLang.toUpperCase();
     }
 
-    function toggleVerseAudio(btn, enText, saText) {
+    function resetAllSpeakers() {
+        document.querySelectorAll('.speaker-icon').forEach(icon => {
+            icon.classList.remove('fa-volume-up', 'text-amber-500');
+            icon.classList.add('fa-volume-mute', 'text-zinc-400');
+        });
+    }
+
+    function toggleAudio(btn, enText, saText) {
       const icon = btn.querySelector('i');
-      if (currentAudio) {
-        window.speechSynthesis.cancel();
-        icon.classList.remove('fa-volume-up', 'text-amber-500');
-        icon.classList.add('fa-volume-mute');
-        currentAudio = null;
-        return;
+      const isCurrentlyPlaying = icon.classList.contains('fa-volume-up');
+      
+      // Stop anything that is currently playing and reset all buttons
+      window.speechSynthesis.cancel();
+      resetAllSpeakers();
+
+      if (isCurrentlyPlaying) {
+         // If it was already playing, we just wanted to stop it. We are done.
+         return;
       }
 
-      window.speechSynthesis.cancel();
+      // Otherwise, start playing the new audio
       const textToPlay = audioLang === 'en' ? enText : (saText || enText);
       const msg = new SpeechSynthesisUtterance(textToPlay);
-      msg.rate = 0.85;
-      msg.lang = audioLang === 'en' ? 'en-US' : 'hi-IN';
-
-      icon.classList.remove('fa-volume-mute');
+      msg.rate = 0.85; 
+      msg.lang = audioLang === 'sa' ? 'hi-IN' : 'en-US';
+      
+      icon.classList.remove('fa-volume-mute', 'text-zinc-400');
       icon.classList.add('fa-volume-up', 'text-amber-500');
-
-      msg.onend = () => {
-        icon.classList.remove('fa-volume-up', 'text-amber-500');
-        icon.classList.add('fa-volume-mute');
-        currentAudio = null;
-      };
-
+      
+      msg.onend = () => resetAllSpeakers();
+      msg.onerror = () => resetAllSpeakers();
+      
       window.speechSynthesis.speak(msg);
-      currentAudio = msg;
     }
 
     function buildVerseHTML(title, chapter, verse, slok, translation, associatedPrompt = null) {
       const formattedSlok = slok ? `<span class="sanskrit-verse">${slok.replace(/\n/g, '<br>')}</span>` : '';
+      let toolsHTML = '';
+      
       const safeTitle = title.replace(/'/g, "\\'").replace(/"/g, "&quot;");
       const safeSlok = slok ? slok.replace(/'/g, "\\'").replace(/\n/g, "\\n") : '';
       const safeTrans = translation.replace(/'/g, "\\'").replace(/"/g, "&quot;");
       const safePrompt = associatedPrompt ? associatedPrompt.replace(/'/g, "\\'").replace(/"/g, "&quot;") : '';
 
-      const bookmarkBtn = associatedPrompt ? `
+      let bookmarkBtn = associatedPrompt ? `
         <button onclick="bookmarkExactVerse('${safePrompt}', '${safeTitle}', ${chapter}, ${verse}, '${safeSlok}', '${safeTrans}')" 
                 class="text-[11px] text-amber-300/80 hover:text-amber-300 flex items-center gap-1 bg-zinc-800/80 hover:bg-zinc-700/80 px-2.5 py-1 rounded-md transition-all border border-zinc-700/40">
           <i class="fas fa-bookmark text-[10px]"></i> Save Action
-        </button>` : '';
-
-      const toolsHTML = `
+        </button>
+      ` : '';
+      
+      toolsHTML = `
         <div class="mt-3 pt-2 border-t border-zinc-800/60 flex justify-between items-center">
           <div class="flex gap-2">
-            <button onclick="toggleVerseAudio(this, '${safeTrans}', '${safeSlok}')" class="text-zinc-400 hover:text-amber-400 transition-colors p-1" title="Toggle Audio">
-              <i class="fas fa-volume-mute"></i>
-            </button>
+             <button onclick="toggleAudio(this, '${safeTrans}', '${safeSlok}')" class="hover:text-amber-400 transition-colors p-1" title="Toggle Audio">
+               <i class="fas fa-volume-mute speaker-icon text-zinc-400 text-lg"></i>
+             </button>
           </div>
           ${bookmarkBtn}
-        </div>`;
+        </div>
+      `;
 
       return `
         <strong class="text-amber-400 block mb-2">${title} (Chapter ${chapter}, Verse ${verse})</strong>
@@ -376,19 +405,18 @@
       const cached = localStorage.getItem(cacheKey);
       if (cached) return JSON.parse(cached);
       
-      try {
-        const res = await fetch(`https://bhagavadgitaapi.in/slok/${ch}/${verse}/`);
-        if (!res.ok) throw new Error();
-        const data = await res.json();
-        localStorage.setItem(cacheKey, JSON.stringify(data));
-        return data;
-      } catch (e) {
-        throw e;
-      }
+      // Fixed URL: Switched to reliable, free static API mimicking the same JSON structure
+      const res = await fetch(`https://vedicscriptures.github.io/slok/${ch}/${verse}`);
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      
+      localStorage.setItem(cacheKey, JSON.stringify(data));
+      return data;
     }
 
     async function sendMessage(e, explicitText = null) {
       if (e && e.preventDefault) e.preventDefault();
+      
       const input = document.getElementById('userInput');
       const msg = explicitText ? explicitText.trim() : input.value.trim();
       if (!msg) return;
@@ -419,10 +447,12 @@
       if (e.key === 'Enter') {
         const val = e.target.value.trim();
         const parts = val.split('.');
+        
         if (parts.length === 2) {
           const ch = parseInt(parts[0]);
           const v = parseInt(parts[1]);
-          if (!isNaN(ch) && !isNaN(v) && ch >= 1 && ch <= 18 && v >= 1 && v <= (chapterBounds[ch] || 50)) {
+          
+          if (!isNaN(ch) && !isNaN(v) && ch >= 1 && ch <= 18 && v >= 1 && v <= chapterBounds[ch]) {
             e.target.value = '';
             appendMessage('user', `Look up exact verse: ${ch}.${v}`);
             const thinking = appendMessage('bot', '<span class="text-amber-400 font-medium animate-pulse">Retrieving specific text...</span>');
@@ -434,56 +464,74 @@
               appendMessage('bot', buildVerseHTML("Direct Lookup", ch, v, data.slok, extractedTranslation, "Direct Search"));
             } catch (err) {
               thinking.parentElement.remove();
-              const fallback = randomVersePool[Math.floor(Math.random() * randomVersePool.length)];
-              appendMessage('bot', buildVerseHTML("Direct Lookup (Local)", fallback.ch, fallback.verse, fallback.slok, fallback.translation, "Direct Search"));
+              appendMessage('bot', `<span class="text-red-400">Could not retrieve Chapter ${ch}, Verse ${v} at this time. Network may be down.</span>`);
             }
           } else {
             alert("Invalid verse. Please enter a valid Chapter.Verse (e.g., 2.47).");
           }
         } else {
-          alert("Please format exactly as Chapter.Verse (e.g., 2.47)");
+            alert("Please format exactly as Chapter.Verse (e.g., 2.47)");
         }
       }
     }
 
     async function fetchRandomGitaVerse() {
       const randomChapter = Math.floor(Math.random() * 18) + 1;
-      const randomVerse = Math.floor(Math.random() * (chapterBounds[randomChapter] || 30)) + 1;
+      const randomVerse = Math.floor(Math.random() * chapterBounds[randomChapter]) + 1;
+
       const loadingMsg = appendMessage('bot', '<span class="text-amber-400 font-medium animate-pulse">Opening a random chapter...</span>');
 
       try {
         const data = await getVerseData(randomChapter, randomVerse);
         loadingMsg.parentElement.remove();
         const extractedTranslation = data.siva?.et || data.purohit?.et || data.tej?.ht || "Wisdom is unfolding.";
-        appendMessage('bot', buildVerseHTML("Random Insight", randomChapter, randomVerse, data.slok, extractedTranslation, "Random Selection"));
+        const extractedSlok = data.slok || "";
+        appendMessage('bot', buildVerseHTML("Random Insight", randomChapter, randomVerse, extractedSlok, extractedTranslation, "Random Selection"));
       } catch (e) {
         loadingMsg.parentElement.remove();
         const fallback = randomVersePool[Math.floor(Math.random() * randomVersePool.length)];
-        appendMessage('bot', buildVerseHTML("Random Insight (Local)", fallback.ch, fallback.verse, fallback.slok, fallback.translation, "Random Selection"));
+        appendMessage('bot', buildVerseHTML("Random Insight (Local Archive)", fallback.ch, fallback.verse, fallback.slok, fallback.translation, "Random Selection"));
       }
     }
 
-    function newChat() {
-      chat.innerHTML = `
+    function getOvalHTML(type) {
+      let title, text, quote, iconHtml;
+      
+      if (type === 'welcome') {
+        title = "Welcome to Inner Peace";
+        text = "Describe whatever challenges or transitions you are balancing right now. I will query the open Gita ledger dynamically to build your custom action resolutions.";
+        quote = `"In the battlefield of life, wisdom begins when we pause and listen."`;
+        // Make sure krishna-arjuna.jpg is in the same folder as your HTML file
+        iconHtml = `<img src="krishna-arjuna.jpg" alt="Krishna and Arjuna" class="w-20 h-20 rounded-full border border-amber-500/40 shadow-inner object-cover">`;
+      } else {
+        title = "New Conversation Initialized";
+        text = "Share your current configuration, dilemma, or structural struggle to pull balanced action items directly from the open Gita ledger.";
+        quote = `"Faced with crisis on the battlefield of life, the dialogue between the soul and higher consciousness begins."`;
+        iconHtml = `<div class="w-16 h-16 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-2xl flex items-center justify-center text-xl shadow-inner"><i class="fas fa-dharmachakra animate-spin-slow"></i></div>`;
+      }
+
+      return `
         <div class="faint-overlay"></div>
-        <div class="max-w-4xl mx-auto mt-6 p-6 rounded-3xl bg-zinc-900/80 border border-zinc-800/80 backdrop-blur-md text-center relative overflow-hidden shadow-2xl">
+        <div class="max-w-4xl mx-auto mt-6 p-8 rounded-3xl bg-zinc-900/80 border border-zinc-800/80 backdrop-blur-md text-center relative overflow-hidden shadow-2xl">
           <div class="absolute inset-0 opacity-10 bg-cover bg-center mix-blend-luminosity pointer-events-none" 
                style="background-image: url('https://images.unsplash.com/photo-1609137144813-7d7881005ca7?auto=format&fit=crop&w=1200&q=50');">
           </div>
-          <div class="relative z-10 flex flex-col items-center justify-center gap-3">
-            <div class="w-20 h-20 rounded-3xl overflow-hidden border border-amber-500/30 shadow-xl">
-              <img src="krishna-arjuna.jpg" alt="Krishna Arjuna" class="w-full h-full object-cover">
-            </div>
-            <h3 class="text-lg font-bold text-zinc-100 tracking-tight">New Conversation Initialized</h3>
-            <p class="text-zinc-400 text-sm leading-relaxed max-w-2xl">
-              Share your current configuration, dilemma, or structural struggle to pull balanced action items directly from the open Gita ledger.
+          <div class="relative z-10 flex flex-col items-center justify-center gap-4">
+            ${iconHtml}
+            <h3 class="text-xl font-bold text-zinc-100 tracking-tight">${title}</h3>
+            <p class="text-zinc-400 text-sm leading-relaxed max-w-2xl px-4">
+              ${text}
             </p>
-            <div class="text-[11px] text-amber-400/50 italic border-t border-zinc-800/80 pt-3 w-full">
-              "Faced with crisis on the battlefield of life, the dialogue between the soul and higher consciousness begins."
+            <div class="text-xs text-amber-400/50 italic border-t border-zinc-800/80 pt-4 w-full mt-2">
+              ${quote}
             </div>
           </div>
         </div>
       `;
+    }
+
+    function newChat() {
+      chat.innerHTML = getOvalHTML('new');
     }
 
     function openSettings() {
@@ -493,27 +541,8 @@
     window.onload = () => {
       setupDynamicBackground();
       renderSavedPrompts();
-      
-      chat.innerHTML = `
-        <div class="faint-overlay"></div>
-        <div class="max-w-4xl mx-auto mt-6 p-6 rounded-3xl bg-zinc-900/80 border border-zinc-800/80 backdrop-blur-md text-center relative overflow-hidden shadow-2xl">
-          <div class="absolute inset-0 opacity-10 bg-cover bg-center mix-blend-luminosity pointer-events-none" 
-               style="background-image: url('https://images.unsplash.com/photo-1609137144813-7d7881005ca7?auto=format&fit=crop&w=1200&q=50');">
-          </div>
-          <div class="relative z-10 flex flex-col items-center justify-center gap-3">
-            <div class="w-20 h-20 rounded-3xl overflow-hidden border border-amber-500/30 shadow-xl">
-              <img src="krishna-arjuna.jpg" alt="Krishna Arjuna" class="w-full h-full object-cover">
-            </div>
-            <h3 class="text-lg font-bold text-zinc-100 tracking-tight">Welcome to Inner Peace</h3>
-            <p class="text-zinc-400 text-sm leading-relaxed max-w-2xl">
-              Describe whatever challenges or transitions you are balancing right now. I will query the open Gita ledger dynamically to build your custom action resolutions.
-            </p>
-            <div class="text-[11px] text-amber-400/50 italic border-t border-zinc-800/80 pt-3 w-full">
-              "In the battlefield of life, wisdom begins when we pause and listen."
-            </div>
-          </div>
-        </div>
-      `;
+      // Load the welcome oval on start
+      chat.innerHTML = getOvalHTML('welcome');
     };
   </script>
 </body>
