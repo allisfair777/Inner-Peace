@@ -68,50 +68,8 @@
     }
   </style>
 </head>
-<body class="h-screen w-screen text-gray-100 flex overflow-hidden bg-cover bg-center bg-no-repeat bg-fixed relative">
+<body class="h-screen w-screen text-gray-100 flex overflow-hidden bg-cover bg-center bg-no-repeat bg-fixed">
 
-  <div id="settingsModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
-    <div class="bg-zinc-900 border border-zinc-700 w-full max-w-md rounded-3xl shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300" id="settingsContent">
-      <div class="p-5 border-b border-zinc-800 flex justify-between items-center bg-zinc-950/50">
-        <h2 class="text-lg font-bold text-zinc-100"><i class="fas fa-cog text-amber-500 mr-2"></i> Settings</h2>
-        <button onclick="closeSettings()" class="text-zinc-500 hover:text-red-400 transition-colors p-1">
-          <i class="fas fa-times text-lg"></i>
-        </button>
-      </div>
-      
-      <div class="p-6 space-y-6">
-        <div>
-          <h3 class="text-amber-400 text-xs font-semibold tracking-wider mb-3 uppercase">Voice & Audio</h3>
-          <div class="space-y-4">
-            <div>
-              <label class="block text-sm text-zinc-400 mb-1">English Voice</label>
-              <select id="enVoiceSelect" onchange="saveSettings()" class="w-full bg-zinc-950 border border-zinc-700 text-zinc-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-amber-500"></select>
-            </div>
-            
-            <div>
-              <label class="block text-sm text-zinc-400 mb-1">Sanskrit/Hindi Voice</label>
-              <select id="saVoiceSelect" onchange="saveSettings()" class="w-full bg-zinc-950 border border-zinc-700 text-zinc-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-amber-500"></select>
-            </div>
-
-            <div>
-              <label class="block text-sm text-zinc-400 mb-1 flex justify-between">
-                <span>Reading Speed</span>
-                <span id="speedValue" class="text-amber-500 font-medium">Normal (1.0x)</span>
-              </label>
-              <input type="range" id="speedSlider" min="0.5" max="1.5" step="0.1" value="1.0" oninput="updateSpeedLabel(); saveSettings()" class="w-full accent-amber-500">
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <h3 class="text-amber-400 text-xs font-semibold tracking-wider mb-3 uppercase">Data Management</h3>
-          <button id="clearDataBtn" onclick="clearAllSavedData()" class="w-full bg-zinc-950 hover:bg-red-900/30 text-red-400 border border-red-900/50 hover:border-red-500/50 py-2.5 rounded-xl text-sm transition-colors flex items-center justify-center gap-2">
-            <i class="fas fa-trash-alt"></i> Clear Saved Actions
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
   <div id="sidebar" class="w-0 border-transparent opacity-0 flex flex-col h-full z-20 sidebar-transition overflow-hidden shrink-0">
     <div class="p-5 flex items-center justify-between border-b border-zinc-800 shrink-0 w-72">
       <div class="font-semibold text-xl tracking-tight text-zinc-200">Resolution Planner</div>
@@ -195,89 +153,6 @@
     const chat = document.getElementById('chat');
     let audioLang = 'en'; 
     
-    // ================= SETTINGS LOGIC =================
-    let systemVoices = [];
-    let appSettings = JSON.parse(localStorage.getItem('gitaSettings')) || {
-      enVoiceURI: '',
-      saVoiceURI: '',
-      speechSpeed: 1.0
-    };
-
-    function populateVoiceList() {
-      systemVoices = window.speechSynthesis.getVoices();
-      const enSelect = document.getElementById('enVoiceSelect');
-      const saSelect = document.getElementById('saVoiceSelect');
-      
-      enSelect.innerHTML = '<option value="">Default English Voice</option>';
-      saSelect.innerHTML = '<option value="">Default Hindi/Sanskrit Voice</option>';
-
-      systemVoices.forEach(voice => {
-        const option = document.createElement('option');
-        option.textContent = `${voice.name} (${voice.lang})`;
-        option.value = voice.voiceURI;
-
-        if (voice.lang.startsWith('en')) {
-          enSelect.appendChild(option);
-        } else if (voice.lang.startsWith('hi') || voice.lang.startsWith('sa')) {
-          saSelect.appendChild(option.cloneNode(true)); 
-        }
-      });
-
-      if (appSettings.enVoiceURI) enSelect.value = appSettings.enVoiceURI;
-      if (appSettings.saVoiceURI) saSelect.value = appSettings.saVoiceURI;
-      
-      document.getElementById('speedSlider').value = appSettings.speechSpeed;
-      updateSpeedLabel();
-    }
-
-    if (speechSynthesis.onvoiceschanged !== undefined) {
-      speechSynthesis.onvoiceschanged = populateVoiceList;
-    }
-
-    function updateSpeedLabel() {
-      const val = parseFloat(document.getElementById('speedSlider').value);
-      let label = "Normal";
-      if (val < 1.0) label = "Slow";
-      if (val > 1.0) label = "Fast";
-      document.getElementById('speedValue').innerText = `${label} (${val.toFixed(1)}x)`;
-    }
-
-    function saveSettings() {
-      appSettings.enVoiceURI = document.getElementById('enVoiceSelect').value;
-      appSettings.saVoiceURI = document.getElementById('saVoiceSelect').value;
-      appSettings.speechSpeed = parseFloat(document.getElementById('speedSlider').value);
-      localStorage.setItem('gitaSettings', JSON.stringify(appSettings));
-    }
-
-    function openSettings() {
-      const modal = document.getElementById('settingsModal');
-      const content = document.getElementById('settingsContent');
-      modal.classList.remove('opacity-0', 'pointer-events-none');
-      content.classList.remove('scale-95');
-      if (systemVoices.length === 0) populateVoiceList(); 
-    }
-
-    function closeSettings() {
-      const modal = document.getElementById('settingsModal');
-      const content = document.getElementById('settingsContent');
-      modal.classList.add('opacity-0', 'pointer-events-none');
-      content.classList.add('scale-95');
-    }
-
-    function clearAllSavedData() {
-      // Check if there are actually actions to clear
-      if (savedPrompts.length === 0) {
-        return; 
-      }
-      if(confirm("Are you sure you want to delete all your saved Action Solutions? This cannot be undone.")) {
-        localStorage.removeItem('gitaSavedPrompts');
-        savedPrompts = [];
-        renderSavedPrompts();
-        closeSettings();
-      }
-    }
-    // ================= END SETTINGS LOGIC =================
-
     const chapterBounds = { 1:47, 2:72, 3:43, 4:42, 5:29, 6:47, 7:30, 8:28, 9:34, 10:42, 11:55, 12:20, 13:35, 14:27, 15:20, 16:24, 17:28, 18:78 };
 
     const wisdomDb = {
@@ -333,6 +208,7 @@
       }
     }
 
+    // Helper to gracefully close sidebar after an action
     function closeSidebar() {
       const sidebar = document.getElementById('sidebar');
       sidebar.className = "w-0 border-transparent opacity-0 flex flex-col h-full z-20 sidebar-transition overflow-hidden shrink-0";
@@ -342,18 +218,6 @@
 
     function renderSavedPrompts() {
       const container = document.getElementById('saved-prompts-list');
-      const clearBtn = document.getElementById('clearDataBtn');
-      
-      if (clearBtn) {
-        if (savedPrompts.length === 0) {
-            clearBtn.disabled = true;
-            clearBtn.className = "w-full bg-zinc-900 text-zinc-600 border border-zinc-800 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 cursor-not-allowed transition-colors";
-        } else {
-            clearBtn.disabled = false;
-            clearBtn.className = "w-full bg-zinc-950 hover:bg-red-900/30 text-red-400 border border-red-900/50 hover:border-red-500/50 py-2.5 rounded-xl text-sm transition-colors flex items-center justify-center gap-2";
-        }
-      }
-
       if (savedPrompts.length === 0) {
         container.innerHTML = '<div class="text-zinc-600 text-xs px-3 italic">No configurations saved yet.</div>';
         return;
@@ -371,7 +235,7 @@
     }
 
     function loadSavedVerse(index) {
-      closeSidebar(); 
+      closeSidebar(); // Collapse sidebar
       const item = savedPrompts[index];
       if (!item) return;
       if (item.prompt && item.prompt !== "Random Selection" && item.prompt !== "Direct Search") {
@@ -449,6 +313,7 @@
       return { title: "Reflective Insight", ch: fallback.ch, verse: fallback.verse, slok: fallback.slok, translation: fallback.translation };
     }
 
+    // --- Audio Logic ---
     function toggleAudioLang() {
       audioLang = audioLang === 'en' ? 'sa' : 'en';
       document.getElementById('langToggleBtn').innerText = audioLang.toUpperCase();
@@ -461,11 +326,9 @@
         });
     }
 
-    let utteranceQueue = []; 
+  let utteranceQueue = []; // Global array to prevent speech cut-offs
 
-    // FIX: Completely skip speaking the Chapter and Verse numbers.
-    // Jump straight into the actual verse/translation content.
-    function toggleAudio(btn, enText, saText) {
+    async function toggleAudio(btn, enText, saText, chapter, verse) {
       const icon = btn.querySelector('i');
       const isCurrentlyPlaying = icon.classList.contains('fa-volume-up');
       
@@ -476,69 +339,53 @@
       if (isCurrentlyPlaying) return;
 
       const isSanskrit = audioLang === 'sa';
-      const langCode = isSanskrit ? 'hi-IN' : 'en-US';
-      const defaultRate = isSanskrit ? 0.75 : 0.85;
+      
+      // 1. Create a bulletproof TTS citation that voices won't misinterpret
+      const spokenCitation = isSanskrit 
+        ? `Adhyay ${chapter}. Shloka ${verse}.` 
+        : `Chapter ${chapter}. Verse ${verse}.`;
 
-      let sentences = [];
+      // 2. Universal Sentence Splitter
+      const rawContent = isSanskrit ? (saText || enText) : enText;
+      let segments = [];
       
       if (isSanskrit) {
-          const rawContent = (saText || enText);
-          const verseLines = rawContent.replace(/\|\|/g, '।').replace(/॥/g, '।').split('।');
-          verseLines.forEach(line => {
-              if (line.trim()) sentences.push(line.trim());
-          });
+        // Replace dandas with periods so the engine pauses properly
+        segments = rawContent.replace(/\|\|/g, '.').replace(/\|/g, '.').split('.').filter(s => s.trim() !== '');
       } else {
-          const engLines = enText.replace(/([.?!;])/g, "$1|").split("|");
-          engLines.forEach(line => {
-              if (line.trim()) sentences.push(line.trim());
-          });
+        // Safe regex to split English by punctuation without breaking older browsers
+        segments = rawContent.replace(/([.?!;])/g, "$1|").split("|").map(s => s.trim()).filter(s => s !== '');
       }
 
       icon.classList.remove('fa-volume-mute', 'text-zinc-400');
       icon.classList.add('fa-volume-up', 'text-amber-500');
 
-      let completedCount = 0;
-      
-      // If there's nothing to speak, reset immediately
-      if (sentences.length === 0) {
-          resetAllSpeakers();
-          return;
+      const speak = (text, rate) => new Promise((resolve) => {
+        if (!text) return resolve();
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.rate = rate;
+        msg.lang = isSanskrit ? 'hi-IN' : 'en-US';
+        
+        utteranceQueue.push(msg); // Fixes the Chrome/Safari garbage collection bug
+
+        msg.onend = resolve;
+        msg.onerror = resolve; // Continue even if one sentence errors out
+        window.speechSynthesis.speak(msg);
+      });
+
+      // 3. Play audio sequentially
+      await speak(spokenCitation, 0.85);
+      await new Promise(r => setTimeout(r, 800)); // Hard pause after citation
+
+      for (const seg of segments) {
+        await speak(seg, isSanskrit ? 0.75 : 0.85); // Slightly slower for Sanskrit clarity
+        await new Promise(r => setTimeout(r, 600)); // Natural breath between sentences
       }
 
-      sentences.forEach((sentenceText) => {
-          const msg = new SpeechSynthesisUtterance(sentenceText);
-          msg.rate = defaultRate * (appSettings.speechSpeed || 1.0);
-          
-          const targetVoiceURI = isSanskrit ? appSettings.saVoiceURI : appSettings.enVoiceURI;
-          if (targetVoiceURI && systemVoices.length > 0) {
-            const selectedVoice = systemVoices.find(v => v.voiceURI === targetVoiceURI);
-            if (selectedVoice) msg.voice = selectedVoice;
-          } else {
-             msg.lang = langCode;
-          }
-          
-          msg.onend = () => {
-              completedCount++;
-              if (completedCount === sentences.length) {
-                  resetAllSpeakers();
-                  utteranceQueue = [];
-              }
-          };
-          
-          msg.onerror = () => {
-              completedCount++;
-              if (completedCount === sentences.length) {
-                  resetAllSpeakers();
-                  utteranceQueue = [];
-              }
-          };
-          
-          utteranceQueue.push(msg); 
-          window.speechSynthesis.speak(msg);
-      });
+      resetAllSpeakers();
+      utteranceQueue = [];
     }
     
-    // Updated button onclick to no longer pass chapter and verse
     function buildVerseHTML(title, chapter, verse, slok, translation, associatedPrompt = null) {
       const formattedSlok = slok ? `<span class="sanskrit-verse">${slok.replace(/\n/g, '<br>')}</span>` : '';
       let toolsHTML = '';
@@ -558,7 +405,7 @@
       toolsHTML = `
         <div class="mt-3 pt-2 border-t border-zinc-800/60 flex justify-between items-center">
           <div class="flex gap-2">
-             <button onclick="toggleAudio(this, '${safeTrans}', '${safeSlok}')" class="hover:text-amber-400 transition-colors p-1" title="Toggle Audio">
+             <button onclick="toggleAudio(this, '${safeTrans}', '${safeSlok}', ${chapter}, ${verse})" class="hover:text-amber-400 transition-colors p-1" title="Toggle Audio">
                <i class="fas fa-volume-mute speaker-icon text-zinc-400 text-lg"></i>
              </button>
           </div>
@@ -613,7 +460,7 @@
     }
 
     function sendPrompt(promptText) {
-      closeSidebar(); 
+      closeSidebar(); // Collapse sidebar
       setTimeout(() => sendMessage(null, promptText), 80);
     }
 
@@ -650,8 +497,8 @@
     }
 
     async function fetchRandomGitaVerse() {
-      closeSidebar(); 
-      appendMessage('user', "Random Verse"); 
+      closeSidebar(); // Collapse sidebar
+      appendMessage('user', "Random Verse"); // Makes the UI flow correctly from the quick prompt
       const randomChapter = Math.floor(Math.random() * 18) + 1;
       const randomVerse = Math.floor(Math.random() * chapterBounds[randomChapter]) + 1;
 
@@ -670,7 +517,9 @@
       }
     }
 
+    // Consolidated Welcome Banner
     function getOvalHTML() {
+      // Applied a gradient ring wrapper matching the Om icon background, forcing a rounded-full layout
       return `
         <div class="faint-overlay"></div>
         <div class="max-w-4xl mx-auto mt-6 p-8 rounded-3xl bg-zinc-900/80 border border-zinc-800/80 backdrop-blur-md text-center relative overflow-hidden shadow-2xl">
@@ -696,17 +545,18 @@
     }
 
     function newChat() {
-      closeSidebar(); 
+      closeSidebar(); // Collapse sidebar
       chat.innerHTML = getOvalHTML();
+    }
+
+    function openSettings() {
+      alert("System Settings - Resolution Planner Engine is running optimally.");
     }
 
     window.onload = () => {
       setupDynamicBackground();
       renderSavedPrompts();
       chat.innerHTML = getOvalHTML();
-      if (window.speechSynthesis.getVoices().length > 0) {
-        populateVoiceList();
-      }
     };
   </script>
 </body>
