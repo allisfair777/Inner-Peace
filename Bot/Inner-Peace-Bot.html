@@ -105,7 +105,7 @@
 
         <div>
           <h3 class="text-amber-400 text-xs font-semibold tracking-wider mb-3 uppercase">Data Management</h3>
-          <button onclick="clearAllSavedData()" class="w-full bg-zinc-950 hover:bg-red-900/30 text-red-400 border border-red-900/50 hover:border-red-500/50 py-2.5 rounded-xl text-sm transition-colors flex items-center justify-center gap-2">
+          <button id="clearDataBtn" onclick="clearAllSavedData()" class="w-full bg-zinc-950 hover:bg-red-900/30 text-red-400 border border-red-900/50 hover:border-red-500/50 py-2.5 rounded-xl text-sm transition-colors flex items-center justify-center gap-2">
             <i class="fas fa-trash-alt"></i> Clear Saved Actions
           </button>
         </div>
@@ -265,12 +265,10 @@
     }
 
     function clearAllSavedData() {
-      // Fix: Alert if there is nothing to clear before confirming
+      // Check if there are actually actions to clear
       if (savedPrompts.length === 0) {
-        alert("You don't have any saved Action Solutions to clear.");
-        return;
+        return; 
       }
-
       if(confirm("Are you sure you want to delete all your saved Action Solutions? This cannot be undone.")) {
         localStorage.removeItem('gitaSavedPrompts');
         savedPrompts = [];
@@ -344,6 +342,19 @@
 
     function renderSavedPrompts() {
       const container = document.getElementById('saved-prompts-list');
+      const clearBtn = document.getElementById('clearDataBtn');
+      
+      // Feature: Dynamically Grey out "Clear Saved Actions" if there is no data
+      if (clearBtn) {
+        if (savedPrompts.length === 0) {
+            clearBtn.disabled = true;
+            clearBtn.className = "w-full bg-zinc-900 text-zinc-600 border border-zinc-800 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 cursor-not-allowed transition-colors";
+        } else {
+            clearBtn.disabled = false;
+            clearBtn.className = "w-full bg-zinc-950 hover:bg-red-900/30 text-red-400 border border-red-900/50 hover:border-red-500/50 py-2.5 rounded-xl text-sm transition-colors flex items-center justify-center gap-2";
+        }
+      }
+
       if (savedPrompts.length === 0) {
         container.innerHTML = '<div class="text-zinc-600 text-xs px-3 italic">No configurations saved yet.</div>';
         return;
@@ -451,10 +462,10 @@
         });
     }
 
-    let utteranceQueue = []; 
+    let utteranceQueue = []; // Global array to prevent speech cut-offs
 
-    // FIX: Completely isolate sentences and numbers to prevent range merging and run-ons
-    async function toggleAudio(btn, enText, saText, chapter, verse) {
+    // Audio Solution: Enforce sequential boundaries by pushing distinct events to the native queue.
+    function toggleAudio(btn, enText, saText, chapter, verse) {
       const icon = btn.querySelector('i');
       const isCurrentlyPlaying = icon.classList.contains('fa-volume-up');
       
@@ -468,65 +479,66 @@
       const langCode = isSanskrit ? 'hi-IN' : 'en-US';
       const defaultRate = isSanskrit ? 0.75 : 0.85;
 
-      // 1. Build an array of completely independent speech segments
-      let chunks = [];
+      let sentences = [];
       
       if (isSanskrit) {
-          // Push Chapter and Verse as separate objects to force a complete stop between them
-          chunks.push({ text: `Adhyay ${chapter}`, delay: 600 });
-          chunks.push({ text: `Shloka ${verse}`, delay: 1000 });
+          // Devanagari text explicitly prevents the Hindi engine from reading numbers as an English math equation
+          sentences.push(`अध्याय ${chapter}`);
+          sentences.push(`श्लोक ${verse}`);
           
           const rawContent = (saText || enText);
-          const verses = rawContent.replace(/\|\|/g, '.').replace(/\|/g, '.').split('.');
-          verses.forEach(v => {
-              if (v.trim()) chunks.push({ text: v.trim(), delay: 600 });
+          const verseLines = rawContent.replace(/\|\|/g, '।').replace(/॥/g, '।').split('।');
+          verseLines.forEach(line => {
+              if (line.trim()) sentences.push(line.trim());
           });
       } else {
-          chunks.push({ text: `Chapter ${chapter}`, delay: 600 });
-          chunks.push({ text: `Verse ${verse}`, delay: 1000 });
+          // Explicit string boundary prevents run-ons
+          sentences.push(`Chapter ${chapter}`);
+          sentences.push(`Verse ${verse}`);
           
-          const sentences = enText.replace(/([.?!;])/g, "$1|").split("|");
-          sentences.forEach(s => {
-              if (s.trim()) chunks.push({ text: s.trim(), delay: 600 });
+          const engLines = enText.replace(/([.?!;])/g, "$1|").split("|");
+          engLines.forEach(line => {
+              if (line.trim()) sentences.push(line.trim());
           });
       }
 
       icon.classList.remove('fa-volume-mute', 'text-zinc-400');
       icon.classList.add('fa-volume-up', 'text-amber-500');
 
-      // 2. Playback helper with strict resolution
-      const speak = (text) => new Promise((resolve) => {
-        if (!text) return resolve();
-        const msg = new SpeechSynthesisUtterance(text);
-        
-        msg.rate = defaultRate * (appSettings.speechSpeed || 1.0);
-        
-        const targetVoiceURI = isSanskrit ? appSettings.saVoiceURI : appSettings.enVoiceURI;
-        if (targetVoiceURI && systemVoices.length > 0) {
-          const selectedVoice = systemVoices.find(v => v.voiceURI === targetVoiceURI);
-          if (selectedVoice) msg.voice = selectedVoice;
-        } else {
-           msg.lang = langCode;
-        }
-        
-        utteranceQueue.push(msg); 
+      let completedCount = 0;
 
-        msg.onend = () => {
-           utteranceQueue = utteranceQueue.filter(u => u !== msg);
-           resolve();
-        };
-        msg.onerror = resolve; 
-        window.speechSynthesis.speak(msg);
+      // Pushing independent SpeechSynthesisUtterances forces the browser to drop state and pause between them
+      sentences.forEach((sentenceText) => {
+          const msg = new SpeechSynthesisUtterance(sentenceText);
+          msg.rate = defaultRate * (appSettings.speechSpeed || 1.0);
+          
+          const targetVoiceURI = isSanskrit ? appSettings.saVoiceURI : appSettings.enVoiceURI;
+          if (targetVoiceURI && systemVoices.length > 0) {
+            const selectedVoice = systemVoices.find(v => v.voiceURI === targetVoiceURI);
+            if (selectedVoice) msg.voice = selectedVoice;
+          } else {
+             msg.lang = langCode;
+          }
+          
+          msg.onend = () => {
+              completedCount++;
+              if (completedCount === sentences.length) {
+                  resetAllSpeakers();
+                  utteranceQueue = [];
+              }
+          };
+          
+          msg.onerror = () => {
+              completedCount++;
+              if (completedCount === sentences.length) {
+                  resetAllSpeakers();
+                  utteranceQueue = [];
+              }
+          };
+          
+          utteranceQueue.push(msg); // Hold in memory to prevent browser garbage collection
+          window.speechSynthesis.speak(msg);
       });
-
-      // 3. Sequentially process chunks with explicit physical pauses
-      for (const chunk of chunks) {
-          await speak(chunk.text);
-          await new Promise(r => setTimeout(r, chunk.delay)); 
-      }
-
-      resetAllSpeakers();
-      utteranceQueue = [];
     }
     
     function buildVerseHTML(title, chapter, verse, slok, translation, associatedPrompt = null) {
