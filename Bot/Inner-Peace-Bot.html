@@ -70,7 +70,7 @@
 </head>
 <body class="h-screen w-screen text-gray-100 flex overflow-hidden bg-cover bg-center bg-no-repeat bg-fixed">
 
-  <div id="sidebar" class="w-72 bg-zinc-950/95 border-r border-zinc-800 flex flex-col h-full z-20 sidebar-transition overflow-hidden shrink-0">
+  <div id="sidebar" class="w-0 border-transparent opacity-0 flex flex-col h-full z-20 sidebar-transition overflow-hidden shrink-0">
     <div class="p-5 flex items-center justify-between border-b border-zinc-800 shrink-0 w-72">
       <div class="font-semibold text-xl tracking-tight text-zinc-200">Resolution Planner</div>
       <button onclick="toggleSidebar()" class="text-zinc-400 hover:text-amber-400">
@@ -208,6 +208,12 @@
       }
     }
 
+    // Helper to gracefully close sidebar after an action
+    function closeSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.className = "w-0 border-transparent opacity-0 flex flex-col h-full z-20 sidebar-transition overflow-hidden shrink-0";
+    }
+
     let savedPrompts = JSON.parse(localStorage.getItem('gitaSavedPrompts')) || [];
 
     function renderSavedPrompts() {
@@ -229,6 +235,7 @@
     }
 
     function loadSavedVerse(index) {
+      closeSidebar(); // Collapse sidebar
       const item = savedPrompts[index];
       if (!item) return;
       if (item.prompt && item.prompt !== "Random Selection" && item.prompt !== "Direct Search") {
@@ -416,6 +423,7 @@
     }
 
     function sendPrompt(promptText) {
+      closeSidebar(); // Collapse sidebar
       setTimeout(() => sendMessage(null, promptText), 80);
     }
 
@@ -452,6 +460,7 @@
     }
 
     async function fetchRandomGitaVerse() {
+      closeSidebar(); // Collapse sidebar
       appendMessage('user', "Random Verse"); // Makes the UI flow correctly from the quick prompt
       const randomChapter = Math.floor(Math.random() * 18) + 1;
       const randomVerse = Math.floor(Math.random() * chapterBounds[randomChapter]) + 1;
@@ -473,6 +482,7 @@
 
     // Consolidated Welcome Banner
     function getOvalHTML() {
+      // Applied a gradient ring wrapper matching the Om icon background, forcing a rounded-full layout
       return `
         <div class="faint-overlay"></div>
         <div class="max-w-4xl mx-auto mt-6 p-8 rounded-3xl bg-zinc-900/80 border border-zinc-800/80 backdrop-blur-md text-center relative overflow-hidden shadow-2xl">
@@ -480,7 +490,11 @@
                style="background-image: url('https://images.unsplash.com/photo-1609137144813-7d7881005ca7?auto=format&fit=crop&w=1200&q=50');">
           </div>
           <div class="relative z-10 flex flex-col items-center justify-center gap-4">
-            <img src="krishna-arjuna.jpg" alt="Krishna and Arjuna" class="w-32 h-32 md:w-40 md:h-40 rounded-2xl border-2 border-amber-500/30 shadow-lg object-cover">
+            
+            <div class="rounded-full p-1 bg-gradient-to-br from-amber-400 to-orange-500 shadow-lg">
+              <img src="krishna-arjuna.jpg" alt="Krishna and Arjuna" class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover">
+            </div>
+
             <h3 class="text-xl font-bold text-zinc-100 tracking-tight">Welcome to Inner Peace</h3>
             <p class="text-zinc-400 text-sm leading-relaxed max-w-2xl px-4">
               Describe whatever challenges or transitions you are balancing right now. I will query the open Gita ledger dynamically to build your custom action resolutions.
@@ -494,6 +508,7 @@
     }
 
     function newChat() {
+      closeSidebar(); // Collapse sidebar
       chat.innerHTML = getOvalHTML();
     }
 
