@@ -326,50 +326,64 @@
         });
     }
 
-  async function toggleAudio(btn, enText, saText) {
+  let utteranceQueue = []; // Global array to prevent speech cut-offs
+
+    async function toggleAudio(btn, enText, saText, chapter, verse) {
       const icon = btn.querySelector('i');
       const isCurrentlyPlaying = icon.classList.contains('fa-volume-up');
       
       window.speechSynthesis.cancel();
+      utteranceQueue = []; 
       resetAllSpeakers();
 
       if (isCurrentlyPlaying) return;
 
-      const citationText = btn.closest('.message-bot').querySelector('strong').innerText;
-      
-      // 1. Logic for segmenting English vs Sanskrit
       const isSanskrit = audioLang === 'sa';
-      const rawContent = isSanskrit ? (saText || enText) : enText;
+      
+      // 1. Create a bulletproof TTS citation that voices won't misinterpret
+      const spokenCitation = isSanskrit 
+        ? `Adhyay ${chapter}. Shloka ${verse}.` 
+        : `Chapter ${chapter}. Verse ${verse}.`;
 
-      // Split Sanskrit by '||', or English by sentence endings (. or ;)
-      const segments = isSanskrit 
-        ? rawContent.split('||').map(s => s.trim())
-        : rawContent.split(/(?<=[.;])\s+/); 
+      // 2. Universal Sentence Splitter
+      const rawContent = isSanskrit ? (saText || enText) : enText;
+      let segments = [];
+      
+      if (isSanskrit) {
+        // Replace dandas with periods so the engine pauses properly
+        segments = rawContent.replace(/\|\|/g, '.').replace(/\|/g, '.').split('.').filter(s => s.trim() !== '');
+      } else {
+        // Safe regex to split English by punctuation without breaking older browsers
+        segments = rawContent.replace(/([.?!;])/g, "$1|").split("|").map(s => s.trim()).filter(s => s !== '');
+      }
 
       icon.classList.remove('fa-volume-mute', 'text-zinc-400');
       icon.classList.add('fa-volume-up', 'text-amber-500');
 
       const speak = (text, rate) => new Promise((resolve) => {
+        if (!text) return resolve();
         const msg = new SpeechSynthesisUtterance(text);
         msg.rate = rate;
         msg.lang = isSanskrit ? 'hi-IN' : 'en-US';
+        
+        utteranceQueue.push(msg); // Fixes the Chrome/Safari garbage collection bug
+
         msg.onend = resolve;
+        msg.onerror = resolve; // Continue even if one sentence errors out
         window.speechSynthesis.speak(msg);
       });
 
-      // 2. Play Citation
-      await speak(citationText, 0.9);
-      await new Promise(r => setTimeout(r, 800)); // Fixed, longer pause
+      // 3. Play audio sequentially
+      await speak(spokenCitation, 0.85);
+      await new Promise(r => setTimeout(r, 800)); // Hard pause after citation
 
-      // 3. Play Segments
       for (const seg of segments) {
-        if (seg) {
-          await speak(seg, 0.8);
-          await new Promise(r => setTimeout(r, 500)); // Pause between sentences
-        }
+        await speak(seg, isSanskrit ? 0.75 : 0.85); // Slightly slower for Sanskrit clarity
+        await new Promise(r => setTimeout(r, 600)); // Natural breath between sentences
       }
 
       resetAllSpeakers();
+      utteranceQueue = [];
     }
     
     function buildVerseHTML(title, chapter, verse, slok, translation, associatedPrompt = null) {
@@ -391,14 +405,14 @@
       toolsHTML = `
         <div class="mt-3 pt-2 border-t border-zinc-800/60 flex justify-between items-center">
           <div class="flex gap-2">
-             <button onclick="toggleAudio(this, '${safeTrans}', '${safeSlok}')" class="hover:text-amber-400 transition-colors p-1" title="Toggle Audio">
+             <button onclick="toggleAudio(this, '${safeTrans}', '${safeSlok}', ${chapter}, ${verse})" class="hover:text-amber-400 transition-colors p-1" title="Toggle Audio">
                <i class="fas fa-volume-mute speaker-icon text-zinc-400 text-lg"></i>
              </button>
           </div>
           ${bookmarkBtn}
         </div>
       `;
-
+      
       return `
         <strong class="text-amber-400 block mb-2">${title} (Chapter ${chapter}, Verse ${verse})</strong>
         ${formattedSlok}
