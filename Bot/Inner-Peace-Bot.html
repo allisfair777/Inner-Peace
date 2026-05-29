@@ -105,15 +105,13 @@
 
         <div>
           <h3 class="text-amber-400 text-xs font-semibold tracking-wider mb-3 uppercase">Data Management</h3>
-          <button id="clearBtn" onclick="clearAllSavedData()" 
-                  class="w-full bg-zinc-950 hover:bg-red-900/30 text-red-400 border border-red-900/50 hover:border-red-500/50 py-2.5 rounded-xl text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+          <button onclick="clearAllSavedData()" class="w-full bg-zinc-950 hover:bg-red-900/30 text-red-400 border border-red-900/50 hover:border-red-500/50 py-2.5 rounded-xl text-sm transition-colors flex items-center justify-center gap-2">
             <i class="fas fa-trash-alt"></i> Clear Saved Actions
           </button>
         </div>
       </div>
     </div>
   </div>
-
   <div id="sidebar" class="w-0 border-transparent opacity-0 flex flex-col h-full z-20 sidebar-transition overflow-hidden shrink-0">
     <div class="p-5 flex items-center justify-between border-b border-zinc-800 shrink-0 w-72">
       <div class="font-semibold text-xl tracking-tight text-zinc-200">Resolution Planner</div>
@@ -146,6 +144,7 @@
   </div>
 
   <div class="flex-1 flex flex-col chat-container relative h-full min-w-0">
+    
     <div class="oval-header mx-4 mt-4 px-6 py-4 flex items-center justify-between border border-zinc-800/60 shadow-xl z-10">
       <div class="flex items-center gap-4">
         <button onclick="toggleSidebar()" class="w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-amber-300 rounded-3xl hover:bg-zinc-800 transition-all">
@@ -158,6 +157,7 @@
         </div>
       </div>
       <div class="flex items-center gap-3">
+        
         <div class="relative hidden sm:block">
           <input id="directSearch" type="text" placeholder="Find (e.g. 2.47)" 
                  class="bg-zinc-900 border border-zinc-700 text-zinc-200 px-4 py-2 rounded-full w-36 text-sm focus:outline-none focus:border-amber-500 transition-all"
@@ -175,7 +175,8 @@
       </div>
     </div>
 
-    <div id="chat" class="flex-1 p-6 overflow-y-auto space-y-5 relative min-h-0"></div>
+    <div id="chat" class="flex-1 p-6 overflow-y-auto space-y-5 relative min-h-0">
+      </div>
 
     <div class="p-5 border-t border-zinc-800/50 bg-zinc-950/80 z-10">
       <form onsubmit="sendMessage(event)" class="relative max-w-4xl mx-auto">
@@ -193,10 +194,13 @@
   <script>
     const chat = document.getElementById('chat');
     let audioLang = 'en'; 
-
+    
+    // ================= SETTINGS LOGIC =================
     let systemVoices = [];
     let appSettings = JSON.parse(localStorage.getItem('gitaSettings')) || {
-      enVoiceURI: '', saVoiceURI: '', speechSpeed: 1.0
+      enVoiceURI: '',
+      saVoiceURI: '',
+      speechSpeed: 1.0
     };
 
     function populateVoiceList() {
@@ -211,17 +215,24 @@
         const option = document.createElement('option');
         option.textContent = `${voice.name} (${voice.lang})`;
         option.value = voice.voiceURI;
-        if (voice.lang.startsWith('en')) enSelect.appendChild(option);
-        else if (voice.lang.startsWith('hi') || voice.lang.startsWith('sa')) saSelect.appendChild(option.cloneNode(true));
+
+        if (voice.lang.startsWith('en')) {
+          enSelect.appendChild(option);
+        } else if (voice.lang.startsWith('hi') || voice.lang.startsWith('sa')) {
+          saSelect.appendChild(option.cloneNode(true)); 
+        }
       });
 
       if (appSettings.enVoiceURI) enSelect.value = appSettings.enVoiceURI;
       if (appSettings.saVoiceURI) saSelect.value = appSettings.saVoiceURI;
+      
       document.getElementById('speedSlider').value = appSettings.speechSpeed;
       updateSpeedLabel();
     }
 
-    if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.onvoiceschanged = populateVoiceList;
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = populateVoiceList;
+    }
 
     function updateSpeedLabel() {
       const val = parseFloat(document.getElementById('speedSlider').value);
@@ -243,7 +254,7 @@
       const content = document.getElementById('settingsContent');
       modal.classList.remove('opacity-0', 'pointer-events-none');
       content.classList.remove('scale-95');
-      if (systemVoices.length === 0) populateVoiceList();
+      if (systemVoices.length === 0) populateVoiceList(); 
     }
 
     function closeSettings() {
@@ -253,13 +264,7 @@
       content.classList.add('scale-95');
     }
 
-    function updateClearButtonState() {
-      const btn = document.getElementById('clearBtn');
-      btn.disabled = savedPrompts.length === 0;
-    }
-
     function clearAllSavedData() {
-      if (savedPrompts.length === 0) return;
       if(confirm("Are you sure you want to delete all your saved Action Solutions? This cannot be undone.")) {
         localStorage.removeItem('gitaSavedPrompts');
         savedPrompts = [];
@@ -267,6 +272,7 @@
         closeSettings();
       }
     }
+    // ================= END SETTINGS LOGIC =================
 
     const chapterBounds = { 1:47, 2:72, 3:43, 4:42, 5:29, 6:47, 7:30, 8:28, 9:34, 10:42, 11:55, 12:20, 13:35, 14:27, 15:20, 16:24, 17:28, 18:78 };
 
@@ -314,30 +320,7 @@
       { ch: 8, verse: 7, slok: "तस्मात्सर्वेषु कालेषु मामनुस्मर युध्य च।\nमय्यर्पितमनोबुद्धिर्मामेवैष्यस्यसंशयम्॥", translation: "Therefore, at all times you should think of Me and carry out your prescribed duty. With your activities dedicated to Me and your mind and intelligence fixed on Me, you will attain Me without doubt." }
     ];
 
-    let savedPrompts = JSON.parse(localStorage.getItem('gitaSavedPrompts')) || [];
-
-    function renderSavedPrompts() {
-      const container = document.getElementById('saved-prompts-list');
-      if (savedPrompts.length === 0) {
-        container.innerHTML = '<div class="text-zinc-600 text-xs px-3 italic">No configurations saved yet.</div>';
-      } else {
-        container.innerHTML = savedPrompts.map((p, index) => `
-          <div class="prompt-btn text-sm flex justify-between items-center relative overflow-hidden group" title="${p.prompt || p.title}">
-            <div class="truncate flex-1 pr-2 py-0.5 text-zinc-300 hover:text-amber-300" onclick="loadSavedVerse(${index})">
-              ${p.name}
-            </div>
-            <button onclick="event.stopPropagation(); deleteSavedPrompt(${index})" class="text-zinc-500 hover:text-red-400 transition-colors px-1 z-10">
-              <i class="fas fa-trash-alt text-xs"></i>
-            </button>
-          </div>
-        `).join('');
-      }
-      updateClearButtonState();
-    }
-
-    // ... [All other functions are the same as before - toggleSidebar, bookmarkExactVerse, etc.] ...
-
-    function toggleSidebar() { /* same as original */ 
+    function toggleSidebar() {
       const sidebar = document.getElementById('sidebar');
       if (sidebar.classList.contains('w-72')) {
         sidebar.className = "w-0 border-transparent opacity-0 flex flex-col h-full z-20 sidebar-transition overflow-hidden shrink-0";
@@ -349,6 +332,26 @@
     function closeSidebar() {
       const sidebar = document.getElementById('sidebar');
       sidebar.className = "w-0 border-transparent opacity-0 flex flex-col h-full z-20 sidebar-transition overflow-hidden shrink-0";
+    }
+
+    let savedPrompts = JSON.parse(localStorage.getItem('gitaSavedPrompts')) || [];
+
+    function renderSavedPrompts() {
+      const container = document.getElementById('saved-prompts-list');
+      if (savedPrompts.length === 0) {
+        container.innerHTML = '<div class="text-zinc-600 text-xs px-3 italic">No configurations saved yet.</div>';
+        return;
+      }
+      container.innerHTML = savedPrompts.map((p, index) => `
+        <div class="prompt-btn text-sm flex justify-between items-center relative overflow-hidden group" title="${p.prompt || p.title}">
+          <div class="truncate flex-1 pr-2 py-0.5 text-zinc-300 hover:text-amber-300" onclick="loadSavedVerse(${index})">
+            ${p.name}
+          </div>
+          <button onclick="event.stopPropagation(); deleteSavedPrompt(${index})" class="text-zinc-500 hover:text-red-400 transition-colors px-1 z-10">
+            <i class="fas fa-trash-alt text-xs"></i>
+          </button>
+        </div>
+      `).join('');
     }
 
     function loadSavedVerse(index) {
@@ -368,11 +371,16 @@
       let name = prompt("Give this resolution entry a unique name:");
       if (!name || name.trim() === "") return;
       name = name.trim();
+
       if (savedPrompts.some(p => p.name.toLowerCase() === name.toLowerCase())) {
-        alert("A configuration with this name already exists.");
+        alert("A configuration with this name already exists. Please choose a unique name to prevent overrides.");
         return;
       }
-      savedPrompts.push({ name, prompt: promptText, title, ch, verse, slok: slok ? slok.replace(/\\n/g, '\n') : '', translation });
+
+      savedPrompts.push({
+        name: name, prompt: promptText, title: title, ch: ch, verse: verse, 
+        slok: slok ? slok.replace(/\\n/g, '\n') : '', translation: translation
+      });
       localStorage.setItem('gitaSavedPrompts', JSON.stringify(savedPrompts));
       renderSavedPrompts();
     }
@@ -391,25 +399,35 @@
         'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&w=1400&q=60',
         'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1400&q=60'
       ];
-      document.body.style.backgroundImage = `linear-gradient(rgba(9, 9, 11, 0.90), rgba(9, 9, 11, 0.95)), url('${backgroundImages[Math.floor(Math.random() * backgroundImages.length)]}')`;
+      const selectedImg = backgroundImages[Math.floor(Math.random() * backgroundImages.length)];
+      document.body.style.backgroundImage = `linear-gradient(rgba(9, 9, 11, 0.90), rgba(9, 9, 11, 0.95)), url('${selectedImg}')`;
     }
 
     function appendMessage(sender, html) {
       const div = document.createElement('div');
       div.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'} w-full`;
-      div.innerHTML = `<div class="max-w-[82%] ${sender === 'user' ? 'message-user' : 'message-bot'} px-6 py-4 text-[15.5px] leading-relaxed shadow-md"><div>${html}</div></div>`;
+      div.innerHTML = `
+        <div class="max-w-[82%] ${sender === 'user' ? 'message-user' : 'message-bot'} px-6 py-4 text-[15.5px] leading-relaxed shadow-md">
+          <div>${html}</div>
+        </div>
+      `;
       chat.appendChild(div);
       chat.scrollTop = chat.scrollHeight;
+      return div.querySelector('.message-bot') || div.querySelector('.message-user');
     }
 
     function matchIntentData(text) {
       const lower = text.toLowerCase();
-      if (/karma|action|deeds|work/i.test(lower)) return wisdomDb.karma[Math.floor(Math.random() * wisdomDb.karma.length)];
-      if (/bhakti|devotion|worship|love/i.test(lower)) return wisdomDb.bhakti[Math.floor(Math.random() * wisdomDb.bhakti.length)];
-      if (/gnana|jnana|knowledge|intellect/i.test(lower)) return wisdomDb.gnana[Math.floor(Math.random() * wisdomDb.gnana.length)];
-      if (/anxiety|anxious|worry|panic|fear/i.test(lower)) return wisdomDb.anxiety[Math.floor(Math.random() * wisdomDb.anxiety.length)];
-      if (/equanimity|balance|peace|calm|still/i.test(lower)) return wisdomDb.balance[Math.floor(Math.random() * wisdomDb.balance.length)];
-      if (/depression|depress|sad|grief|sorrow|loss/i.test(lower)) return wisdomDb.depression[Math.floor(Math.random() * wisdomDb.depression.length)];
+      let matchedArray = null;
+
+      if (/karma|action|deeds|work/i.test(lower)) matchedArray = wisdomDb.karma;
+      else if (/bhakti|devotion|worship|love/i.test(lower)) matchedArray = wisdomDb.bhakti;
+      else if (/gnana|jnana|knowledge|intellect/i.test(lower)) matchedArray = wisdomDb.gnana;
+      else if (/anxiety|anxious|worry|panic|fear/i.test(lower)) matchedArray = wisdomDb.anxiety;
+      else if (/equanimity|balance|peace|calm|still/i.test(lower)) matchedArray = wisdomDb.balance;
+      else if (/depression|depress|sad|grief|sorrow|loss/i.test(lower)) matchedArray = wisdomDb.depression;
+
+      if (matchedArray) return matchedArray[Math.floor(Math.random() * matchedArray.length)];
 
       const fallback = randomVersePool[Math.floor(Math.random() * randomVersePool.length)];
       return { title: "Reflective Insight", ch: fallback.ch, verse: fallback.verse, slok: fallback.slok, translation: fallback.translation };
@@ -421,101 +439,116 @@
     }
 
     function resetAllSpeakers() {
-      document.querySelectorAll('.speaker-icon').forEach(icon => {
-        icon.classList.remove('fa-volume-up', 'text-amber-500');
-        icon.classList.add('fa-volume-mute', 'text-zinc-400');
-      });
+        document.querySelectorAll('.speaker-icon').forEach(icon => {
+            icon.classList.remove('fa-volume-up', 'text-amber-500');
+            icon.classList.add('fa-volume-mute', 'text-zinc-400');
+        });
     }
 
-    let utteranceQueue = [];
+    let utteranceQueue = []; // Global array to prevent speech cut-offs
 
     async function toggleAudio(btn, enText, saText, chapter, verse) {
       const icon = btn.querySelector('i');
-      if (icon.classList.contains('fa-volume-up')) {
-        window.speechSynthesis.cancel();
-        resetAllSpeakers();
-        return;
-      }
-
+      const isCurrentlyPlaying = icon.classList.contains('fa-volume-up');
+      
       window.speechSynthesis.cancel();
-      utteranceQueue = [];
+      utteranceQueue = []; 
       resetAllSpeakers();
 
+      if (isCurrentlyPlaying) return;
+
       const isSanskrit = audioLang === 'sa';
-      const spokenCitation = isSanskrit ? `Adhyay ${chapter}, Shloka ${verse}.` : `Chapter ${chapter}, Verse ${verse}.`;
+      
+      // FIX: Use commas instead of periods. This prevents the voice engine from
+      // misinterpreting decimals (9.22) or making harsh, unnatural stops.
+      const spokenCitation = isSanskrit 
+        ? `Adhyay ${chapter}, Shloka ${verse}.` 
+        : `Chapter ${chapter}, Verse ${verse}.`;
 
-      let rawContent = isSanskrit ? (saText || enText) : enText;
-
-      if (rawContent) {
-        rawContent = rawContent
-          .replace(/\s*\(?\d+\.\d+\)?\.?\s*/g, ' ')
-          .replace(/\s*\(?\d+\s*[-–—]\s*\d+\)?\.?\s*/g, ' ')
-          .replace(/\s*\d+\.\d+\s*$/, '')
-          .replace(/\s*\d+\s*[-–—]\s*\d+\s*$/, '')
-          .trim();
-      }
-
+      const rawContent = isSanskrit ? (saText || enText) : enText;
       let segments = [];
+      
       if (isSanskrit) {
-        let cleanSa = rawContent.replace(/\|\|/g, '.').replace(/\|/g, '.').replace(/\s*\d+\s*[-–—]\s*\d+\s*$/, '').trim();
-        segments = cleanSa.split('.').filter(s => s.trim() !== '');
+        segments = rawContent.replace(/\|\|/g, '.').replace(/\|/g, '.').split('.').filter(s => s.trim() !== '');
       } else {
+        // Safe regex to split English by punctuation without breaking older browsers
         segments = rawContent.replace(/([.?!;])/g, "$1|").split("|").map(s => s.trim()).filter(s => s !== '');
       }
 
-      icon.classList.add('fa-volume-up', 'text-amber-500');
       icon.classList.remove('fa-volume-mute', 'text-zinc-400');
+      icon.classList.add('fa-volume-up', 'text-amber-500');
 
-      const speak = (text, rate, lang) => new Promise(resolve => {
-        if (!text?.trim()) return resolve();
+      const speak = (text, defaultRate, lang) => new Promise((resolve) => {
+        if (!text) return resolve();
         const msg = new SpeechSynthesisUtterance(text);
-        msg.rate = rate * (appSettings.speechSpeed || 1);
-        const targetURI = (lang.startsWith('hi') || lang.startsWith('sa')) ? appSettings.saVoiceURI : appSettings.enVoiceURI;
-        if (targetURI) {
-          const v = systemVoices.find(voice => voice.voiceURI === targetURI);
-          if (v) msg.voice = v;
-        } else msg.lang = lang;
-        utteranceQueue.push(msg);
-        msg.onend = () => { utteranceQueue = utteranceQueue.filter(u => u !== msg); resolve(); };
-        msg.onerror = resolve;
+        
+        // Apply Settings from the Modal
+        msg.rate = defaultRate * (appSettings.speechSpeed || 1.0);
+        
+        const targetVoiceURI = lang.startsWith('hi') || lang.startsWith('sa') ? appSettings.saVoiceURI : appSettings.enVoiceURI;
+        if (targetVoiceURI && systemVoices.length > 0) {
+          const selectedVoice = systemVoices.find(v => v.voiceURI === targetVoiceURI);
+          if (selectedVoice) msg.voice = selectedVoice;
+        } else {
+           msg.lang = lang;
+        }
+        
+        utteranceQueue.push(msg); // Fixes the Chrome/Safari garbage collection bug
+
+        msg.onend = () => {
+           utteranceQueue = utteranceQueue.filter(u => u !== msg);
+           resolve();
+        };
+        msg.onerror = resolve; 
         window.speechSynthesis.speak(msg);
       });
 
+      // Play audio sequentially
       await speak(spokenCitation, 0.85, isSanskrit ? 'hi-IN' : 'en-US');
-      await new Promise(r => setTimeout(r, 650));
+      await new Promise(r => setTimeout(r, 600)); // Natural breath
 
       for (const seg of segments) {
-        await speak(seg, isSanskrit ? 0.75 : 0.85, isSanskrit ? 'hi-IN' : 'en-US');
-        await new Promise(r => setTimeout(r, 400));
+        await speak(seg, isSanskrit ? 0.75 : 0.85, isSanskrit ? 'hi-IN' : 'en-US'); 
+        await new Promise(r => setTimeout(r, 400)); // Natural breath between sentences
       }
 
       resetAllSpeakers();
       utteranceQueue = [];
     }
-
+    
     function buildVerseHTML(title, chapter, verse, slok, translation, associatedPrompt = null) {
       const formattedSlok = slok ? `<span class="sanskrit-verse">${slok.replace(/\n/g, '<br>')}</span>` : '';
+      let toolsHTML = '';
+      
       const safeTitle = title.replace(/'/g, "\\'").replace(/"/g, "&quot;");
       const safeSlok = slok ? slok.replace(/'/g, "\\'").replace(/\n/g, "\\n") : '';
       const safeTrans = translation.replace(/'/g, "\\'").replace(/"/g, "&quot;");
       const safePrompt = associatedPrompt ? associatedPrompt.replace(/'/g, "\\'").replace(/"/g, "&quot;") : '';
 
-      const bookmarkBtn = associatedPrompt ? `
+      let bookmarkBtn = associatedPrompt ? `
         <button onclick="bookmarkExactVerse('${safePrompt}', '${safeTitle}', ${chapter}, ${verse}, '${safeSlok}', '${safeTrans}')" 
                 class="text-[11px] text-amber-300/80 hover:text-amber-300 flex items-center gap-1 bg-zinc-800/80 hover:bg-zinc-700/80 px-2.5 py-1 rounded-md transition-all border border-zinc-700/40">
           <i class="fas fa-bookmark text-[10px]"></i> Save Action
-        </button>` : '';
-
+        </button>
+      ` : '';
+      
+      toolsHTML = `
+        <div class="mt-3 pt-2 border-t border-zinc-800/60 flex justify-between items-center">
+          <div class="flex gap-2">
+             <button onclick="toggleAudio(this, '${safeTrans}', '${safeSlok}', ${chapter}, ${verse})" class="hover:text-amber-400 transition-colors p-1" title="Toggle Audio">
+               <i class="fas fa-volume-mute speaker-icon text-zinc-400 text-lg"></i>
+             </button>
+          </div>
+          ${bookmarkBtn}
+        </div>
+      `;
+      
       return `
         <strong class="text-amber-400 block mb-2">${title} (Chapter ${chapter}, Verse ${verse})</strong>
         ${formattedSlok}
         <div class="text-zinc-300 italic border-l-2 border-amber-500/40 pl-3 mt-3 leading-relaxed">"${translation}"</div>
-        <div class="mt-3 pt-2 border-t border-zinc-800/60 flex justify-between items-center">
-          <button onclick="toggleAudio(this, '${safeTrans}', '${safeSlok}', ${chapter}, ${verse})" class="hover:text-amber-400 transition-colors p-1">
-            <i class="fas fa-volume-mute speaker-icon text-zinc-400 text-lg"></i>
-          </button>
-          ${bookmarkBtn}
-        </div>`;
+        ${toolsHTML}
+      `;
     }
 
     async function getVerseData(ch, verse) {
@@ -523,19 +556,17 @@
       const cached = localStorage.getItem(cacheKey);
       if (cached) return JSON.parse(cached);
       
-      try {
-        const res = await fetch(`https://vedicscriptures.github.io/slok/${ch}/${verse}`);
-        if (!res.ok) throw new Error();
-        const data = await res.json();
-        localStorage.setItem(cacheKey, JSON.stringify(data));
-        return data;
-      } catch (e) {
-        throw e;
-      }
+      const res = await fetch(`https://vedicscriptures.github.io/slok/${ch}/${verse}`);
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      
+      localStorage.setItem(cacheKey, JSON.stringify(data));
+      return data;
     }
 
     async function sendMessage(e, explicitText = null) {
-      if (e) e.preventDefault();
+      if (e && e.preventDefault) e.preventDefault();
+      
       const input = document.getElementById('userInput');
       const msg = explicitText ? explicitText.trim() : input.value.trim();
       if (!msg) return;
@@ -549,9 +580,9 @@
       try {
         const data = await getVerseData(matched.ch, matched.verse);
         thinking.parentElement.remove();
-        const trans = data.siva?.et || data.purohit?.et || data.tej?.ht || matched.translation;
-        const slok = data.slok || matched.slok || "";
-        appendMessage('bot', buildVerseHTML(matched.title, matched.ch, matched.verse, slok, trans, msg));
+        const extractedTranslation = data.siva?.et || data.purohit?.et || data.tej?.ht || matched.translation;
+        const extractedSlok = data.slok || matched.slok || "";
+        appendMessage('bot', buildVerseHTML(matched.title, matched.ch, matched.verse, extractedSlok, extractedTranslation, msg));
       } catch (err) {
         thinking.parentElement.remove();
         appendMessage('bot', buildVerseHTML(matched.title, matched.ch, matched.verse, matched.slok, matched.translation, msg));
@@ -559,64 +590,90 @@
     }
 
     function sendPrompt(promptText) {
-      closeSidebar();
+      closeSidebar(); 
       setTimeout(() => sendMessage(null, promptText), 80);
     }
 
-    // handleDirectSearch, fetchRandomGitaVerse, getOvalHTML, newChat remain the same as your original
-
     async function handleDirectSearch(e) {
-      if (e.key !== 'Enter') return;
-      const val = e.target.value.trim();
-      const parts = val.split('.');
-      if (parts.length !== 2) {
-        alert("Please format exactly as Chapter.Verse (e.g., 2.47)");
-        return;
-      }
-      const ch = parseInt(parts[0]);
-      const v = parseInt(parts[1]);
-      if (isNaN(ch) || isNaN(v) || ch < 1 || ch > 18 || v < 1 || v > (chapterBounds[ch] || 0)) {
-        alert("Invalid verse.");
-        return;
-      }
-      e.target.value = '';
-      appendMessage('user', `Look up exact verse: ${ch}.${v}`);
-      const thinking = appendMessage('bot', '<span class="text-amber-400 font-medium animate-pulse">Retrieving specific text...</span>');
-      try {
-        const data = await getVerseData(ch, v);
-        thinking.parentElement.remove();
-        const trans = data.siva?.et || data.purohit?.et || data.tej?.ht || "Translation unavailable.";
-        appendMessage('bot', buildVerseHTML("Direct Lookup", ch, v, data.slok, trans, "Direct Search"));
-      } catch {
-        thinking.parentElement.remove();
-        appendMessage('bot', `<span class="text-red-400">Could not retrieve Chapter ${ch}, Verse ${v}.</span>`);
+      if (e.key === 'Enter') {
+        const val = e.target.value.trim();
+        const parts = val.split('.');
+        
+        if (parts.length === 2) {
+          const ch = parseInt(parts[0]);
+          const v = parseInt(parts[1]);
+          
+          if (!isNaN(ch) && !isNaN(v) && ch >= 1 && ch <= 18 && v >= 1 && v <= chapterBounds[ch]) {
+            e.target.value = '';
+            appendMessage('user', `Look up exact verse: ${ch}.${v}`);
+            const thinking = appendMessage('bot', '<span class="text-amber-400 font-medium animate-pulse">Retrieving specific text...</span>');
+            
+            try {
+              const data = await getVerseData(ch, v);
+              thinking.parentElement.remove();
+              const extractedTranslation = data.siva?.et || data.purohit?.et || data.tej?.ht || "Translation unavailable.";
+              appendMessage('bot', buildVerseHTML("Direct Lookup", ch, v, data.slok, extractedTranslation, "Direct Search"));
+            } catch (err) {
+              thinking.parentElement.remove();
+              appendMessage('bot', `<span class="text-red-400">Could not retrieve Chapter ${ch}, Verse ${v} at this time. Network may be down.</span>`);
+            }
+          } else {
+            alert("Invalid verse. Please enter a valid Chapter.Verse (e.g., 2.47).");
+          }
+        } else {
+            alert("Please format exactly as Chapter.Verse (e.g., 2.47)");
+        }
       }
     }
 
     async function fetchRandomGitaVerse() {
-      closeSidebar();
-      appendMessage('user', "Random Verse");
-      const ch = Math.floor(Math.random() * 18) + 1;
-      const v = Math.floor(Math.random() * chapterBounds[ch]) + 1;
-      const loading = appendMessage('bot', '<span class="text-amber-400 font-medium animate-pulse">Opening a random chapter...</span>');
+      closeSidebar(); 
+      appendMessage('user', "Random Verse"); 
+      const randomChapter = Math.floor(Math.random() * 18) + 1;
+      const randomVerse = Math.floor(Math.random() * chapterBounds[randomChapter]) + 1;
+
+      const loadingMsg = appendMessage('bot', '<span class="text-amber-400 font-medium animate-pulse">Opening a random chapter...</span>');
+
       try {
-        const data = await getVerseData(ch, v);
-        loading.parentElement.remove();
-        const trans = data.siva?.et || data.purohit?.et || data.tej?.ht || "Wisdom is unfolding.";
-        appendMessage('bot', buildVerseHTML("Random Insight", ch, v, data.slok, trans, "Random Selection"));
-      } catch {
-        loading.parentElement.remove();
-        const fb = randomVersePool[Math.floor(Math.random() * randomVersePool.length)];
-        appendMessage('bot', buildVerseHTML("Random Insight (Local Archive)", fb.ch, fb.verse, fb.slok, fb.translation, "Random Selection"));
+        const data = await getVerseData(randomChapter, randomVerse);
+        loadingMsg.parentElement.remove();
+        const extractedTranslation = data.siva?.et || data.purohit?.et || data.tej?.ht || "Wisdom is unfolding.";
+        const extractedSlok = data.slok || "";
+        appendMessage('bot', buildVerseHTML("Random Insight", randomChapter, randomVerse, extractedSlok, extractedTranslation, "Random Selection"));
+      } catch (e) {
+        loadingMsg.parentElement.remove();
+        const fallback = randomVersePool[Math.floor(Math.random() * randomVersePool.length)];
+        appendMessage('bot', buildVerseHTML("Random Insight (Local Archive)", fallback.ch, fallback.verse, fallback.slok, fallback.translation, "Random Selection"));
       }
     }
 
     function getOvalHTML() {
-      return `<div class="faint-overlay"></div><div class="max-w-4xl mx-auto mt-6 p-8 rounded-3xl bg-zinc-900/80 border border-zinc-800/80 backdrop-blur-md text-center relative overflow-hidden shadow-2xl">... (your original welcome HTML) ...</div>`;
+      return `
+        <div class="faint-overlay"></div>
+        <div class="max-w-4xl mx-auto mt-6 p-8 rounded-3xl bg-zinc-900/80 border border-zinc-800/80 backdrop-blur-md text-center relative overflow-hidden shadow-2xl">
+          <div class="absolute inset-0 opacity-10 bg-cover bg-center mix-blend-luminosity pointer-events-none" 
+               style="background-image: url('https://images.unsplash.com/photo-1609137144813-7d7881005ca7?auto=format&fit=crop&w=1200&q=50');">
+          </div>
+          <div class="relative z-10 flex flex-col items-center justify-center gap-4">
+            
+            <div class="rounded-full p-1 bg-gradient-to-br from-amber-400 to-orange-500 shadow-lg">
+              <img src="krishna-arjuna.jpg" alt="Krishna and Arjuna" class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover">
+            </div>
+
+            <h3 class="text-xl font-bold text-zinc-100 tracking-tight">Welcome to Inner Peace</h3>
+            <p class="text-zinc-400 text-sm leading-relaxed max-w-2xl px-4">
+              Describe whatever challenges or transitions you are balancing right now. I will query the open Gita ledger dynamically to build your custom action resolutions.
+            </p>
+            <div class="text-xs text-amber-400/50 italic border-t border-zinc-800/80 pt-4 w-full mt-2">
+              "In the battlefield of life, wisdom begins when we pause and listen."
+            </div>
+          </div>
+        </div>
+      `;
     }
 
     function newChat() {
-      closeSidebar();
+      closeSidebar(); 
       chat.innerHTML = getOvalHTML();
     }
 
@@ -624,7 +681,10 @@
       setupDynamicBackground();
       renderSavedPrompts();
       chat.innerHTML = getOvalHTML();
-      if (window.speechSynthesis.getVoices().length > 0) populateVoiceList();
+      // Ensure settings populate if voices load instantly
+      if (window.speechSynthesis.getVoices().length > 0) {
+        populateVoiceList();
+      }
     };
   </script>
 </body>
