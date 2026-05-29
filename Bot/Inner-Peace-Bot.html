@@ -344,7 +344,6 @@
       const container = document.getElementById('saved-prompts-list');
       const clearBtn = document.getElementById('clearDataBtn');
       
-      // Feature: Dynamically Grey out "Clear Saved Actions" if there is no data
       if (clearBtn) {
         if (savedPrompts.length === 0) {
             clearBtn.disabled = true;
@@ -462,10 +461,11 @@
         });
     }
 
-    let utteranceQueue = []; // Global array to prevent speech cut-offs
+    let utteranceQueue = []; 
 
-    // Audio Solution: Enforce sequential boundaries by pushing distinct events to the native queue.
-    function toggleAudio(btn, enText, saText, chapter, verse) {
+    // FIX: Completely skip speaking the Chapter and Verse numbers.
+    // Jump straight into the actual verse/translation content.
+    function toggleAudio(btn, enText, saText) {
       const icon = btn.querySelector('i');
       const isCurrentlyPlaying = icon.classList.contains('fa-volume-up');
       
@@ -482,20 +482,12 @@
       let sentences = [];
       
       if (isSanskrit) {
-          // Devanagari text explicitly prevents the Hindi engine from reading numbers as an English math equation
-          sentences.push(`अध्याय ${chapter}`);
-          sentences.push(`श्लोक ${verse}`);
-          
           const rawContent = (saText || enText);
           const verseLines = rawContent.replace(/\|\|/g, '।').replace(/॥/g, '।').split('।');
           verseLines.forEach(line => {
               if (line.trim()) sentences.push(line.trim());
           });
       } else {
-          // Explicit string boundary prevents run-ons
-          sentences.push(`Chapter ${chapter}`);
-          sentences.push(`Verse ${verse}`);
-          
           const engLines = enText.replace(/([.?!;])/g, "$1|").split("|");
           engLines.forEach(line => {
               if (line.trim()) sentences.push(line.trim());
@@ -506,8 +498,13 @@
       icon.classList.add('fa-volume-up', 'text-amber-500');
 
       let completedCount = 0;
+      
+      // If there's nothing to speak, reset immediately
+      if (sentences.length === 0) {
+          resetAllSpeakers();
+          return;
+      }
 
-      // Pushing independent SpeechSynthesisUtterances forces the browser to drop state and pause between them
       sentences.forEach((sentenceText) => {
           const msg = new SpeechSynthesisUtterance(sentenceText);
           msg.rate = defaultRate * (appSettings.speechSpeed || 1.0);
@@ -536,11 +533,12 @@
               }
           };
           
-          utteranceQueue.push(msg); // Hold in memory to prevent browser garbage collection
+          utteranceQueue.push(msg); 
           window.speechSynthesis.speak(msg);
       });
     }
     
+    // Updated button onclick to no longer pass chapter and verse
     function buildVerseHTML(title, chapter, verse, slok, translation, associatedPrompt = null) {
       const formattedSlok = slok ? `<span class="sanskrit-verse">${slok.replace(/\n/g, '<br>')}</span>` : '';
       let toolsHTML = '';
@@ -560,7 +558,7 @@
       toolsHTML = `
         <div class="mt-3 pt-2 border-t border-zinc-800/60 flex justify-between items-center">
           <div class="flex gap-2">
-             <button onclick="toggleAudio(this, '${safeTrans}', '${safeSlok}', ${chapter}, ${verse})" class="hover:text-amber-400 transition-colors p-1" title="Toggle Audio">
+             <button onclick="toggleAudio(this, '${safeTrans}', '${safeSlok}')" class="hover:text-amber-400 transition-colors p-1" title="Toggle Audio">
                <i class="fas fa-volume-mute speaker-icon text-zinc-400 text-lg"></i>
              </button>
           </div>
