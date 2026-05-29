@@ -195,7 +195,6 @@
     const chat = document.getElementById('chat');
     let audioLang = 'en'; 
     
-    // ================= SETTINGS LOGIC =================
     let systemVoices = [];
     let appSettings = JSON.parse(localStorage.getItem('gitaSettings')) || {
       enVoiceURI: '',
@@ -265,9 +264,7 @@
     }
 
     function clearAllSavedData() {
-      if (savedPrompts.length === 0) {
-        return; 
-      }
+      if (savedPrompts.length === 0) return; 
       if(confirm("Are you sure you want to delete all your saved Action Solutions? This cannot be undone.")) {
         localStorage.removeItem('gitaSavedPrompts');
         savedPrompts = [];
@@ -275,7 +272,6 @@
         closeSettings();
       }
     }
-    // ================= END SETTINGS LOGIC =================
 
     const chapterBounds = { 1:47, 2:72, 3:43, 4:42, 5:29, 6:47, 7:30, 8:28, 9:34, 10:42, 11:55, 12:20, 13:35, 14:27, 15:20, 16:24, 17:28, 18:78 };
 
@@ -283,7 +279,7 @@
       karma: [
         { title: "Wisdom on Action & Purpose", ch: 3, verse: 19, slok: "तस्मादसक्तः सततम् कार्यम् कर्म समाचर।\nअसक्तो ह्याचरन्कर्म परमाप्नोति पूरुषः॥", translation: "Therefore, without attachment, always perform the actions that ought to be done; for by performing actions without attachment, one attains the supreme state." },
         { title: "The Path of Action", ch: 2, verse: 47, slok: "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।\nमा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥", translation: "You have a right to perform your prescribed duties, but you are never entitled to the fruits of your actions. Never consider yourself to be the cause of the results of your activities, nor be attached to inaction." },
-        { title: "Pure and Balanced Labor", ch: 18, verse: 23, slok: "नियतं सङ्गरहितमरागद्वेषतः कृतम्\nअफलप्रेप्सुना कर्म यत्तत्सात्त्विकमुच्यते॥", translation: "Action which is ordained, which is free from attachment, which is done without love or hatred by one not desirous of the fruit, that is declared to be pure." }
+        { title: "Pure and Balanced Labor", ch: 18, verse: 23, slok: "नियतं सङ्गरहितमरागद्वेषतः कृतम्।\nअफलप्रेप्सुना कर्म यत्तत्सात्त्विकमुच्यते॥", translation: "Action which is ordained, which is free from attachment, which is done without love or hatred by one not desirous of the fruit, that is declared to be pure." }
       ],
       bhakti: [
         { title: "The Path of Devotion", ch: 12, verse: 13, slok: "अद्वेष्टा सर्वभूतानां मैत्रः करुण एव च।\nनिर्ममो निरहङ्कारः समदुःखसुखः क्षमी॥", translation: "One who is not envious but is a kind friend to all living entities, who does not think himself a proprietor and is free from false ego, who is equal in both happiness and distress, and tolerant, is very dear to Me." },
@@ -308,21 +304,6 @@
       ]
     };
 
-    const randomVersePool = [
-      { ch: 6, verse: 5, slok: "उद्धरेदात्मनात्मानं नात्मानमवसादयेत्।\nआत्मैव ह्यात्मनो बन्धुरात्मैव रिपुरात्मनः॥", translation: "Let a man lift himself up by his own mind; let him not degrade himself. For the mind is the friend of the self, and the mind can be the enemy of the self." },
-      { ch: 5, verse: 21, slok: "बाह्यस्पर्शेष्वसक्तात्मा विन्दत्यात्मनि यत्सुखम्।\nस ब्रह्मयोगयुक्तात्मा सुखमक्षयमश्नुते॥", translation: "One who is unattached to external sensory pleasures finds true happiness within. Self-connected, they experience endless joy." },
-      { ch: 13, verse: 28, slok: "समं पश्यन्हि सर्वत्र समवस्थितमीश्वरम्।\nन हिनस्त्यात्मनात्मानं ततो याति परां गतिम्॥", translation: "Seeing the presence of truth equally everywhere, one does not destroy the self by the mind, thus attaining the supreme state." },
-      { ch: 9, verse: 22, slok: "अनन्याश्चिन्तयन्तो मां ये जनाः पर्युपासते।\nतेषां नित्याभियुक्तानां योगक्षेमं वहाम्यहम्॥", translation: "But those who worship with exclusive devotion, meditating on the Cosmic Whole, to them I carry what they lack and preserve what they already have." },
-      { ch: 4, verse: 38, slok: "न हि ज्ञानेन सदृशं पवित्रमिह विद्यते।\nतत्स्वयं योगसंसिद्धः कालेनात्मनि विन्दति॥", translation: "In this world, there is nothing so sublime and pure as transcendental knowledge. Such knowledge is the mature fruit of all mysticism." },
-      { ch: 12, verse: 13, slok: "अद्वेष्टा सर्वभूतानां मैत्रः करुण एव च।\nनिर्ममो निरहङ्कारः समदुःखसुखः क्षमी॥", translation: "One who is not envious but is a kind friend to all living entities, who does not think himself a proprietor and is free from false ego, is dear to Me." },
-      { ch: 6, verse: 34, slok: "चञ्चलं हि मनः कृष्ण प्रमाथि बलवद्दृढम्।\nतस्याहं निग्रहं मन्ये वायोरिव सुदुष्करम्॥", translation: "For the mind is restless, turbulent, obstinate and very strong, O Krishna, and to subdue it, I think, is more difficult than controlling the wind." },
-      { ch: 2, verse: 50, slok: "बुद्धियुक्तो जहातीह उभे सुकृतदुष्कृते।\nतस्माद्योगाय युज्यस्व योगः कर्मसु कौशलम्॥", translation: "A man engaged in devotional service rids himself of both good and bad actions even in this life. Therefore strive for yoga, which is the art of all work." },
-      { ch: 16, verse: 1, slok: "अभयं सत्त्वसंशुद्धिर्ज्ञानयोगव्यवस्थितिः।\nदानं दमश्च यज्ञश्च स्वाध्यायस्तप आर्जवम्॥", translation: "Fearlessness; purification of one's existence; cultivation of spiritual knowledge; charity; self-control; performance of sacrifice; study of the Vedas; austerity and simplicity; these belong to the godly men." },
-      { ch: 3, verse: 27, slok: "प्रकृतेः क्रियमाणानि गुणैः कर्माणि सर्वशः\nअहङ्कारविमूढात्मा कर्ताहमिति मन्यते॥", translation: "All aspects of actions are carried out by the complex intertwining of nature's qualities. The soul, bewildered by the ego, thinks 'I am the doer.'" },
-      { ch: 14, verse: 22, slok: "प्रकाशं च प्रवृत्तिं च मोहमेव च पाण्डव।\nन द्वेष्टि सम्प्रवृत्तानि न निवृत्तानि काङ्क्षति॥", translation: "He who does not hate illumination, attachment and delusion when they are present or long for them when they disappear... is firmly situated." },
-      { ch: 8, verse: 7, slok: "तस्मात्सर्वेषु कालेषु मामनुस्मर युध्य च।\nमय्यर्पितमनोबुद्धिर्मामेवैष्यस्यसंशयम्॥", translation: "Therefore, at all times you should think of Me and carry out your prescribed duty. With your activities dedicated to Me and your mind and intelligence fixed on Me, you will attain Me without doubt." }
-    ];
-
     function toggleSidebar() {
       const sidebar = document.getElementById('sidebar');
       if (sidebar.classList.contains('w-72')) {
@@ -342,7 +323,6 @@
     function renderSavedPrompts() {
       const container = document.getElementById('saved-prompts-list');
       const clearBtn = document.getElementById('clearDataBtn');
-      
       if (clearBtn) {
         if (savedPrompts.length === 0) {
             clearBtn.disabled = true;
@@ -352,7 +332,6 @@
             clearBtn.className = "w-full bg-zinc-950 hover:bg-red-900/30 text-red-400 border border-red-900/50 hover:border-red-500/50 py-2.5 rounded-xl text-sm transition-colors flex items-center justify-center gap-2";
         }
       }
-
       if (savedPrompts.length === 0) {
         container.innerHTML = '<div class="text-zinc-600 text-xs px-3 italic">No configurations saved yet.</div>';
         return;
@@ -386,12 +365,10 @@
       let name = prompt("Give this resolution entry a unique name:");
       if (!name || name.trim() === "") return;
       name = name.trim();
-
       if (savedPrompts.some(p => p.name.toLowerCase() === name.toLowerCase())) {
-        alert("A configuration with this name already exists. Please choose a unique name to prevent overrides.");
+        alert("A configuration with this name already exists.");
         return;
       }
-
       savedPrompts.push({
         name: name, prompt: promptText, title: title, ch: ch, verse: verse, 
         slok: slok ? slok.replace(/\\n/g, '\n') : '', translation: translation
@@ -434,18 +411,14 @@
     function matchIntentData(text) {
       const lower = text.toLowerCase();
       let matchedArray = null;
-
       if (/karma|action|deeds|work/i.test(lower)) matchedArray = wisdomDb.karma;
       else if (/bhakti|devotion|worship|love/i.test(lower)) matchedArray = wisdomDb.bhakti;
       else if (/gnana|jnana|knowledge|intellect/i.test(lower)) matchedArray = wisdomDb.gnana;
       else if (/anxiety|anxious|worry|panic|fear/i.test(lower)) matchedArray = wisdomDb.anxiety;
       else if (/equanimity|balance|peace|calm|still/i.test(lower)) matchedArray = wisdomDb.balance;
       else if (/depression|depress|sad|grief|sorrow|loss/i.test(lower)) matchedArray = wisdomDb.depression;
-
       if (matchedArray) return matchedArray[Math.floor(Math.random() * matchedArray.length)];
-
-      const fallback = randomVersePool[Math.floor(Math.random() * randomVersePool.length)];
-      return { title: "Reflective Insight", ch: fallback.ch, verse: fallback.verse, slok: fallback.slok, translation: fallback.translation };
+      return { title: "Reflective Insight", ch: 6, verse: 5, slok: "उद्धरेदात्मनात्मानं नात्मानमवसादयेत्।\nआत्मैव ह्यात्मनो बन्धुरात्मैव रिपुरात्मनः॥", translation: "Let a man lift himself up by his own mind; let him not degrade himself. For the mind is the friend of the self, and the mind can be the enemy of the self." };
     }
 
     function toggleAudioLang() {
@@ -460,10 +433,9 @@
         });
     }
 
-    let utteranceQueue = []; 
+    let utteranceQueue = [];
 
-    // FIX: Completely skip speaking the Chapter and Verse numbers.
-    // Skip recitation of citations to fix math/run-on issues.
+    // Audio Solution: Enforce sequential boundaries and strip noise
     function toggleAudio(btn, enText, saText) {
       const icon = btn.querySelector('i');
       const isCurrentlyPlaying = icon.classList.contains('fa-volume-up');
@@ -481,12 +453,17 @@
       let sentences = [];
       
       if (isSanskrit) {
-          const rawContent = (saText || enText);
-          const verseLines = rawContent.replace(/\|\|/g, '।').replace(/॥/g, '।').split('।');
+          // CLEANER: Removes everything between || and || or ॥ and ॥ before feeding to TTS
+          const cleanedSanskrit = (saText || enText)
+            .replace(/\|\|.*?\|\|/g, '')
+            .replace(/॥.*?॥/g, '');
+
+          const verseLines = cleanedSanskrit.replace(/\|\|/g, '।').replace(/॥/g, '।').split('।');
           verseLines.forEach(line => {
               if (line.trim()) sentences.push(line.trim());
           });
       } else {
+          // CLEANER: Only reads the text, no numbers/headers
           const engLines = enText.replace(/([.?!;])/g, "$1|").split("|");
           engLines.forEach(line => {
               if (line.trim()) sentences.push(line.trim());
@@ -497,11 +474,6 @@
       icon.classList.add('fa-volume-up', 'text-amber-500');
 
       let completedCount = 0;
-
-      if (sentences.length === 0) {
-          resetAllSpeakers();
-          return;
-      }
 
       sentences.forEach((sentenceText) => {
           const msg = new SpeechSynthesisUtterance(sentenceText);
@@ -531,14 +503,13 @@
               }
           };
           
-          utteranceQueue.push(msg); 
+          utteranceQueue.push(msg);
           window.speechSynthesis.speak(msg);
       });
     }
     
     function buildVerseHTML(title, chapter, verse, slok, translation, associatedPrompt = null) {
       const formattedSlok = slok ? `<span class="sanskrit-verse">${slok.replace(/\n/g, '<br>')}</span>` : '';
-      let toolsHTML = '';
       
       const safeTitle = title.replace(/'/g, "\\'").replace(/"/g, "&quot;");
       const safeSlok = slok ? slok.replace(/'/g, "\\'").replace(/\n/g, "\\n") : '';
@@ -552,7 +523,7 @@
         </button>
       ` : '';
       
-      toolsHTML = `
+      const toolsHTML = `
         <div class="mt-3 pt-2 border-t border-zinc-800/60 flex justify-between items-center">
           <div class="flex gap-2">
              <button onclick="toggleAudio(this, '${safeTrans}', '${safeSlok}')" class="hover:text-amber-400 transition-colors p-1" title="Toggle Audio">
@@ -575,28 +546,22 @@
       const cacheKey = `gita_cache_${ch}_${verse}`;
       const cached = localStorage.getItem(cacheKey);
       if (cached) return JSON.parse(cached);
-      
       const res = await fetch(`https://vedicscriptures.github.io/slok/${ch}/${verse}`);
       if (!res.ok) throw new Error();
       const data = await res.json();
-      
       localStorage.setItem(cacheKey, JSON.stringify(data));
       return data;
     }
 
     async function sendMessage(e, explicitText = null) {
       if (e && e.preventDefault) e.preventDefault();
-      
       const input = document.getElementById('userInput');
       const msg = explicitText ? explicitText.trim() : input.value.trim();
       if (!msg) return;
-
       appendMessage('user', msg);
       if (!explicitText) input.value = '';
-
       const thinking = appendMessage('bot', '<span class="text-amber-400 font-medium animate-pulse">Contemplating the verses...</span>');
       const matched = matchIntentData(msg);
-
       try {
         const data = await getVerseData(matched.ch, matched.verse);
         thinking.parentElement.remove();
@@ -618,16 +583,13 @@
       if (e.key === 'Enter') {
         const val = e.target.value.trim();
         const parts = val.split('.');
-        
         if (parts.length === 2) {
           const ch = parseInt(parts[0]);
           const v = parseInt(parts[1]);
-          
           if (!isNaN(ch) && !isNaN(v) && ch >= 1 && ch <= 18 && v >= 1 && v <= chapterBounds[ch]) {
             e.target.value = '';
             appendMessage('user', `Look up exact verse: ${ch}.${v}`);
             const thinking = appendMessage('bot', '<span class="text-amber-400 font-medium animate-pulse">Retrieving specific text...</span>');
-            
             try {
               const data = await getVerseData(ch, v);
               thinking.parentElement.remove();
@@ -646,27 +608,6 @@
       }
     }
 
-    async function fetchRandomGitaVerse() {
-      closeSidebar(); 
-      appendMessage('user', "Random Verse"); 
-      const randomChapter = Math.floor(Math.random() * 18) + 1;
-      const randomVerse = Math.floor(Math.random() * chapterBounds[randomChapter]) + 1;
-
-      const loadingMsg = appendMessage('bot', '<span class="text-amber-400 font-medium animate-pulse">Opening a random chapter...</span>');
-
-      try {
-        const data = await getVerseData(randomChapter, randomVerse);
-        loadingMsg.parentElement.remove();
-        const extractedTranslation = data.siva?.et || data.purohit?.et || data.tej?.ht || "Wisdom is unfolding.";
-        const extractedSlok = data.slok || "";
-        appendMessage('bot', buildVerseHTML("Random Insight", randomChapter, randomVerse, extractedSlok, extractedTranslation, "Random Selection"));
-      } catch (e) {
-        loadingMsg.parentElement.remove();
-        const fallback = randomVersePool[Math.floor(Math.random() * randomVersePool.length)];
-        appendMessage('bot', buildVerseHTML("Random Insight (Local Archive)", fallback.ch, fallback.verse, fallback.slok, fallback.translation, "Random Selection"));
-      }
-    }
-
     function getOvalHTML() {
       return `
         <div class="faint-overlay"></div>
@@ -675,11 +616,9 @@
                style="background-image: url('https://images.unsplash.com/photo-1609137144813-7d7881005ca7?auto=format&fit=crop&w=1200&q=50');">
           </div>
           <div class="relative z-10 flex flex-col items-center justify-center gap-4">
-            
             <div class="rounded-full p-1 bg-gradient-to-br from-amber-400 to-orange-500 shadow-lg">
               <img src="krishna-arjuna.jpg" alt="Krishna and Arjuna" class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover">
             </div>
-
             <h3 class="text-xl font-bold text-zinc-100 tracking-tight">Welcome to Inner Peace</h3>
             <p class="text-zinc-400 text-sm leading-relaxed max-w-2xl px-4">
               Describe whatever challenges or transitions you are balancing right now. I will query the open Gita ledger dynamically to build your custom action resolutions.
@@ -701,9 +640,7 @@
       setupDynamicBackground();
       renderSavedPrompts();
       chat.innerHTML = getOvalHTML();
-      if (window.speechSynthesis.getVoices().length > 0) {
-        populateVoiceList();
-      }
+      if (window.speechSynthesis.getVoices().length > 0) populateVoiceList();
     };
   </script>
 </body>
