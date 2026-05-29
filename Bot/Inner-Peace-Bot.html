@@ -66,13 +66,6 @@
     .sidebar-transition {
       transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease, border-color 0.3s ease;
     }
-    .animate-spin-slow {
-      animation: spin 16s linear infinite;
-    }
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
   </style>
 </head>
 <body class="h-screen w-screen text-gray-100 flex overflow-hidden bg-cover bg-center bg-no-repeat bg-fixed">
@@ -86,17 +79,20 @@
     </div>
 
     <div class="p-4 shrink-0 w-72">
-      <button onclick="newChat()" class="w-full bg-amber-500 hover:bg-amber-600 text-black font-semibold py-3.5 rounded-2xl flex items-center justify-center gap-2 transition-all">
+      <button onclick="newChat()" class="w-full bg-amber-500 hover:bg-amber-600 text-black font-semibold py-3.5 rounded-2xl flex items-center justify-center gap-2 transition-all shadow-md">
         <i class="fas fa-plus"></i> New Conversation
       </button>
     </div>
 
     <div class="px-4 flex-1 overflow-y-auto pb-4 w-72">
       <p class="text-amber-400/80 text-xs mb-3 px-3 font-semibold tracking-wider">QUICK PROMPTS</p>
-      <div onclick="sendPrompt('Explain Karma from Gita')" class="prompt-btn text-sm text-zinc-300">Karma explained</div>
-      <div onclick="sendPrompt('What is Dharma?')" class="prompt-btn text-sm text-zinc-300">Dharma meaning</div>
-      <div onclick="sendPrompt('Verse on equanimity and inner balance')" class="prompt-btn text-sm text-zinc-300">Verse on balance</div>
-      <div onclick="sendPrompt('How to handle fear and anxiety')" class="prompt-btn text-sm text-zinc-300">Handling anxiety</div>
+      <div onclick="sendPrompt('Karma Yoga')" class="prompt-btn text-sm text-zinc-300">Karma Yoga</div>
+      <div onclick="sendPrompt('Bhakti Yoga')" class="prompt-btn text-sm text-zinc-300">Bhakti Yoga</div>
+      <div onclick="sendPrompt('Gnana Yoga')" class="prompt-btn text-sm text-zinc-300">Gnana Yoga</div>
+      <div onclick="sendPrompt('Handle Anxiety')" class="prompt-btn text-sm text-zinc-300">Handle Anxiety</div>
+      <div onclick="sendPrompt('Maintain Equanimity')" class="prompt-btn text-sm text-zinc-300">Maintain Equanimity</div>
+      <div onclick="sendPrompt('Manage Depression')" class="prompt-btn text-sm text-zinc-300">Manage Depression</div>
+      <div onclick="fetchRandomGitaVerse()" class="prompt-btn text-sm text-zinc-300">Random Verse</div>
 
       <div class="mt-8">
         <p class="text-amber-400/80 text-xs mb-3 px-3 font-semibold tracking-wider">SAVED ACTION SOLUTIONS</p>
@@ -127,16 +123,11 @@
           <i class="fas fa-search absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 text-xs"></i>
         </div>
 
-        <button id="langToggleBtn" onclick="toggleAudioLang()" title="Toggle EN/SA Audio" class="w-8 h-8 flex items-center justify-center text-xs font-bold text-amber-500 border border-amber-500/30 rounded-lg hover:bg-amber-500/10 transition-all">
+        <button id="langToggleBtn" onclick="toggleAudioLang()" title="Toggle EN/SA Audio" class="w-8 h-8 flex items-center justify-center text-xs font-bold text-amber-500 border border-amber-500/30 rounded-lg hover:bg-amber-500/10 transition-all ml-2">
           EN
         </button>
 
-        <button onclick="fetchRandomGitaVerse()" 
-                class="flex items-center gap-2 bg-zinc-800 hover:bg-zinc-700 hover:text-amber-300 px-5 py-2.5 rounded-3xl text-sm font-medium transition-all ml-2">
-          <i class="fas fa-book"></i>
-          <span class="hidden sm:inline">Random</span>
-        </button>
-        <button onclick="openSettings()" class="w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-amber-300 rounded-3xl hover:bg-zinc-800 transition-all">
+        <button onclick="openSettings()" class="w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-amber-300 rounded-3xl hover:bg-zinc-800 transition-all ml-2">
           <i class="fas fa-cog text-xl"></i>
         </button>
       </div>
@@ -170,9 +161,13 @@
         { title: "The Path of Action", ch: 2, verse: 47, slok: "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।\nमा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥", translation: "You have a right to perform your prescribed duties, but you are never entitled to the fruits of your actions. Never consider yourself to be the cause of the results of your activities, nor be attached to inaction." },
         { title: "Pure and Balanced Labor", ch: 18, verse: 23, slok: "नियतं सङ्गरहितमरागद्वेषतः कृतम्।\nअफलप्रेप्सुना कर्म यत्तत्सात्त्विकमुच्यते॥", translation: "Action which is ordained, which is free from attachment, which is done without love or hatred by one not desirous of the fruit, that is declared to be pure." }
       ],
-      dharma: [
-        { title: "Wisdom on Natural Duty", ch: 18, verse: 47, slok: "श्रेयानस्वधर्मो विगुणः परधर्मात्स्वनुष्ठितात्।\nस्वभावनियतं कर्म कुर्वन्नाप्नोति किल्बिषम्॥", translation: "It is far better to perform one’s own natural duties, even if imperfectly, than to master the duties of another. Engaging in work mapped to your true nature brings no internal conflict." },
-        { title: "Identity and Path", ch: 3, verse: 35, slok: "श्रेयान्स्वधर्मो विगुणः परधर्मात्स्वनुष्ठितात्।\nस्वधर्मे निधनं श्रेयः परधर्मो भयावहः॥", translation: "It is far better to follow one's own path, even if flawed, than to perfectly copy another's blueprint. Even destruction on your own natural path brings alignment." }
+      bhakti: [
+        { title: "The Path of Devotion", ch: 12, verse: 13, slok: "अद्वेष्टा सर्वभूतानां मैत्रः करुण एव च।\nनिर्ममो निरहङ्कारः समदुःखसुखः क्षमी॥", translation: "One who is not envious but is a kind friend to all living entities, who does not think himself a proprietor and is free from false ego, who is equal in both happiness and distress, and tolerant, is very dear to Me." },
+        { title: "Divine Protection", ch: 9, verse: 22, slok: "अनन्याश्चिन्तयन्तो मां ये जनाः पर्युपासते।\nतेषां नित्याभियुक्तानां योगक्षेमं वहाम्यहम्॥", translation: "But those who always worship Me with exclusive devotion, meditating on My transcendental form—to them I carry what they lack, and I preserve what they have." }
+      ],
+      gnana: [
+        { title: "The Fire of Knowledge", ch: 4, verse: 38, slok: "न हि ज्ञानेन सदृशं पवित्रमिह विद्यते।\nतत्स्वयं योगसंसिद्धः कालेनात्मनि विन्दति॥", translation: "In this world, there is nothing so sublime and pure as transcendental knowledge. Such knowledge is the mature fruit of all mysticism." },
+        { title: "Slashing Ignorance", ch: 4, verse: 42, slok: "तस्मादज्ञानसम्भूतं हृत्स्थं ज्ञानासिनात्मनः।\nछित्त्वैनं संशयं योगमातिष्ठोत्तिष्ठ भारत॥", translation: "Therefore, the doubts which have arisen in your heart out of ignorance should be slashed by the weapon of knowledge. Armed with yoga, stand and fight." }
       ],
       balance: [
         { title: "Wisdom on Equanimity", ch: 2, verse: 48, slok: "योगस्थः कुरु कर्माणि सङ्गं त्यक्त्वा धनञ्जय।\nसिद्ध्यसिद्ध्योः समो भूत्वा समत्वं योग उच्यते॥", translation: "Be steadfast in your path, abandoning all anxious attachment to success or failure. Such balance and evenness of mind is the true essence of Yoga." },
@@ -182,21 +177,10 @@
         { title: "Wisdom on Overcoming Anxiety", ch: 2, verse: 14, slok: "मात्रास्पर्शास्तु कौन्तेय शीतोष्णसुखदुःखदाः।\nआगमापायिनोऽनित्यास्तांस्तितिक्षस्व भारत॥", translation: "The sensory contacts with external things give rise to temporary feelings of pleasure and pain. They come and go like changing seasons. Observe and tolerate them without letting them shake your internal core." },
         { title: "Freedom from Fear", ch: 18, verse: 66, slok: "सर्वधर्मान्परित्यज्य मामेकं शरणं व्रज।\nअहं त्वां सर्वपापेभ्यो मोक्षयिष्यामि मा शुचः॥", translation: "Abandon all varieties of operational anxieties and surrender completely into the cosmic flow. Do not fear, do not grieve." }
       ],
-      anger: [
-        { title: "The Cascade of Anger", ch: 2, verse: 62, slok: "ध्यायतो विषयान्पुंसः सङ्गस्तेषूपजायते।\nसङ्गात्सञ्जायते कामः कामात्क्रोधोऽभिजायते॥", translation: "While contemplating the objects of the senses, a person develops attachment for them, and from such attachment lust develops, and from lust anger arises." },
-        { title: "Breaking the Cycle", ch: 2, verse: 63, slok: "क्रोधाद्भवति सम्मोहः सम्मोहात्स्मृतिविभ्रमः।\nस्मृतिभ्रंशाद्बुद्धिनाशो बुद्धिनाशात्प्रणश्यति॥", translation: "From anger, complete delusion arises, and from delusion bewilderment of memory. When memory is bewildered, intelligence is lost, and when intelligence is lost one falls down again into the material pool." }
-      ],
-      grief: [
+      depression: [
         { title: "Wisdom on Sorrow", ch: 2, verse: 11, slok: "अशोच्यानन्वशोचस्त्वं प्रज्ञावादांश्च भाषसे।\nगतासूनगतासूंश्च नानुशोचन्ति पण्डिताः॥", translation: "While speaking learned words, you are mourning for what is not worthy of grief. Those who are wise lament neither for the living nor for the dead." },
-        { title: "The Eternal Nature", ch: 2, verse: 22, slok: "वासांसि जीर्णानि यथा विहाय नवानि गृह्णाति नरोऽपराणि।\nतथा शरीराणि विहाय जीर्णान्यन्यानि संयाति नवानि देही॥", translation: "As a person puts on new garments, giving up old ones, the soul similarly accepts new material bodies, giving up the old and useless ones." }
-      ],
-      doubt: [
-        { title: "Slaying Doubt", ch: 4, verse: 42, slok: "तस्मादज्ञानसम्भूतं हृत्स्थं ज्ञानासिनात्मनः।\nछित्त्वैनं संशयं योगमातिष्ठोत्तिष्ठ भारत॥", translation: "Therefore, the doubts which have arisen in your heart out of ignorance should be slashed by the weapon of knowledge. Armed with yoga, stand and fight." },
-        { title: "Clarity Restored", ch: 18, verse: 73, slok: "नष्टो मोहः स्मृतिर्लब्धा त्वत्प्रसादान्मयाच्युत।\nस्थितोऽस्मि गतसन्देहः करिष्ये वचनं तव॥", translation: "My illusion is now gone. I have regained my memory by Your mercy. I am now firm and free from doubt and am prepared to act according to Your instructions." }
-      ],
-      relationships: [
-        { title: "Transcending Envy", ch: 12, verse: 13, slok: "अद्वेष्टा सर्वभूतानां मैत्रः करुण एव च।\nनिर्ममो निरहङ्कारः समदुःखसुखः क्षमी॥", translation: "One who is not envious but is a kind friend to all living entities, who does not think himself a proprietor and is free from false ego, who is equal in both happiness and distress, and tolerant, is very dear to Me." },
-        { title: "Dealing with Difficult Traits", ch: 16, verse: 4, slok: "दम्भो दर्पोऽभिमानश्च क्रोधः पारुष्यमेव च।\nअज्ञानं चाभिजातस्य पार्थ सम्पदमासुरीम्॥", translation: "Pride, arrogance, conceit, anger, harshness and ignorance—these qualities belong to those of demoniac nature. Recognize these traits without letting them disturb your own balance." }
+        { title: "The Eternal Nature", ch: 2, verse: 22, slok: "वासांसि जीर्णानि यथा विहाय नवानि गृह्णाति नरोऽपराणि।\nतथा शरीराणि विहाय जीर्णान्यन्यानि संयाति नवानि देही॥", translation: "As a person puts on new garments, giving up old ones, the soul similarly accepts new material bodies, giving up the old and useless ones." },
+        { title: "Uplifting the Self", ch: 6, verse: 5, slok: "उद्धरेदात्मनात्मानं नात्मानमवसादयेत्।\nआत्मैव ह्यात्मनो बन्धुरात्मैव रिपुरात्मनः॥", translation: "Let a man lift himself up by his own mind; let him not degrade himself. For the mind is the friend of the self, and the mind can be the enemy of the self."}
       ]
     };
 
@@ -309,14 +293,12 @@
       const lower = text.toLowerCase();
       let matchedArray = null;
 
-      if (/karma|action|deeds|work|career|job|office|project/i.test(lower)) matchedArray = wisdomDb.karma;
-      else if (/dharma|duty|purpose|meaning|path/i.test(lower)) matchedArray = wisdomDb.dharma;
-      else if (/equanimity|balance|peace|calm|focus|still/i.test(lower)) matchedArray = wisdomDb.balance;
-      else if (/fear|anxious|worry|panic|stress|overwhelm/i.test(lower)) matchedArray = wisdomDb.anxiety;
-      else if (/anger|frustration|rage|mad|annoyed|temper/i.test(lower)) matchedArray = wisdomDb.anger;
-      else if (/grief|heartbreak|sad|loss|sorrow|depress/i.test(lower)) matchedArray = wisdomDb.grief;
-      else if (/doubt|confusion|lost|unsure|stuck|decision/i.test(lower)) matchedArray = wisdomDb.doubt;
-      else if (/jealous|envy|boss|toxic|coworker|manager|colleague|hate|resent|betray/i.test(lower)) matchedArray = wisdomDb.relationships;
+      if (/karma|action|deeds|work/i.test(lower)) matchedArray = wisdomDb.karma;
+      else if (/bhakti|devotion|worship|love/i.test(lower)) matchedArray = wisdomDb.bhakti;
+      else if (/gnana|jnana|knowledge|intellect/i.test(lower)) matchedArray = wisdomDb.gnana;
+      else if (/anxiety|anxious|worry|panic|fear/i.test(lower)) matchedArray = wisdomDb.anxiety;
+      else if (/equanimity|balance|peace|calm|still/i.test(lower)) matchedArray = wisdomDb.balance;
+      else if (/depression|depress|sad|grief|sorrow|loss/i.test(lower)) matchedArray = wisdomDb.depression;
 
       if (matchedArray) return matchedArray[Math.floor(Math.random() * matchedArray.length)];
 
@@ -341,16 +323,11 @@
       const icon = btn.querySelector('i');
       const isCurrentlyPlaying = icon.classList.contains('fa-volume-up');
       
-      // Stop anything that is currently playing and reset all buttons
       window.speechSynthesis.cancel();
       resetAllSpeakers();
 
-      if (isCurrentlyPlaying) {
-         // If it was already playing, we just wanted to stop it. We are done.
-         return;
-      }
+      if (isCurrentlyPlaying) return;
 
-      // Otherwise, start playing the new audio
       const textToPlay = audioLang === 'en' ? enText : (saText || enText);
       const msg = new SpeechSynthesisUtterance(textToPlay);
       msg.rate = 0.85; 
@@ -405,7 +382,6 @@
       const cached = localStorage.getItem(cacheKey);
       if (cached) return JSON.parse(cached);
       
-      // Fixed URL: Switched to reliable, free static API mimicking the same JSON structure
       const res = await fetch(`https://vedicscriptures.github.io/slok/${ch}/${verse}`);
       if (!res.ok) throw new Error();
       const data = await res.json();
@@ -476,6 +452,7 @@
     }
 
     async function fetchRandomGitaVerse() {
+      appendMessage('user', "Random Verse"); // Makes the UI flow correctly from the quick prompt
       const randomChapter = Math.floor(Math.random() * 18) + 1;
       const randomVerse = Math.floor(Math.random() * chapterBounds[randomChapter]) + 1;
 
@@ -494,22 +471,8 @@
       }
     }
 
-    function getOvalHTML(type) {
-      let title, text, quote, iconHtml;
-      
-      if (type === 'welcome') {
-        title = "Welcome to Inner Peace";
-        text = "Describe whatever challenges or transitions you are balancing right now. I will query the open Gita ledger dynamically to build your custom action resolutions.";
-        quote = `"In the battlefield of life, wisdom begins when we pause and listen."`;
-        // Make sure krishna-arjuna.jpg is in the same folder as your HTML file
-        iconHtml = `<img src="krishna-arjuna.jpg" alt="Krishna and Arjuna" class="w-20 h-20 rounded-full border border-amber-500/40 shadow-inner object-cover">`;
-      } else {
-        title = "New Conversation Initialized";
-        text = "Share your current configuration, dilemma, or structural struggle to pull balanced action items directly from the open Gita ledger.";
-        quote = `"Faced with crisis on the battlefield of life, the dialogue between the soul and higher consciousness begins."`;
-        iconHtml = `<div class="w-16 h-16 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-2xl flex items-center justify-center text-xl shadow-inner"><i class="fas fa-dharmachakra animate-spin-slow"></i></div>`;
-      }
-
+    // Consolidated Welcome Banner
+    function getOvalHTML() {
       return `
         <div class="faint-overlay"></div>
         <div class="max-w-4xl mx-auto mt-6 p-8 rounded-3xl bg-zinc-900/80 border border-zinc-800/80 backdrop-blur-md text-center relative overflow-hidden shadow-2xl">
@@ -517,13 +480,13 @@
                style="background-image: url('https://images.unsplash.com/photo-1609137144813-7d7881005ca7?auto=format&fit=crop&w=1200&q=50');">
           </div>
           <div class="relative z-10 flex flex-col items-center justify-center gap-4">
-            ${iconHtml}
-            <h3 class="text-xl font-bold text-zinc-100 tracking-tight">${title}</h3>
+            <img src="krishna-arjuna.jpg" alt="Krishna and Arjuna" class="w-32 h-32 md:w-40 md:h-40 rounded-2xl border-2 border-amber-500/30 shadow-lg object-cover">
+            <h3 class="text-xl font-bold text-zinc-100 tracking-tight">Welcome to Inner Peace</h3>
             <p class="text-zinc-400 text-sm leading-relaxed max-w-2xl px-4">
-              ${text}
+              Describe whatever challenges or transitions you are balancing right now. I will query the open Gita ledger dynamically to build your custom action resolutions.
             </p>
             <div class="text-xs text-amber-400/50 italic border-t border-zinc-800/80 pt-4 w-full mt-2">
-              ${quote}
+              "In the battlefield of life, wisdom begins when we pause and listen."
             </div>
           </div>
         </div>
@@ -531,7 +494,7 @@
     }
 
     function newChat() {
-      chat.innerHTML = getOvalHTML('new');
+      chat.innerHTML = getOvalHTML();
     }
 
     function openSettings() {
@@ -541,8 +504,7 @@
     window.onload = () => {
       setupDynamicBackground();
       renderSavedPrompts();
-      // Load the welcome oval on start
-      chat.innerHTML = getOvalHTML('welcome');
+      chat.innerHTML = getOvalHTML();
     };
   </script>
 </body>
