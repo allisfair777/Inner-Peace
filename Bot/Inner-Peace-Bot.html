@@ -68,8 +68,50 @@
     }
   </style>
 </head>
-<body class="h-screen w-screen text-gray-100 flex overflow-hidden bg-cover bg-center bg-no-repeat bg-fixed">
+<body class="h-screen w-screen text-gray-100 flex overflow-hidden bg-cover bg-center bg-no-repeat bg-fixed relative">
 
+  <div id="settingsModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="bg-zinc-900 border border-zinc-700 w-full max-w-md rounded-3xl shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300" id="settingsContent">
+      <div class="p-5 border-b border-zinc-800 flex justify-between items-center bg-zinc-950/50">
+        <h2 class="text-lg font-bold text-zinc-100"><i class="fas fa-cog text-amber-500 mr-2"></i> Settings</h2>
+        <button onclick="closeSettings()" class="text-zinc-500 hover:text-red-400 transition-colors p-1">
+          <i class="fas fa-times text-lg"></i>
+        </button>
+      </div>
+      
+      <div class="p-6 space-y-6">
+        <div>
+          <h3 class="text-amber-400 text-xs font-semibold tracking-wider mb-3 uppercase">Voice & Audio</h3>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm text-zinc-400 mb-1">English Voice</label>
+              <select id="enVoiceSelect" onchange="saveSettings()" class="w-full bg-zinc-950 border border-zinc-700 text-zinc-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-amber-500"></select>
+            </div>
+            
+            <div>
+              <label class="block text-sm text-zinc-400 mb-1">Sanskrit/Hindi Voice</label>
+              <select id="saVoiceSelect" onchange="saveSettings()" class="w-full bg-zinc-950 border border-zinc-700 text-zinc-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-amber-500"></select>
+            </div>
+
+            <div>
+              <label class="block text-sm text-zinc-400 mb-1 flex justify-between">
+                <span>Reading Speed</span>
+                <span id="speedValue" class="text-amber-500 font-medium">Normal (1.0x)</span>
+              </label>
+              <input type="range" id="speedSlider" min="0.5" max="1.5" step="0.1" value="1.0" oninput="updateSpeedLabel(); saveSettings()" class="w-full accent-amber-500">
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-amber-400 text-xs font-semibold tracking-wider mb-3 uppercase">Data Management</h3>
+          <button onclick="clearAllSavedData()" class="w-full bg-zinc-950 hover:bg-red-900/30 text-red-400 border border-red-900/50 hover:border-red-500/50 py-2.5 rounded-xl text-sm transition-colors flex items-center justify-center gap-2">
+            <i class="fas fa-trash-alt"></i> Clear Saved Actions
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
   <div id="sidebar" class="w-0 border-transparent opacity-0 flex flex-col h-full z-20 sidebar-transition overflow-hidden shrink-0">
     <div class="p-5 flex items-center justify-between border-b border-zinc-800 shrink-0 w-72">
       <div class="font-semibold text-xl tracking-tight text-zinc-200">Resolution Planner</div>
@@ -153,6 +195,85 @@
     const chat = document.getElementById('chat');
     let audioLang = 'en'; 
     
+    // ================= SETTINGS LOGIC =================
+    let systemVoices = [];
+    let appSettings = JSON.parse(localStorage.getItem('gitaSettings')) || {
+      enVoiceURI: '',
+      saVoiceURI: '',
+      speechSpeed: 1.0
+    };
+
+    function populateVoiceList() {
+      systemVoices = window.speechSynthesis.getVoices();
+      const enSelect = document.getElementById('enVoiceSelect');
+      const saSelect = document.getElementById('saVoiceSelect');
+      
+      enSelect.innerHTML = '<option value="">Default English Voice</option>';
+      saSelect.innerHTML = '<option value="">Default Hindi/Sanskrit Voice</option>';
+
+      systemVoices.forEach(voice => {
+        const option = document.createElement('option');
+        option.textContent = `${voice.name} (${voice.lang})`;
+        option.value = voice.voiceURI;
+
+        if (voice.lang.startsWith('en')) {
+          enSelect.appendChild(option);
+        } else if (voice.lang.startsWith('hi') || voice.lang.startsWith('sa')) {
+          saSelect.appendChild(option.cloneNode(true)); 
+        }
+      });
+
+      if (appSettings.enVoiceURI) enSelect.value = appSettings.enVoiceURI;
+      if (appSettings.saVoiceURI) saSelect.value = appSettings.saVoiceURI;
+      
+      document.getElementById('speedSlider').value = appSettings.speechSpeed;
+      updateSpeedLabel();
+    }
+
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = populateVoiceList;
+    }
+
+    function updateSpeedLabel() {
+      const val = parseFloat(document.getElementById('speedSlider').value);
+      let label = "Normal";
+      if (val < 1.0) label = "Slow";
+      if (val > 1.0) label = "Fast";
+      document.getElementById('speedValue').innerText = `${label} (${val.toFixed(1)}x)`;
+    }
+
+    function saveSettings() {
+      appSettings.enVoiceURI = document.getElementById('enVoiceSelect').value;
+      appSettings.saVoiceURI = document.getElementById('saVoiceSelect').value;
+      appSettings.speechSpeed = parseFloat(document.getElementById('speedSlider').value);
+      localStorage.setItem('gitaSettings', JSON.stringify(appSettings));
+    }
+
+    function openSettings() {
+      const modal = document.getElementById('settingsModal');
+      const content = document.getElementById('settingsContent');
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      content.classList.remove('scale-95');
+      if (systemVoices.length === 0) populateVoiceList(); 
+    }
+
+    function closeSettings() {
+      const modal = document.getElementById('settingsModal');
+      const content = document.getElementById('settingsContent');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+      content.classList.add('scale-95');
+    }
+
+    function clearAllSavedData() {
+      if(confirm("Are you sure you want to delete all your saved Action Solutions? This cannot be undone.")) {
+        localStorage.removeItem('gitaSavedPrompts');
+        savedPrompts = [];
+        renderSavedPrompts();
+        closeSettings();
+      }
+    }
+    // ================= END SETTINGS LOGIC =================
+
     const chapterBounds = { 1:47, 2:72, 3:43, 4:42, 5:29, 6:47, 7:30, 8:28, 9:34, 10:42, 11:55, 12:20, 13:35, 14:27, 15:20, 16:24, 17:28, 18:78 };
 
     const wisdomDb = {
@@ -208,7 +329,6 @@
       }
     }
 
-    // Helper to gracefully close sidebar after an action
     function closeSidebar() {
       const sidebar = document.getElementById('sidebar');
       sidebar.className = "w-0 border-transparent opacity-0 flex flex-col h-full z-20 sidebar-transition overflow-hidden shrink-0";
@@ -235,7 +355,7 @@
     }
 
     function loadSavedVerse(index) {
-      closeSidebar(); // Collapse sidebar
+      closeSidebar(); 
       const item = savedPrompts[index];
       if (!item) return;
       if (item.prompt && item.prompt !== "Random Selection" && item.prompt !== "Direct Search") {
@@ -313,7 +433,6 @@
       return { title: "Reflective Insight", ch: fallback.ch, verse: fallback.verse, slok: fallback.slok, translation: fallback.translation };
     }
 
-    // --- Audio Logic ---
     function toggleAudioLang() {
       audioLang = audioLang === 'en' ? 'sa' : 'en';
       document.getElementById('langToggleBtn').innerText = audioLang.toUpperCase();
@@ -326,7 +445,7 @@
         });
     }
 
-  let utteranceQueue = []; // Global array to prevent speech cut-offs
+    let utteranceQueue = []; // Global array to prevent speech cut-offs
 
     async function toggleAudio(btn, enText, saText, chapter, verse) {
       const icon = btn.querySelector('i');
@@ -340,17 +459,16 @@
 
       const isSanskrit = audioLang === 'sa';
       
-      // 1. Create a bulletproof TTS citation that voices won't misinterpret
+      // FIX: Use commas instead of periods. This prevents the voice engine from
+      // misinterpreting decimals (9.22) or making harsh, unnatural stops.
       const spokenCitation = isSanskrit 
-        ? `Adhyay ${chapter}. Shloka ${verse}.` 
-        : `Chapter ${chapter}. Verse ${verse}.`;
+        ? `Adhyay ${chapter}, Shloka ${verse}.` 
+        : `Chapter ${chapter}, Verse ${verse}.`;
 
-      // 2. Universal Sentence Splitter
       const rawContent = isSanskrit ? (saText || enText) : enText;
       let segments = [];
       
       if (isSanskrit) {
-        // Replace dandas with periods so the engine pauses properly
         segments = rawContent.replace(/\|\|/g, '.').replace(/\|/g, '.').split('.').filter(s => s.trim() !== '');
       } else {
         // Safe regex to split English by punctuation without breaking older browsers
@@ -360,26 +478,38 @@
       icon.classList.remove('fa-volume-mute', 'text-zinc-400');
       icon.classList.add('fa-volume-up', 'text-amber-500');
 
-      const speak = (text, rate) => new Promise((resolve) => {
+      const speak = (text, defaultRate, lang) => new Promise((resolve) => {
         if (!text) return resolve();
         const msg = new SpeechSynthesisUtterance(text);
-        msg.rate = rate;
-        msg.lang = isSanskrit ? 'hi-IN' : 'en-US';
+        
+        // Apply Settings from the Modal
+        msg.rate = defaultRate * (appSettings.speechSpeed || 1.0);
+        
+        const targetVoiceURI = lang.startsWith('hi') || lang.startsWith('sa') ? appSettings.saVoiceURI : appSettings.enVoiceURI;
+        if (targetVoiceURI && systemVoices.length > 0) {
+          const selectedVoice = systemVoices.find(v => v.voiceURI === targetVoiceURI);
+          if (selectedVoice) msg.voice = selectedVoice;
+        } else {
+           msg.lang = lang;
+        }
         
         utteranceQueue.push(msg); // Fixes the Chrome/Safari garbage collection bug
 
-        msg.onend = resolve;
-        msg.onerror = resolve; // Continue even if one sentence errors out
+        msg.onend = () => {
+           utteranceQueue = utteranceQueue.filter(u => u !== msg);
+           resolve();
+        };
+        msg.onerror = resolve; 
         window.speechSynthesis.speak(msg);
       });
 
-      // 3. Play audio sequentially
-      await speak(spokenCitation, 0.85);
-      await new Promise(r => setTimeout(r, 800)); // Hard pause after citation
+      // Play audio sequentially
+      await speak(spokenCitation, 0.85, isSanskrit ? 'hi-IN' : 'en-US');
+      await new Promise(r => setTimeout(r, 600)); // Natural breath
 
       for (const seg of segments) {
-        await speak(seg, isSanskrit ? 0.75 : 0.85); // Slightly slower for Sanskrit clarity
-        await new Promise(r => setTimeout(r, 600)); // Natural breath between sentences
+        await speak(seg, isSanskrit ? 0.75 : 0.85, isSanskrit ? 'hi-IN' : 'en-US'); 
+        await new Promise(r => setTimeout(r, 400)); // Natural breath between sentences
       }
 
       resetAllSpeakers();
@@ -460,7 +590,7 @@
     }
 
     function sendPrompt(promptText) {
-      closeSidebar(); // Collapse sidebar
+      closeSidebar(); 
       setTimeout(() => sendMessage(null, promptText), 80);
     }
 
@@ -497,8 +627,8 @@
     }
 
     async function fetchRandomGitaVerse() {
-      closeSidebar(); // Collapse sidebar
-      appendMessage('user', "Random Verse"); // Makes the UI flow correctly from the quick prompt
+      closeSidebar(); 
+      appendMessage('user', "Random Verse"); 
       const randomChapter = Math.floor(Math.random() * 18) + 1;
       const randomVerse = Math.floor(Math.random() * chapterBounds[randomChapter]) + 1;
 
@@ -517,9 +647,7 @@
       }
     }
 
-    // Consolidated Welcome Banner
     function getOvalHTML() {
-      // Applied a gradient ring wrapper matching the Om icon background, forcing a rounded-full layout
       return `
         <div class="faint-overlay"></div>
         <div class="max-w-4xl mx-auto mt-6 p-8 rounded-3xl bg-zinc-900/80 border border-zinc-800/80 backdrop-blur-md text-center relative overflow-hidden shadow-2xl">
@@ -545,18 +673,18 @@
     }
 
     function newChat() {
-      closeSidebar(); // Collapse sidebar
+      closeSidebar(); 
       chat.innerHTML = getOvalHTML();
-    }
-
-    function openSettings() {
-      alert("System Settings - Resolution Planner Engine is running optimally.");
     }
 
     window.onload = () => {
       setupDynamicBackground();
       renderSavedPrompts();
       chat.innerHTML = getOvalHTML();
+      // Ensure settings populate if voices load instantly
+      if (window.speechSynthesis.getVoices().length > 0) {
+        populateVoiceList();
+      }
     };
   </script>
 </body>
