@@ -265,7 +265,6 @@
     }
 
     function clearAllSavedData() {
-      // Check if there are actually actions to clear
       if (savedPrompts.length === 0) {
         return; 
       }
@@ -284,7 +283,7 @@
       karma: [
         { title: "Wisdom on Action & Purpose", ch: 3, verse: 19, slok: "तस्मादसक्तः सततम् कार्यम् कर्म समाचर।\nअसक्तो ह्याचरन्कर्म परमाप्नोति पूरुषः॥", translation: "Therefore, without attachment, always perform the actions that ought to be done; for by performing actions without attachment, one attains the supreme state." },
         { title: "The Path of Action", ch: 2, verse: 47, slok: "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।\nमा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥", translation: "You have a right to perform your prescribed duties, but you are never entitled to the fruits of your actions. Never consider yourself to be the cause of the results of your activities, nor be attached to inaction." },
-        { title: "Pure and Balanced Labor", ch: 18, verse: 23, slok: "नियतं सङ्गरहितमरागद्वेषतः कृतम्।\nअफलप्रेप्सुना कर्म यत्तत्सात्त्विकमुच्यते॥", translation: "Action which is ordained, which is free from attachment, which is done without love or hatred by one not desirous of the fruit, that is declared to be pure." }
+        { title: "Pure and Balanced Labor", ch: 18, verse: 23, slok: "नियतं सङ्गरहितमरागद्वेषतः कृतम्\nअफलप्रेप्सुना कर्म यत्तत्सात्त्विकमुच्यते॥", translation: "Action which is ordained, which is free from attachment, which is done without love or hatred by one not desirous of the fruit, that is declared to be pure." }
       ],
       bhakti: [
         { title: "The Path of Devotion", ch: 12, verse: 13, slok: "अद्वेष्टा सर्वभूतानां मैत्रः करुण एव च।\nनिर्ममो निरहङ्कारः समदुःखसुखः क्षमी॥", translation: "One who is not envious but is a kind friend to all living entities, who does not think himself a proprietor and is free from false ego, who is equal in both happiness and distress, and tolerant, is very dear to Me." },
@@ -319,7 +318,7 @@
       { ch: 6, verse: 34, slok: "चञ्चलं हि मनः कृष्ण प्रमाथि बलवद्दृढम्।\nतस्याहं निग्रहं मन्ये वायोरिव सुदुष्करम्॥", translation: "For the mind is restless, turbulent, obstinate and very strong, O Krishna, and to subdue it, I think, is more difficult than controlling the wind." },
       { ch: 2, verse: 50, slok: "बुद्धियुक्तो जहातीह उभे सुकृतदुष्कृते।\nतस्माद्योगाय युज्यस्व योगः कर्मसु कौशलम्॥", translation: "A man engaged in devotional service rids himself of both good and bad actions even in this life. Therefore strive for yoga, which is the art of all work." },
       { ch: 16, verse: 1, slok: "अभयं सत्त्वसंशुद्धिर्ज्ञानयोगव्यवस्थितिः।\nदानं दमश्च यज्ञश्च स्वाध्यायस्तप आर्जवम्॥", translation: "Fearlessness; purification of one's existence; cultivation of spiritual knowledge; charity; self-control; performance of sacrifice; study of the Vedas; austerity and simplicity; these belong to the godly men." },
-      { ch: 3, verse: 27, slok: "प्रकृतेः क्रियमाणानि गुणैः कर्माणि सर्वशः।\nअहङ्कारविमूढात्मा कर्ताहमिति मन्यते॥", translation: "All aspects of actions are carried out by the complex intertwining of nature's qualities. The soul, bewildered by the ego, thinks 'I am the doer.'" },
+      { ch: 3, verse: 27, slok: "प्रकृतेः क्रियमाणानि गुणैः कर्माणि सर्वशः\nअहङ्कारविमूढात्मा कर्ताहमिति मन्यते॥", translation: "All aspects of actions are carried out by the complex intertwining of nature's qualities. The soul, bewildered by the ego, thinks 'I am the doer.'" },
       { ch: 14, verse: 22, slok: "प्रकाशं च प्रवृत्तिं च मोहमेव च पाण्डव।\nन द्वेष्टि सम्प्रवृत्तानि न निवृत्तानि काङ्क्षति॥", translation: "He who does not hate illumination, attachment and delusion when they are present or long for them when they disappear... is firmly situated." },
       { ch: 8, verse: 7, slok: "तस्मात्सर्वेषु कालेषु मामनुस्मर युध्य च।\nमय्यर्पितमनोबुद्धिर्मामेवैष्यस्यसंशयम्॥", translation: "Therefore, at all times you should think of Me and carry out your prescribed duty. With your activities dedicated to Me and your mind and intelligence fixed on Me, you will attain Me without doubt." }
     ];
@@ -344,7 +343,6 @@
       const container = document.getElementById('saved-prompts-list');
       const clearBtn = document.getElementById('clearDataBtn');
       
-      // Feature: Dynamically Grey out "Clear Saved Actions" if there is no data
       if (clearBtn) {
         if (savedPrompts.length === 0) {
             clearBtn.disabled = true;
@@ -462,10 +460,11 @@
         });
     }
 
-    let utteranceQueue = []; // Global array to prevent speech cut-offs
+    let utteranceQueue = []; 
 
-    // Audio Solution: Enforce sequential boundaries by pushing distinct events to the native queue.
-    function toggleAudio(btn, enText, saText, chapter, verse) {
+    // FIX: Completely skip speaking the Chapter and Verse numbers.
+    // Skip recitation of citations to fix math/run-on issues.
+    function toggleAudio(btn, enText, saText) {
       const icon = btn.querySelector('i');
       const isCurrentlyPlaying = icon.classList.contains('fa-volume-up');
       
@@ -482,20 +481,12 @@
       let sentences = [];
       
       if (isSanskrit) {
-          // Devanagari text explicitly prevents the Hindi engine from reading numbers as an English math equation
-          sentences.push(`अध्याय ${chapter}`);
-          sentences.push(`श्लोक ${verse}`);
-          
           const rawContent = (saText || enText);
           const verseLines = rawContent.replace(/\|\|/g, '।').replace(/॥/g, '।').split('।');
           verseLines.forEach(line => {
               if (line.trim()) sentences.push(line.trim());
           });
       } else {
-          // Explicit string boundary prevents run-ons
-          sentences.push(`Chapter ${chapter}`);
-          sentences.push(`Verse ${verse}`);
-          
           const engLines = enText.replace(/([.?!;])/g, "$1|").split("|");
           engLines.forEach(line => {
               if (line.trim()) sentences.push(line.trim());
@@ -507,7 +498,11 @@
 
       let completedCount = 0;
 
-      // Pushing independent SpeechSynthesisUtterances forces the browser to drop state and pause between them
+      if (sentences.length === 0) {
+          resetAllSpeakers();
+          return;
+      }
+
       sentences.forEach((sentenceText) => {
           const msg = new SpeechSynthesisUtterance(sentenceText);
           msg.rate = defaultRate * (appSettings.speechSpeed || 1.0);
@@ -536,7 +531,7 @@
               }
           };
           
-          utteranceQueue.push(msg); // Hold in memory to prevent browser garbage collection
+          utteranceQueue.push(msg); 
           window.speechSynthesis.speak(msg);
       });
     }
@@ -560,7 +555,7 @@
       toolsHTML = `
         <div class="mt-3 pt-2 border-t border-zinc-800/60 flex justify-between items-center">
           <div class="flex gap-2">
-             <button onclick="toggleAudio(this, '${safeTrans}', '${safeSlok}', ${chapter}, ${verse})" class="hover:text-amber-400 transition-colors p-1" title="Toggle Audio">
+             <button onclick="toggleAudio(this, '${safeTrans}', '${safeSlok}')" class="hover:text-amber-400 transition-colors p-1" title="Toggle Audio">
                <i class="fas fa-volume-mute speaker-icon text-zinc-400 text-lg"></i>
              </button>
           </div>
