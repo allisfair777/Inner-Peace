@@ -335,48 +335,43 @@
 
       if (isCurrentlyPlaying) return;
 
-      // 1. Identify the citation text (e.g., "Chapter 2, Verse 47")
-      // This looks for the strong tag directly above the current button
       const citationText = btn.closest('.message-bot').querySelector('strong').innerText;
       
-      // 2. Prepare content
-      const content = audioLang === 'en' ? enText : (saText || enText);
-      
-      // For Sanskrit, we split by '||' to create natural line breaks
-      const chunks = audioLang === 'sa' 
-        ? content.split('||').map(c => c.trim()) 
-        : [content];
+      // 1. Logic for segmenting English vs Sanskrit
+      const isSanskrit = audioLang === 'sa';
+      const rawContent = isSanskrit ? (saText || enText) : enText;
+
+      // Split Sanskrit by '||', or English by sentence endings (. or ;)
+      const segments = isSanskrit 
+        ? rawContent.split('||').map(s => s.trim())
+        : rawContent.split(/(?<=[.;])\s+/); 
 
       icon.classList.remove('fa-volume-mute', 'text-zinc-400');
       icon.classList.add('fa-volume-up', 'text-amber-500');
 
-      // Helper function to handle individual speech segments
       const speak = (text, rate) => new Promise((resolve) => {
         const msg = new SpeechSynthesisUtterance(text);
         msg.rate = rate;
-        msg.lang = audioLang === 'sa' ? 'hi-IN' : 'en-US';
+        msg.lang = isSanskrit ? 'hi-IN' : 'en-US';
         msg.onend = resolve;
         window.speechSynthesis.speak(msg);
       });
 
-      // 3. Play sequentially with forced pauses
-      // A: Speak Citation
+      // 2. Play Citation
       await speak(citationText, 0.9);
-      
-      // B: Hard pause (700ms) - This prevents the "run-on" effect
-      await new Promise(r => setTimeout(r, 700));
+      await new Promise(r => setTimeout(r, 800)); // Fixed, longer pause
 
-      // C: Speak Content Chunks
-      for (const chunk of chunks) {
-        if (chunk) {
-          await speak(chunk, 0.8);
-          await new Promise(r => setTimeout(r, 400)); // Short pause between verse lines
+      // 3. Play Segments
+      for (const seg of segments) {
+        if (seg) {
+          await speak(seg, 0.8);
+          await new Promise(r => setTimeout(r, 500)); // Pause between sentences
         }
       }
 
       resetAllSpeakers();
     }
-
+    
     function buildVerseHTML(title, chapter, verse, slok, translation, associatedPrompt = null) {
       const formattedSlok = slok ? `<span class="sanskrit-verse">${slok.replace(/\n/g, '<br>')}</span>` : '';
       let toolsHTML = '';
