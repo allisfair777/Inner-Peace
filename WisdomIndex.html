@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Wisdom Nexus | Choose Your Guide</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
   <style>
     body { background-color: #050505; color: white; font-family: system-ui, sans-serif; }
     .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
@@ -13,36 +14,44 @@
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center p-6">
 
-  <div class="max-w-4xl w-full text-center mb-16">
+  <div class="max-w-4xl w-full text-center mb-12 mt-8">
     <h1 class="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-gray-200 to-gray-500">The Wisdom Nexus</h1>
-    <p class="text-gray-400">Select a portal to begin your guided reflection.</p>
+    <p class="text-gray-400 mb-8">Ask a universal question below, or select a portal for guided, domain-specific reflection.</p>
+    
+    <div class="w-full glass p-4 rounded-3xl flex items-center gap-3 shadow-xl focus-within:border-gray-400 transition-colors">
+      <i class="fa-solid fa-globe text-gray-400 ml-4"></i>
+      <input type="text" placeholder="Describe a challenge to seek wisdom across all domains..." class="flex-1 bg-transparent border-none p-3 text-white focus:outline-none placeholder-gray-600">
+      <button class="bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded-2xl font-bold transition-colors">Seek</button>
+    </div>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl w-full">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl w-full mb-16">
     
-    <a href="https://allisfair777.github.io/Inner-Peace/Bot/Gita.html" class="portal-card glass p-8 rounded-3xl transition-all duration-300 text-amber-500">
+    <a href="Gita1.html" class="portal-card glass p-8 rounded-3xl transition-all duration-300 text-amber-500">
       <div class="text-4xl mb-4">🕉️</div>
       <h2 class="text-xl font-bold text-white mb-2">Bhagavad Gita</h2>
-      <p class="text-gray-400 text-sm">Timeless counsel for the battlefield of life.</p>
+      <p class="text-gray-400 text-sm">Timeless counsel for the battlefield of life and dynamic transitions.</p>
     </a>
 
-    <a href="https://allisfair777.github.io/Inner-Peace/Bot/Kural.html" class="portal-card glass p-8 rounded-3xl transition-all duration-300 text-emerald-500">
+    <a href="Kural1.html" class="portal-card glass p-8 rounded-3xl transition-all duration-300 text-emerald-500">
       <div class="text-4xl mb-4">🌿</div>
       <h2 class="text-xl font-bold text-white mb-2">Thirukkural</h2>
-      <p class="text-gray-400 text-sm">Ethical clarity and practical wisdom.</p>
+      <p class="text-gray-400 text-sm">Ethical clarity, societal dynamics, and practical daily wisdom.</p>
     </a>
 
-    <a href="https://allisfair777.github.io/Inner-Peace/Bot/Bible.html" class="portal-card glass p-8 rounded-3xl transition-all duration-300 text-sky-500">
-      <div class="text-4xl mb-4">†</div>
-      <h2 class="text-xl font-bold text-white mb-2">Biblical Wisdom</h2>
-      <p class="text-gray-400 text-sm">Grace, teachings, and spiritual guidance.</p>
+    <a href="Bible2.html" class="portal-card glass p-8 rounded-3xl transition-all duration-300 text-blue-500">
+      <div class="text-4xl mb-4">🕊️</div>
+      <h2 class="text-xl font-bold text-white mb-2">The Bible</h2>
+      <p class="text-gray-400 text-sm">Spiritual grounding, faith, and foundational moral guidance.</p>
+    </a>
+
+    <a href="Stoics.html" class="portal-card glass p-8 rounded-3xl transition-all duration-300 text-slate-400">
+      <div class="text-4xl mb-4">🏛️</div>
+      <h2 class="text-xl font-bold text-white mb-2">The Stoics</h2>
+      <p class="text-gray-400 text-sm">Logic, inner tranquility, and mastering what you can control.</p>
     </a>
 
   </div>
-
-  <footer class="mt-20 text-gray-600 text-xs">
-    Wisdom Suite v1.0 | Expanding the archives...
-  </footer>
 
 </body>
 </html>
