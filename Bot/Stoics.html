@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stoic Resolution Guide</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <style>
+    body {
+      background-color: #09090b;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .chat-container {
+      background: rgba(9, 9, 11, 0.88);
+      backdrop-filter: blur(30px);
+    }
+    .message-user {
+      background: #f4efe2;
+      color: #1c1917;
+      border-radius: 20px 20px 6px 20px;
+      font-weight: 500;
+    }
+    .message-bot {
+      background: #18181b;
+      border-radius: 20px 20px 20px 6px;
+      border: 1px solid rgba(148, 163, 184, 0.1); /* Slate hint */
+    }
+    .prompt-btn {
+      padding: 11px 18px;
+      margin-bottom: 8px;
+      background: #27272a;
+      border-radius: 999px;
+      color: #e4e4e7;
+      font-size: 0.875rem;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+    .prompt-btn:hover {
+      background: #3f3f46;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="h-screen flex overflow-hidden selection:bg-slate-500/30 text-zinc-100">
+
+  <main class="flex-1 flex flex-col relative h-full w-full">
+    <header class="flex-none h-16 flex items-center justify-between px-4 border-b border-zinc-800/50 bg-zinc-950/50 backdrop-blur-md z-20">
+      <div class="flex items-center gap-3">
+        <a href="https://allisfair777.github.io/Inner-Peace/WisdomIndex.html" class="text-zinc-400 hover:text-zinc-100 transition-colors">
+          <i class="fa-solid fa-arrow-left"></i>
+        </a>
+        <h1 class="font-semibold text-zinc-100 tracking-wide">The Stoics</h1>
+      </div>
+      <button onclick="newChat()" class="text-slate-400 hover:text-slate-300 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+        <i class="fa-solid fa-plus text-xs"></i> New Entry
+      </button>
+    </header>
+
+    <div id="chat" class="flex-1 overflow-y-auto hide-scrollbar pb-32">
+      <div class="relative w-full h-[60vh] flex items-center justify-center p-6">
+        <div class="absolute inset-0 opacity-10 pointer-events-none" 
+             style="background-image: url('https://images.unsplash.com/photo-1560731671-5fb7317730e1?auto=format&fit=crop&w=1200&q=50'); background-size: cover; background-position: center;">
+        </div>
+        <div class="relative z-10 flex flex-col items-center justify-center gap-4">
+          
+          <div class="rounded-full p-1 bg-gradient-to-br from-slate-400 to-slate-700 shadow-lg">
+            <img src="https://images.unsplash.com/photo-1560731671-5fb7317730e1?auto=format&fit=crop&w=200&h=200&q=80" alt="Marcus Aurelius Bust" class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover grayscale">
+          </div>
+
+          <h3 class="text-xl font-bold text-zinc-100 tracking-tight">Wisdom of the Stoics</h3>
+          <p class="text-zinc-400 text-sm leading-relaxed max-w-2xl px-4 text-center">
+            Describe your current anxieties or challenges. I will draw from Epictetus, Seneca, and Marcus Aurelius to build actionable resolutions grounded in logic and what you can control.
+          </p>
+          <div class="text-xs text-slate-400/50 italic border-t border-zinc-800/80 pt-4 w-full mt-2 text-center">
+            "You have power over your mind - not outside events. Realize this, and you will find strength."
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-zinc-950 via-zinc-950/90 to-transparent z-20">
+      <div class="max-w-3xl mx-auto">
+        
+        <div class="flex gap-2 overflow-x-auto hide-scrollbar mb-3 px-1">
+          <button class="prompt-btn whitespace-nowrap" onclick="sendPrompt(this.innerText)">How do I deal with anxiety about the future?</button>
+          <button class="prompt-btn whitespace-nowrap" onclick="sendPrompt(this.innerText)">I'm facing a difficult transition.</button>
+          <button class="prompt-btn whitespace-nowrap" onclick="sendPrompt(this.innerText)">How do I let go of what I can't control?</button>
+        </div>
+
+        <div class="chat-container rounded-2xl border border-zinc-800/50 p-2 flex items-end gap-2 focus-within:border-slate-500/50 transition-colors shadow-2xl">
+          <textarea id="input" rows="1" class="w-full bg-transparent text-zinc-100 placeholder-zinc-500 text-base px-3 py-2 focus:outline-none resize-none max-h-32" placeholder="Consult the Stoics..."></textarea>
+          <button onclick="handleSend()" class="bg-zinc-100 hover:bg-white text-zinc-900 rounded-xl p-3 h-11 w-11 flex items-center justify-center transition-transform hover:scale-105 shrink-0">
+            <i class="fa-solid fa-arrow-up"></i>
+          </button>
+        </div>
+        <div class="text-center mt-2">
+          <span class="text-[10px] text-zinc-500 font-medium">STOIC RESOLUTION PLANNER</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const input = document.getElementById('input');
+    const chat = document.getElementById('chat');
+
+    input.addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = (this.scrollHeight) + 'px';
+    });
+
+    function sendPrompt(text) {
+      input.value = text;
+      handleSend();
+    }
+
+    function getWelcomeHTML() {
+      return `
+        <div class="relative w-full h-[60vh] flex items-center justify-center p-6">
+          <div class="absolute inset-0 opacity-10 pointer-events-none" 
+               style="background-image: url('https://images.unsplash.com/photo-1560731671-5fb7317730e1?auto=format&fit=crop&w=1200&q=50'); background-size: cover; background-position: center;">
+          </div>
+          <div class="relative z-10 flex flex-col items-center justify-center gap-4">
+            <div class="rounded-full p-1 bg-gradient-to-br from-slate-400 to-slate-700 shadow-lg">
+              <img src="https://images.unsplash.com/photo-1560731671-5fb7317730e1?auto=format&fit=crop&w=200&h=200&q=80" alt="Marcus Aurelius Bust" class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover grayscale">
+            </div>
+            <h3 class="text-xl font-bold text-zinc-100 tracking-tight">Wisdom of the Stoics</h3>
+            <p class="text-zinc-400 text-sm leading-relaxed max-w-2xl px-4 text-center">
+              Describe your current anxieties or challenges. I will draw from Epictetus, Seneca, and Marcus Aurelius to build actionable resolutions grounded in logic and what you can control.
+            </p>
+          </div>
+        </div>
+      `;
+    }
+
+    function newChat() {
+      chat.innerHTML = getWelcomeHTML();
+    }
+
+    function handleSend() {
+      const text = input.value.trim();
+      if (!text) return;
+
+      // Remove welcome screen if it exists
+      if (chat.querySelector('.relative.w-full.h-\\[60vh\\]')) {
+        chat.innerHTML = '';
+      }
+
+      // User message
+      const userDiv = document.createElement('div');
+      userDiv.className = 'flex justify-end mb-6 px-4 mt-4';
+      userDiv.innerHTML = `
+        <div class="message-user max-w-[85%] md:max-w-[75%] px-5 py-3.5 text-[15px] leading-relaxed shadow-sm">
+          ${text}
+        </div>
+      `;
+      chat.appendChild(userDiv);
+
+      input.value = '';
+      input.style.height = 'auto';
+      chat.scrollTop = chat.scrollHeight;
+
+      // Bot typing indicator placeholder
+      setTimeout(() => {
+        const botDiv = document.createElement('div');
+        botDiv.className = 'flex justify-start mb-6 px-4';
+        botDiv.innerHTML = `
+          <div class="message-bot max-w-[90%] md:max-w-[80%] px-5 py-4 text-[15px] leading-relaxed text-zinc-300 shadow-sm">
+            <i class="fa-solid fa-circle-notch fa-spin text-slate-500"></i> Synthesizing ledger...
+          </div>
+        `;
+        chat.appendChild(botDiv);
+        chat.scrollTop = chat.scrollHeight;
+        
+        // Mock response
+        setTimeout(() => {
+           botDiv.innerHTML = `
+            <div class="message-bot max-w-[90%] md:max-w-[80%] px-5 py-4 text-[15px] leading-relaxed text-zinc-300 shadow-sm border-l-2 border-slate-500">
+              The ledger will retrieve quotes locally here. You asked: "${text}".
+            </div>
+           `;
+           chat.scrollTop = chat.scrollHeight;
+        }, 800);
+
+      }, 300);
+    }
+  </script>
+</body>
+</html>
