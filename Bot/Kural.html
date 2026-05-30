@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
@@ -8,17 +7,65 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
   <style>
-    body { background-color: #09090b; font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif; }
-    .chat-container { background: rgba(9, 9, 11, 0.88); backdrop-filter: blur(30px); }
-    .message-user { background: #f4efe2; color: #1c1917; border-radius: 20px 20px 6px 20px; font-weight: 500; }
-    .message-bot { background: #18181b; border-radius: 20px 20px 20px 6px; border: 1px solid rgba(245, 158, 11, 0.08); }
-    .prompt-btn { padding: 11px 18px; margin-bottom: 8px; background: #27272a; border-radius: 9999px; cursor: pointer; transition: all 0.2s ease; border: 1px solid rgba(255,255,255,0.03); }
-    .prompt-btn:hover { background: #3f3f46; transform: translateX(4px); }
-    .faint-overlay { position: absolute; inset: 0; background: radial-gradient(circle at 50% 25%, rgba(16, 185, 129, 0.05), transparent 75%); pointer-events: none; z-index: 0; }
-    .oval-header { border-radius: 9999px; background: rgba(24, 24, 27, 0.95); }
-    #chat { scrollbar-width: thin; scrollbar-color: #3f3f46 #09090b; }
-    .tamil-verse { display: block; color: #10b981; font-weight: 600; margin-top: 6px; margin-bottom: 6px; line-height: 1.8; font-size: 1.05em; }
-    .sidebar-transition { transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease, border-color 0.3s ease; }
+    body {
+      background-color: #09090b;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .chat-container {
+      background: rgba(9, 9, 11, 0.88);
+      backdrop-filter: blur(30px);
+    }
+    .message-user {
+      background: #f4efe2;
+      color: #1c1917;
+      border-radius: 20px 20px 6px 20px;
+      font-weight: 500;
+    }
+    .message-bot {
+      background: #18181b;
+      border-radius: 20px 20px 20px 6px;
+      border: 1px solid rgba(16, 185, 129, 0.08); /* Emerald hint */
+    }
+    .prompt-btn {
+      padding: 11px 18px;
+      margin-bottom: 8px;
+      background: #27272a;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+    .prompt-btn:hover {
+      background: #3f3f46;
+      transform: translateX(4px);
+    }
+    .faint-overlay {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 25%, rgba(16, 185, 129, 0.05), transparent 75%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .oval-header {
+      border-radius: 9999px;
+      background: rgba(24, 24, 27, 0.95);
+    }
+    #chat {
+      scrollbar-width: thin;
+      scrollbar-color: #3f3f46 #09090b;
+    }
+    .tamil-verse {
+      display: block;
+      color: #34d399; /* emerald-400 */
+      font-weight: 600;
+      margin-top: 6px;
+      margin-bottom: 6px;
+      line-height: 1.6;
+      font-size: 1.05em;
+    }
+    .sidebar-transition {
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease, border-color 0.3s ease;
+    }
   </style>
 </head>
 <body class="h-screen w-screen text-gray-100 flex overflow-hidden bg-cover bg-center bg-no-repeat bg-fixed relative">
@@ -27,8 +74,11 @@
     <div class="bg-zinc-900 border border-zinc-700 w-full max-w-md rounded-3xl shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300" id="settingsContent">
       <div class="p-5 border-b border-zinc-800 flex justify-between items-center bg-zinc-950/50">
         <h2 class="text-lg font-bold text-zinc-100"><i class="fas fa-cog text-emerald-500 mr-2"></i> Settings</h2>
-        <button onclick="closeSettings()" class="text-zinc-500 hover:text-red-400 transition-colors p-1"><i class="fas fa-times text-lg"></i></button>
+        <button onclick="closeSettings()" class="text-zinc-500 hover:text-red-400 transition-colors p-1">
+          <i class="fas fa-times text-lg"></i>
+        </button>
       </div>
+      
       <div class="p-6 space-y-6">
         <div>
           <h3 class="text-emerald-400 text-xs font-semibold tracking-wider mb-3 uppercase">Voice & Audio</h3>
@@ -37,10 +87,12 @@
               <label class="block text-sm text-zinc-400 mb-1">English Voice</label>
               <select id="enVoiceSelect" onchange="saveSettings()" class="w-full bg-zinc-950 border border-zinc-700 text-zinc-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-emerald-500"></select>
             </div>
+            
             <div>
               <label class="block text-sm text-zinc-400 mb-1">Tamil Voice</label>
               <select id="taVoiceSelect" onchange="saveSettings()" class="w-full bg-zinc-950 border border-zinc-700 text-zinc-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-emerald-500"></select>
             </div>
+
             <div>
               <label class="block text-sm text-zinc-400 mb-1 flex justify-between">
                 <span>Reading Speed</span>
@@ -50,10 +102,11 @@
             </div>
           </div>
         </div>
+
         <div>
           <h3 class="text-emerald-400 text-xs font-semibold tracking-wider mb-3 uppercase">Data Management</h3>
           <button id="clearDataBtn" onclick="clearAllSavedData()" class="w-full bg-zinc-950 hover:bg-red-900/30 text-red-400 border border-red-900/50 hover:border-red-500/50 py-2.5 rounded-xl text-sm transition-colors flex items-center justify-center gap-2">
-            <i class="fas fa-trash-alt"></i> Clear Saved Kurals
+            <i class="fas fa-trash-alt"></i> Clear Saved Actions
           </button>
         </div>
       </div>
@@ -62,57 +115,83 @@
 
   <div id="sidebar" class="w-0 border-transparent opacity-0 flex flex-col h-full z-20 sidebar-transition overflow-hidden shrink-0">
     <div class="p-5 flex items-center justify-between border-b border-zinc-800 shrink-0 w-72">
-      <div class="font-semibold text-xl tracking-tight text-zinc-200">Kural Guide</div>
-      <button onclick="toggleSidebar()" class="text-zinc-400 hover:text-emerald-400"><i class="fas fa-chevron-left text-sm"></i></button>
+      <div class="font-semibold text-xl tracking-tight text-zinc-200">Thirukkural Guide</div>
+      <button onclick="toggleSidebar()" class="text-zinc-400 hover:text-emerald-400">
+        <i class="fas fa-chevron-left text-sm"></i>
+      </button>
     </div>
+
     <div class="p-4 shrink-0 w-72">
-      <button onclick="newChat()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-semibold py-3.5 rounded-2xl flex items-center justify-center gap-2 transition-all shadow-md"><i class="fas fa-plus"></i> New Conversation</button>
+      <button onclick="newChat()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-semibold py-3.5 rounded-2xl flex items-center justify-center gap-2 transition-all shadow-md">
+        <i class="fas fa-plus"></i> New Conversation
+      </button>
     </div>
+
     <div class="px-4 flex-1 overflow-y-auto pb-4 w-72">
       <p class="text-emerald-400/80 text-xs mb-3 px-3 font-semibold tracking-wider">QUICK PROMPTS</p>
-      <div onclick="sendPrompt('Virtue (Aram)')" class="prompt-btn text-sm text-zinc-300">Virtue (Aram)</div>
-      <div onclick="sendPrompt('Wealth (Porul)')" class="prompt-btn text-sm text-zinc-300">Wealth (Porul)</div>
-      <div onclick="sendPrompt('Love (Inbam)')" class="prompt-btn text-sm text-zinc-300">Love (Inbam)</div>
-      <div onclick="sendPrompt('Importance of Learning')" class="prompt-btn text-sm text-zinc-300">On Learning</div>
-      <div onclick="sendPrompt('True Friendship')" class="prompt-btn text-sm text-zinc-300">True Friendship</div>
-      <div onclick="sendPrompt('Overcoming Adversity')" class="prompt-btn text-sm text-zinc-300">Perseverance</div>
-      <div onclick="fetchRandomKural()" class="prompt-btn text-sm text-zinc-300">Random Kural</div>
+      <div onclick="sendPrompt('Virtue & Ethics')" class="prompt-btn text-sm text-zinc-300">Virtue & Ethics</div>
+      <div onclick="sendPrompt('Wealth & Action')" class="prompt-btn text-sm text-zinc-300">Wealth & Action</div>
+      <div onclick="sendPrompt('Love & Grace')" class="prompt-btn text-sm text-zinc-300">Love & Grace</div>
+      <div onclick="sendPrompt('Handle Anxiety')" class="prompt-btn text-sm text-zinc-300">Handle Anxiety</div>
+      <div onclick="sendPrompt('Maintain Equanimity')" class="prompt-btn text-sm text-zinc-300">Maintain Equanimity</div>
+      <div onclick="sendPrompt('Manage Depression')" class="prompt-btn text-sm text-zinc-300">Manage Depression</div>
+      <div onclick="fetchRandomKural()" class="prompt-btn text-sm text-zinc-300">Random Couplet</div>
 
       <div class="mt-8">
-        <p class="text-emerald-400/80 text-xs mb-3 px-3 font-semibold tracking-wider">SAVED KURALS</p>
+        <p class="text-emerald-400/80 text-xs mb-3 px-3 font-semibold tracking-wider">SAVED ACTION SOLUTIONS</p>
         <div id="saved-prompts-list" class="space-y-2"></div>
       </div>
     </div>
   </div>
 
   <div class="flex-1 flex flex-col chat-container relative h-full min-w-0">
+    
     <div class="oval-header mx-4 mt-4 px-6 py-4 flex items-center justify-between border border-zinc-800/60 shadow-xl z-10">
       <div class="flex items-center gap-4">
-        <button onclick="toggleSidebar()" class="w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-emerald-300 rounded-3xl hover:bg-zinc-800 transition-all"><i class="fas fa-bars text-lg"></i></button>
-        <div class="w-10 h-10 bg-gradient-to-br from-emerald-400 to-teal-600 rounded-2xl flex items-center justify-center text-2xl font-bold text-zinc-950 shadow-md">அ</div>
+        <button onclick="toggleSidebar()" class="relative w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-emerald-300 rounded-3xl hover:bg-zinc-800 transition-all">
+          <i class="fas fa-bars text-lg"></i>
+          <span id="menuPulseDot" class="absolute top-1 right-2 flex h-2.5 w-2.5">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+          </span>
+        </button>
+        <div class="w-10 h-10 bg-gradient-to-br from-emerald-400 to-teal-600 rounded-2xl flex items-center justify-center text-xl font-bold text-zinc-950 shadow-md"><i class="fas fa-leaf"></i></div>
         <div class="hidden md:block">
           <div class="text-xl font-bold tracking-tight text-zinc-100">Wisdom of Thiruvalluvar</div>
-          <div class="text-xs text-emerald-200/60">Practical guidance from the 1330 couplets</div>
+          <div class="text-xs text-emerald-200/60">Create calm, clear resolutions to difficult situations</div>
         </div>
       </div>
       <div class="flex items-center gap-3">
+        
         <div class="relative hidden sm:block">
-          <input id="directSearch" type="text" placeholder="Kural No. (1-1330)" 
-                 class="bg-zinc-900 border border-zinc-700 text-zinc-200 px-4 py-2 rounded-full w-40 text-sm focus:outline-none focus:border-emerald-500 transition-all"
+          <input id="directSearch" type="text" placeholder="Find (e.g. 391)" 
+                 class="bg-zinc-900 border border-zinc-700 text-zinc-200 px-4 py-2 rounded-full w-36 text-sm focus:outline-none focus:border-emerald-500 transition-all"
                  onkeydown="handleDirectSearch(event)">
           <i class="fas fa-search absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 text-xs"></i>
         </div>
-        <button id="langToggleBtn" onclick="toggleAudioLang()" title="Toggle EN/TA Audio" class="w-8 h-8 flex items-center justify-center text-xs font-bold text-emerald-500 border border-emerald-500/30 rounded-lg hover:bg-emerald-500/10 transition-all ml-2">EN</button>
-        <button onclick="openSettings()" class="w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-emerald-300 rounded-3xl hover:bg-zinc-800 transition-all ml-2"><i class="fas fa-cog text-xl"></i></button>
+
+        <button id="langToggleBtn" onclick="toggleAudioLang()" title="Toggle EN/TA Audio" class="w-8 h-8 flex items-center justify-center text-xs font-bold text-emerald-500 border border-emerald-500/30 rounded-lg hover:bg-emerald-500/10 transition-all ml-2">
+          EN
+        </button>
+
+        <button onclick="openSettings()" class="w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-emerald-300 rounded-3xl hover:bg-zinc-800 transition-all ml-2">
+          <i class="fas fa-cog text-xl"></i>
+        </button>
       </div>
     </div>
 
-    <div id="chat" class="flex-1 p-6 overflow-y-auto space-y-5 relative min-h-0"></div>
+    <div id="chat" class="flex-1 p-6 overflow-y-auto space-y-5 relative min-h-0">
+    </div>
 
     <div class="p-5 border-t border-zinc-800/50 bg-zinc-950/80 z-10">
       <form onsubmit="sendMessage(event)" class="relative max-w-4xl mx-auto">
-        <input id="userInput" type="text" autocomplete="off" class="w-full bg-zinc-900 border border-zinc-800 rounded-3xl px-7 py-4.5 pr-16 focus:outline-none focus:border-emerald-500 text-base placeholder-zinc-500 text-zinc-100 shadow-inner transition-all" placeholder="Ask for guidance or a topic...">
-        <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-black w-11 h-11 rounded-2xl flex items-center justify-center transition-all shadow-md"><i class="fas fa-paper-plane"></i></button>
+        <input id="userInput" type="text" autocomplete="off"
+               class="w-full bg-zinc-900 border border-zinc-800 rounded-3xl px-7 py-4.5 pr-16 focus:outline-none focus:border-emerald-500 text-base placeholder-zinc-500 text-zinc-100 shadow-inner transition-all"
+               placeholder="Describe your situation or ask a question...">
+        <button type="submit" 
+                class="absolute right-3 top-1/2 -translate-y-1/2 bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-black w-11 h-11 rounded-2xl flex items-center justify-center transition-all shadow-md">
+          <i class="fas fa-paper-plane"></i>
+        </button>
       </form>
     </div>
   </div>
@@ -192,7 +271,7 @@
 
     function clearAllSavedData() {
       if (savedPrompts.length === 0) return; 
-      if(confirm("Are you sure you want to delete all your saved Kurals? This cannot be undone.")) {
+      if(confirm("Are you sure you want to delete all your saved Action Solutions?")) {
         localStorage.removeItem('kuralSavedPrompts');
         savedPrompts = [];
         renderSavedPrompts();
@@ -201,34 +280,43 @@
     }
     // ================= END SETTINGS LOGIC =================
 
-    // Minimal Hardcoded Database fallback for Thirukkural
     const wisdomDb = {
       virtue: [
-        { title: "The Primal Deity", kural: 1, tamil: "அகர முதல எழுத்தெல்லாம் ஆதி\nபகவன் முதற்றே உலகு.", translation: "A, as its first of letters, every speech maintains; The 'Primal Deity' is First through all the world's domains." },
-        { title: "Power of Virtuous Action", kural: 39, tamil: "அறத்தான் வருவதே இன்பம் மற்றெல்லாம்\nபுறத்த புகழும் இல.", translation: "Only joy derived from virtuous action is true happiness; all other pleasures bring no true joy or lasting praise." }
+        { title: "The Power of Virtue", kuralNo: 31, line: "சிறப்புஈனும் செல்வமும் ஈனும் அறத்தினூஉங்கு\nஆக்கம் எவனோ உயிர்க்கு.", translation: "Virtue yields honor and wealth; what greater source of good can there be for a living being?" },
+        { title: "Purity of Mind", kuralNo: 34, line: "மனத்துக்கண் மாசிலன் ஆதல் அனைத்தறன்\nஆகுல நீர பிற.", translation: "Let him who does virtue be of spotless mind; to that extent is virtue, all else is empty display." }
       ],
       wealth: [
-        { title: "The Value of Wealth", kural: 753, tamil: "பொருளல் லவரைப் பொருளாகச் செய்யும்\nபொருளல்ல தில்லை பொருள்.", translation: "Besides wealth there is nothing that can change people of no importance into those of (some) importance." },
-        { title: "Industriousness", kural: 611, tamil: "முயற்சி திருவினை ஆக்கும் முயற்றின்மை\nஇன்மை புகுத்தி விடும்.", translation: "Effort will produce wealth; idleness will bring poverty." }
-      ],
-      learning: [
-        { title: "Flawless Learning", kural: 391, tamil: "கற்க கசடறக் கற்பவை கற்றபின்\nநிற்க அதற்குத் தக.", translation: "Let a man learn thoroughly whatever he may learn, and let his conduct be worthy of his learning." },
-        { title: "The Eyes of Men", kural: 392, tamil: "எண்ணென்ப ஏனை எழுத்தென்ப இவ்விரண்டும்\nகண்ணென்ப வாழும் உயிர்க்கு.", translation: "Letters and numbers are the two eyes of man." }
-      ],
-      friendship: [
-        { title: "True Friendship", kural: 788, tamil: "உடுக்கை இழந்தவன் கைபோல ஆங்கே\nஇடுக்கண் களைவதாம் நட்பு.", translation: "True friendship hastens to the rescue of the afflicted, as readily as the hand of one whose garment slips drops to gather it." }
-      ],
-      perseverance: [
-        { title: "Overcoming Obstacles", kural: 621, tamil: "இடுக்கண் வருங்கால் நகுக அதனை\nஅடுத்தூர்வது அஃதொப்ப தில்.", translation: "If troubles come, laugh; there is nothing like laughter to overcome sorrow." }
+        { title: "Continuous Effort", kuralNo: 595, line: "வெள்ளத் தனைய மலர்நீட்டம் மாந்தர்தம்\nஉள்ளத் தனையது உயர்வு.", translation: "With rising flood the rising lotus flower its stem unwinds; The dignity of men is measured by their minds." },
+        { title: "Perseverance", kuralNo: 619, line: "தெய்வத்தான் ஆகா தெனினும் முயற்சிதன்\nமெய்வருத்தக் கூலி தரும்.", translation: "Though the gods be against it, industry will pay the wages of physical labor." }
       ],
       love: [
-        { title: "The Power of Love", kural: 71, tamil: "அன்பிற்கும் உண்டோ அடைக்குந்தாழ் ஆர்வலர்\nபுன்கணீர் பூசல் தரும்.", translation: "Is there any fastening that can shut up love? Tears of the affectionate will publish the love that is within." }
+        { title: "The Supremacy of Love", kuralNo: 71, line: "அன்பிற்கும் உண்டோ அடைக்கும்தாழ் ஆர்வலர்\nபுன்கணீர் பூசல் தரும்.", translation: "Is there any fastening that can shut in love? Tears of the affectionate will publish the love that is within." },
+        { title: "Grace and Compassion", kuralNo: 241, line: "அருட்செல்வம் செல்வத்துட் செல்வம் பொருட்செல்வம்\nபூரியார் கண்ணும் உள.", translation: "The wealth of compassion is the wealth of wealths; for material wealth is found even with the base." }
+      ],
+      anxiety: [
+        { title: "Overcoming Fear", kuralNo: 621, line: "இடுக்கண் வருங்கால் நகுக அதனை\nஅடுத்தூர்வது அஃதொப்ப தில்.", translation: "When troubles come, laugh at them. There is nothing like a smile to overcome sorrow." }
+      ],
+      equanimity: [
+        { title: "Balance in all things", kuralNo: 111, line: "தகுதி எனவொன்று நன்றே பகுதியால்\nபாற்பட்டு ஒழுகப் பெறின்.", translation: "That equity which consists in acting with equal regard to each of the three divisions of men (friends, enemies and strangers) is a supreme virtue." }
+      ],
+      depression: [
+        { title: "Hope and Action", kuralNo: 629, line: "இன்பம் விழையான் இடும்பை இயல்பென்பான்\nதுன்பம் உறுதல் இலன்.", translation: "He who does not long for pleasure, and looks upon sorrow as natural, will not be troubled by adversity." }
       ]
     };
 
-    const randomVersePool = [...wisdomDb.virtue, ...wisdomDb.wealth, ...wisdomDb.learning, ...wisdomDb.friendship, ...wisdomDb.perseverance, ...wisdomDb.love];
+    const randomVersePool = [
+      { kuralNo: 391, line: "கற்க கசடறக் கற்பவை கற்றபின்\nநிற்க அதற்குத் தக.", translation: "Let a man learn thoroughly whatever he may learn, and let his conduct be worthy of his learning." },
+      { kuralNo: 423, line: "எப்பொருள் யார்யார்வாய்க் கேட்பினும் அப்பொருள்\nமெய்ப்பொருள் காண்ப தறிவு.", translation: "To grasp the truth from whatever source it may be spoken is the mark of true wisdom." },
+      { kuralNo: 100, line: "இனிய உளவாக இன்னாத கூறல்\nகனியிருப்பக் காய்கவர்ந் தற்று.", translation: "To use harsh words when sweet ones are available is like eating unripe fruit when ripe ones are at hand." }
+    ];
 
     function toggleSidebar() {
+      // Remove the pulsing dot permanently upon first interaction
+      const pulseDot = document.getElementById('menuPulseDot');
+      if (pulseDot) {
+        pulseDot.remove();
+      }
+
       const sidebar = document.getElementById('sidebar');
       if (sidebar.classList.contains('w-72')) {
         sidebar.className = "w-0 border-transparent opacity-0 flex flex-col h-full z-20 sidebar-transition overflow-hidden shrink-0";
@@ -259,7 +347,7 @@
       }
 
       if (savedPrompts.length === 0) {
-        container.innerHTML = '<div class="text-zinc-600 text-xs px-3 italic">No Kurals saved yet.</div>';
+        container.innerHTML = '<div class="text-zinc-600 text-xs px-3 italic">No configurations saved yet.</div>';
         return;
       }
       container.innerHTML = savedPrompts.map((p, index) => `
@@ -283,30 +371,30 @@
       } else {
         appendMessage('user', `Reviewed Saved Entry: "${item.name}"`);
       }
-      const html = buildVerseHTML(item.title, item.kural, item.tamil, item.translation, null);
+      const html = buildVerseHTML(item.title, item.kuralNo, item.line, item.translation, null);
       appendMessage('bot', html);
     }
 
-    function bookmarkExactVerse(promptText, title, kural, tamil, translation) {
-      let name = prompt("Give this Kural a unique name:");
+    function bookmarkExactVerse(promptText, title, kuralNo, line, translation) {
+      let name = prompt("Give this resolution entry a unique name:");
       if (!name || name.trim() === "") return;
       name = name.trim();
 
       if (savedPrompts.some(p => p.name.toLowerCase() === name.toLowerCase())) {
-        alert("A configuration with this name already exists. Please choose a unique name to prevent overrides.");
+        alert("A configuration with this name already exists.");
         return;
       }
 
       savedPrompts.push({
-        name: name, prompt: promptText, title: title, kural: kural, 
-        tamil: tamil ? tamil.replace(/\\n/g, '\n') : '', translation: translation
+        name: name, prompt: promptText, title: title, kuralNo: kuralNo, 
+        line: line ? line.replace(/\\n/g, '\n') : '', translation: translation
       });
       localStorage.setItem('kuralSavedPrompts', JSON.stringify(savedPrompts));
       renderSavedPrompts();
     }
 
     function deleteSavedPrompt(index) {
-      if (confirm("Remove this Kural from your saved list?")) {
+      if (confirm("Remove this exact resolution layout from storage?")) {
         savedPrompts.splice(index, 1);
         localStorage.setItem('kuralSavedPrompts', JSON.stringify(savedPrompts));
         renderSavedPrompts();
@@ -315,9 +403,9 @@
 
     function setupDynamicBackground() {
       const backgroundImages = [
-        'https://images.unsplash.com/photo-1601804576307-e85d9eb5339f?auto=format&fit=crop&w=1400&q=60', // Nature / Temple vibe
-        'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=1400&q=60',
-        'https://images.unsplash.com/photo-1544985392-491e57c6b9eb?auto=format&fit=crop&w=1400&q=60'
+        'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1400&q=60',
+        'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&w=1400&q=60',
+        'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1400&q=60'
       ];
       const selectedImg = backgroundImages[Math.floor(Math.random() * backgroundImages.length)];
       document.body.style.backgroundImage = `linear-gradient(rgba(9, 9, 11, 0.90), rgba(9, 9, 11, 0.95)), url('${selectedImg}')`;
@@ -340,17 +428,17 @@
       const lower = text.toLowerCase();
       let matchedArray = null;
 
-      if (/virtue|aram|right/i.test(lower)) matchedArray = wisdomDb.virtue;
-      else if (/wealth|porul|money|business/i.test(lower)) matchedArray = wisdomDb.wealth;
-      else if (/love|inbam|relationship/i.test(lower)) matchedArray = wisdomDb.love;
-      else if (/learn|study|education/i.test(lower)) matchedArray = wisdomDb.learning;
-      else if (/friend|relationship|companion/i.test(lower)) matchedArray = wisdomDb.friendship;
-      else if (/persevere|hard|difficult|overcome/i.test(lower)) matchedArray = wisdomDb.perseverance;
+      if (/virtue|ethics|aram|good/i.test(lower)) matchedArray = wisdomDb.virtue;
+      else if (/wealth|action|effort|porul/i.test(lower)) matchedArray = wisdomDb.wealth;
+      else if (/love|grace|compassion|inbam/i.test(lower)) matchedArray = wisdomDb.love;
+      else if (/anxiety|anxious|worry|panic|fear/i.test(lower)) matchedArray = wisdomDb.anxiety;
+      else if (/equanimity|balance|peace|calm|still/i.test(lower)) matchedArray = wisdomDb.equanimity;
+      else if (/depression|depress|sad|grief|sorrow|loss/i.test(lower)) matchedArray = wisdomDb.depression;
 
       if (matchedArray) return matchedArray[Math.floor(Math.random() * matchedArray.length)];
 
       const fallback = randomVersePool[Math.floor(Math.random() * randomVersePool.length)];
-      return { title: "Reflective Insight", kural: fallback.kural, tamil: fallback.tamil, translation: fallback.translation };
+      return { title: "Reflective Insight", kuralNo: fallback.kuralNo, line: fallback.line, translation: fallback.translation };
     }
 
     function toggleAudioLang() {
@@ -367,8 +455,7 @@
 
     let utteranceQueue = []; 
 
-    // Audio Solution: Enforce sequential boundaries, strip noise.
-    function toggleAudio(btn, enText, taText) {
+    function toggleAudio(btn, enText, taText, kuralNo) {
       const icon = btn.querySelector('i');
       const isCurrentlyPlaying = icon.classList.contains('fa-volume-up');
       
@@ -380,19 +467,20 @@
 
       const isTamil = audioLang === 'ta';
       const langCode = isTamil ? 'ta-IN' : 'en-US';
-      const defaultRate = isTamil ? 0.8 : 0.9;
+      const defaultRate = isTamil ? 0.8 : 0.85;
 
       let sentences = [];
       
       if (isTamil) {
-          // Tamil Text doesn't usually have || so we just read the lines directly
-          const tamilLines = (taText || enText).split('\n');
-          tamilLines.forEach(line => {
+          let cleanedTamil = (taText || enText).replace(/\|\|.*?\|\|/g, '').replace(/॥.*?॥/g, '');
+          sentences.push(`குறள் ${kuralNo}`);
+          const verseLines = cleanedTamil.replace(/\|\|/g, '।').replace(/॥/g, '।').split('\n');
+          verseLines.forEach(line => {
               if (line.trim()) sentences.push(line.trim());
           });
       } else {
-          // Explicitly Strip Numbers (e.g. 9.22) from the English string before splitting
-          let cleanedEnglish = (enText || "").replace(/\b\d+\.\d+\b/g, '').replace(/[0-9]+/g, '');
+          let cleanedEnglish = (enText || "").replace(/\d+\.?\d*/g, '');
+          sentences.push(`Kural ${kuralNo}`);
           const engLines = cleanedEnglish.replace(/([.?!;])/g, "$1|").split("|");
           engLines.forEach(line => {
               if (line.trim()) sentences.push(line.trim());
@@ -403,11 +491,6 @@
       icon.classList.add('fa-volume-up', 'text-emerald-500');
 
       let completedCount = 0;
-
-      if (sentences.length === 0) {
-          resetAllSpeakers();
-          return;
-      }
 
       sentences.forEach((sentenceText) => {
           const msg = new SpeechSynthesisUtterance(sentenceText);
@@ -442,26 +525,26 @@
       });
     }
     
-    function buildVerseHTML(title, kuralNum, tamilText, translation, associatedPrompt = null) {
-      const formattedTamil = tamilText ? `<span class="tamil-verse">${tamilText.replace(/\n/g, '<br>')}</span>` : '';
+    function buildVerseHTML(title, kuralNo, line, translation, associatedPrompt = null) {
+      const formattedLine = line ? `<span class="tamil-verse">${line.replace(/\n/g, '<br>')}</span>` : '';
       let toolsHTML = '';
       
       const safeTitle = title.replace(/'/g, "\\'").replace(/"/g, "&quot;");
-      const safeTamil = tamilText ? tamilText.replace(/'/g, "\\'").replace(/\n/g, "\\n") : '';
+      const safeLine = line ? line.replace(/'/g, "\\'").replace(/\n/g, "\\n") : '';
       const safeTrans = translation.replace(/'/g, "\\'").replace(/"/g, "&quot;");
       const safePrompt = associatedPrompt ? associatedPrompt.replace(/'/g, "\\'").replace(/"/g, "&quot;") : '';
 
       let bookmarkBtn = associatedPrompt ? `
-        <button onclick="bookmarkExactVerse('${safePrompt}', '${safeTitle}', ${kuralNum}, '${safeTamil}', '${safeTrans}')" 
+        <button onclick="bookmarkExactVerse('${safePrompt}', '${safeTitle}', ${kuralNo}, '${safeLine}', '${safeTrans}')" 
                 class="text-[11px] text-emerald-300/80 hover:text-emerald-300 flex items-center gap-1 bg-zinc-800/80 hover:bg-zinc-700/80 px-2.5 py-1 rounded-md transition-all border border-zinc-700/40">
-          <i class="fas fa-bookmark text-[10px]"></i> Save Kural
+          <i class="fas fa-bookmark text-[10px]"></i> Save Action
         </button>
       ` : '';
       
       toolsHTML = `
         <div class="mt-3 pt-2 border-t border-zinc-800/60 flex justify-between items-center">
           <div class="flex gap-2">
-             <button onclick="toggleAudio(this, '${safeTrans}', '${safeTamil}')" class="hover:text-emerald-400 transition-colors p-1" title="Toggle Audio">
+             <button onclick="toggleAudio(this, '${safeTrans}', '${safeLine}', ${kuralNo})" class="hover:text-emerald-400 transition-colors p-1" title="Toggle Audio">
                <i class="fas fa-volume-mute speaker-icon text-zinc-400 text-lg"></i>
              </button>
           </div>
@@ -470,19 +553,19 @@
       `;
       
       return `
-        <strong class="text-emerald-400 block mb-2">${title} (Kural ${kuralNum})</strong>
-        ${formattedTamil}
+        <strong class="text-emerald-400 block mb-2">${title} (Kural ${kuralNo})</strong>
+        ${formattedLine}
         <div class="text-zinc-300 italic border-l-2 border-emerald-500/40 pl-3 mt-3 leading-relaxed">"${translation}"</div>
         ${toolsHTML}
       `;
     }
 
-    async function getKuralData(kuralNumber) {
-      const cacheKey = `kural_cache_${kuralNumber}`;
+    async function getKuralData(kuralNo) {
+      const cacheKey = `kural_cache_${kuralNo}`;
       const cached = localStorage.getItem(cacheKey);
       if (cached) return JSON.parse(cached);
       
-      const res = await fetch(`https://api-thirukkural.vercel.app/api?num=${kuralNumber}`);
+      const res = await fetch(`https://getthirukkural.appspot.com/api/3.0/kural/${kuralNo}?appid=n1c4k0d5o1p`);
       if (!res.ok) throw new Error();
       const data = await res.json();
       
@@ -500,23 +583,18 @@
       appendMessage('user', msg);
       if (!explicitText) input.value = '';
 
-      const thinking = appendMessage('bot', '<span class="text-emerald-400 font-medium animate-pulse">Consulting Thiruvalluvar...</span>');
+      const thinking = appendMessage('bot', '<span class="text-emerald-400 font-medium animate-pulse">Contemplating the couplets...</span>');
       const matched = matchIntentData(msg);
 
       try {
-        const data = await getKuralData(matched.kural);
+        const data = await getKuralData(matched.kuralNo);
         thinking.parentElement.remove();
-        
-        // Vercel API structure
-        const combinedTamil = data.line1 + '\n' + data.line2;
-        const englishTranslation = data.eng;
-        const sectionTitle = data.chap_eng;
-
-        appendMessage('bot', buildVerseHTML(sectionTitle, matched.kural, combinedTamil, englishTranslation, msg));
+        const extractedTranslation = data.translation || matched.translation;
+        const extractedLine = (data.line1 && data.line2) ? `${data.line1}\n${data.line2}` : matched.line;
+        appendMessage('bot', buildVerseHTML(matched.title, matched.kuralNo, extractedLine, extractedTranslation, msg));
       } catch (err) {
         thinking.parentElement.remove();
-        // Fallback to local DB if API fails
-        appendMessage('bot', buildVerseHTML(matched.title, matched.kural, matched.tamil, matched.translation, msg));
+        appendMessage('bot', buildVerseHTML(matched.title, matched.kuralNo, matched.line, matched.translation, msg));
       }
     }
 
@@ -528,48 +606,46 @@
     async function handleDirectSearch(e) {
       if (e.key === 'Enter') {
         const val = e.target.value.trim();
-        const num = parseInt(val);
+        const kNo = parseInt(val);
         
-        if (!isNaN(num) && num >= 1 && num <= 1330) {
+        if (!isNaN(kNo) && kNo >= 1 && kNo <= 1330) {
             e.target.value = '';
-            appendMessage('user', `Look up exact Kural: ${num}`);
-            const thinking = appendMessage('bot', '<span class="text-emerald-400 font-medium animate-pulse">Retrieving specific Kural...</span>');
+            appendMessage('user', `Look up exact Kural: ${kNo}`);
+            const thinking = appendMessage('bot', '<span class="text-emerald-400 font-medium animate-pulse">Retrieving specific couplet...</span>');
             
             try {
-              const data = await getKuralData(num);
+              const data = await getKuralData(kNo);
               thinking.parentElement.remove();
-              const combinedTamil = data.line1 + '\n' + data.line2;
-              const englishTranslation = data.eng;
-              const sectionTitle = data.chap_eng;
-              appendMessage('bot', buildVerseHTML(sectionTitle, num, combinedTamil, englishTranslation, "Direct Search"));
+              const extractedTranslation = data.translation || "Translation unavailable.";
+              const extractedLine = (data.line1 && data.line2) ? `${data.line1}\n${data.line2}` : "";
+              appendMessage('bot', buildVerseHTML("Direct Lookup", kNo, extractedLine, extractedTranslation, "Direct Search"));
             } catch (err) {
               thinking.parentElement.remove();
-              appendMessage('bot', `<span class="text-red-400">Could not retrieve Kural ${num} at this time. Network may be down.</span>`);
+              appendMessage('bot', `<span class="text-red-400">Could not retrieve Kural ${kNo} at this time. Network may be down.</span>`);
             }
         } else {
-            alert("Invalid Kural. Please enter a valid number between 1 and 1330.");
+            alert("Please enter a valid Kural number between 1 and 1330.");
         }
       }
     }
 
     async function fetchRandomKural() {
       closeSidebar(); 
-      appendMessage('user', "Random Verse"); 
+      appendMessage('user', "Random Couplet"); 
       const randomKural = Math.floor(Math.random() * 1330) + 1;
 
-      const loadingMsg = appendMessage('bot', '<span class="text-emerald-400 font-medium animate-pulse">Opening a random chapter...</span>');
+      const loadingMsg = appendMessage('bot', '<span class="text-emerald-400 font-medium animate-pulse">Opening a random couplet...</span>');
 
       try {
         const data = await getKuralData(randomKural);
         loadingMsg.parentElement.remove();
-        const combinedTamil = data.line1 + '\n' + data.line2;
-        const englishTranslation = data.eng;
-        const sectionTitle = data.chap_eng;
-        appendMessage('bot', buildVerseHTML(sectionTitle, randomKural, combinedTamil, englishTranslation, "Random Selection"));
+        const extractedTranslation = data.translation || "Wisdom is unfolding.";
+        const extractedLine = (data.line1 && data.line2) ? `${data.line1}\n${data.line2}` : "";
+        appendMessage('bot', buildVerseHTML("Random Insight", randomKural, extractedLine, extractedTranslation, "Random Selection"));
       } catch (e) {
         loadingMsg.parentElement.remove();
         const fallback = randomVersePool[Math.floor(Math.random() * randomVersePool.length)];
-        appendMessage('bot', buildVerseHTML(fallback.title, fallback.kural, fallback.tamil, fallback.translation, "Random Selection"));
+        appendMessage('bot', buildVerseHTML("Random Insight (Local Archive)", fallback.kuralNo, fallback.line, fallback.translation, "Random Selection"));
       }
     }
 
@@ -578,12 +654,12 @@
         <div class="faint-overlay"></div>
         <div class="max-w-4xl mx-auto mt-6 p-8 rounded-3xl bg-zinc-900/80 border border-zinc-800/80 backdrop-blur-md text-center relative overflow-hidden shadow-2xl">
           <div class="absolute inset-0 opacity-10 bg-cover bg-center mix-blend-luminosity pointer-events-none" 
-               style="background-image: url('https://images.unsplash.com/photo-1601804576307-e85d9eb5339f?auto=format&fit=crop&w=1200&q=50');">
+               style="background-image: url('https://images.unsplash.com/photo-1609137144813-7d7881005ca7?auto=format&fit=crop&w=1200&q=50');">
           </div>
           <div class="relative z-10 flex flex-col items-center justify-center gap-4">
             
             <div class="rounded-full p-1 bg-gradient-to-br from-emerald-400 to-teal-600 shadow-lg">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/e/ee/Thiruvalluvar_Statue%2C_Kanyakumari.jpg" alt="Thiruvalluvar" class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover">
+              <img src="kural.jpg" alt="Thiruvalluvar" class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover">
             </div>
 
             <h3 class="text-xl font-bold text-zinc-100 tracking-tight">Wisdom of Thiruvalluvar</h3>
