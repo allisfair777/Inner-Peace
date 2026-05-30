@@ -24,7 +24,7 @@
     .message-bot {
       background: #18181b;
       border-radius: 20px 20px 20px 6px;
-      border: 1px solid rgba(16, 185, 129, 0.08); /* Emerald hint */
+      border: 1px solid rgba(16, 185, 129, 0.08);
     }
     .prompt-btn {
       padding: 11px 18px;
@@ -56,7 +56,7 @@
     }
     .tamil-verse {
       display: block;
-      color: #34d399; /* emerald-400 */
+      color: #34d399; 
       font-weight: 600;
       margin-top: 6px;
       margin-bottom: 6px;
@@ -177,6 +177,9 @@
         <button onclick="openSettings()" class="w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-emerald-300 rounded-3xl hover:bg-zinc-800 transition-all ml-2">
           <i class="fas fa-cog text-xl"></i>
         </button>
+        <a href="WisdomIndex.html" class="w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-emerald-300 rounded-3xl hover:bg-zinc-800 transition-all ml-2" title="Return to Wisdom Nexus">
+          <i class="fas fa-home text-xl"></i>
+        </a>
       </div>
     </div>
 
@@ -311,7 +314,6 @@
     ];
 
     function toggleSidebar() {
-      // Remove the pulsing dot permanently upon first interaction
       const pulseDot = document.getElementById('menuPulseDot');
       if (pulseDot) {
         pulseDot.remove();
@@ -560,12 +562,13 @@
       `;
     }
 
+    // UPDATED to use the more reliable Vercel API
     async function getKuralData(kuralNo) {
       const cacheKey = `kural_cache_${kuralNo}`;
       const cached = localStorage.getItem(cacheKey);
       if (cached) return JSON.parse(cached);
       
-      const res = await fetch(`https://getthirukkural.appspot.com/api/3.0/kural/${kuralNo}?appid=n1c4k0d5o1p`);
+      const res = await fetch(`https://api-thirukkural.vercel.app/api?num=${kuralNo}`);
       if (!res.ok) throw new Error();
       const data = await res.json();
       
@@ -589,9 +592,11 @@
       try {
         const data = await getKuralData(matched.kuralNo);
         thinking.parentElement.remove();
-        const extractedTranslation = data.translation || matched.translation;
+        // Fixed mapping to use data.eng and data.chap_eng from Vercel API
+        const extractedTranslation = data.eng || matched.translation;
         const extractedLine = (data.line1 && data.line2) ? `${data.line1}\n${data.line2}` : matched.line;
-        appendMessage('bot', buildVerseHTML(matched.title, matched.kuralNo, extractedLine, extractedTranslation, msg));
+        const title = data.chap_eng || matched.title;
+        appendMessage('bot', buildVerseHTML(title, matched.kuralNo, extractedLine, extractedTranslation, msg));
       } catch (err) {
         thinking.parentElement.remove();
         appendMessage('bot', buildVerseHTML(matched.title, matched.kuralNo, matched.line, matched.translation, msg));
@@ -616,9 +621,11 @@
             try {
               const data = await getKuralData(kNo);
               thinking.parentElement.remove();
-              const extractedTranslation = data.translation || "Translation unavailable.";
+              // Fixed mapping to use data.eng and data.chap_eng from Vercel API
+              const extractedTranslation = data.eng || "Translation unavailable.";
               const extractedLine = (data.line1 && data.line2) ? `${data.line1}\n${data.line2}` : "";
-              appendMessage('bot', buildVerseHTML("Direct Lookup", kNo, extractedLine, extractedTranslation, "Direct Search"));
+              const title = data.chap_eng || "Direct Lookup";
+              appendMessage('bot', buildVerseHTML(title, kNo, extractedLine, extractedTranslation, "Direct Search"));
             } catch (err) {
               thinking.parentElement.remove();
               appendMessage('bot', `<span class="text-red-400">Could not retrieve Kural ${kNo} at this time. Network may be down.</span>`);
@@ -639,9 +646,11 @@
       try {
         const data = await getKuralData(randomKural);
         loadingMsg.parentElement.remove();
-        const extractedTranslation = data.translation || "Wisdom is unfolding.";
+        // Fixed mapping to use data.eng and data.chap_eng from Vercel API
+        const extractedTranslation = data.eng || "Wisdom is unfolding.";
         const extractedLine = (data.line1 && data.line2) ? `${data.line1}\n${data.line2}` : "";
-        appendMessage('bot', buildVerseHTML("Random Insight", randomKural, extractedLine, extractedTranslation, "Random Selection"));
+        const title = data.chap_eng || "Random Insight";
+        appendMessage('bot', buildVerseHTML(title, randomKural, extractedLine, extractedTranslation, "Random Selection"));
       } catch (e) {
         loadingMsg.parentElement.remove();
         const fallback = randomVersePool[Math.floor(Math.random() * randomVersePool.length)];
