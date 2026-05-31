@@ -191,6 +191,7 @@
 
   <script>
     const chat = document.getElementById('chat');
+    let audioLang = 'en'; 
     
     // ================= SETTINGS LOGIC =================
     let systemVoices = [];
@@ -202,6 +203,7 @@
     function populateVoiceList() {
       systemVoices = window.speechSynthesis.getVoices();
       const enSelect = document.getElementById('enVoiceSelect');
+      
       enSelect.innerHTML = '<option value="">Default English Voice</option>';
 
       systemVoices.forEach(voice => {
@@ -263,19 +265,34 @@
     // ================= END SETTINGS LOGIC =================
 
     const wisdomDb = {
-      control: [{ title: "Dichotomy of Control", author: "Epictetus", quote: "Some things are in our control and others not. ...", translation: "Focus only on what is within your power." }],
-      amorFati: [{ title: "Love of Fate", author: "Marcus Aurelius", quote: "Accept the things to which fate binds you, and love the people with whom fate brings you together...", translation: "Love whatever fate brings." }],
-      memento: [{ title: "Memento Mori", author: "Seneca", quote: "You live as if you were going to live forever...", translation: "Remember that you must die." }],
-      anger: [{ title: "Mastering Anger", author: "Seneca", quote: "We are often more frightened than hurt...", translation: "Control your perceptions." }],
-      resilience: [{ title: "The Obstacle is the Way", author: "Marcus Aurelius", quote: "The impediment to action advances action...", translation: "Turn obstacles into fuel." }],
-      virtue: [{ title: "Living with Virtue", author: "Marcus Aurelius", quote: "Waste no more time arguing about what a good man should be. Be one.", translation: "Be the change you wish to see." }],
-      adversity: [{ title: "Enduring Adversity", author: "Epictetus", quote: "It’s not what happens to you, but how you react to it that matters.", translation: "It’s not the event, but your judgment of it." }]
+      control: [
+        { title: "Dichotomy of Control", author: "Epictetus", quote: "Some things are in our control and others not. Things in our control are opinion, pursuit, desire, aversion, and, in a word, whatever are our own actions. Things not in our control are body, property, reputation, command, and, in one word, whatever are not our own actions.", translation: "Focus only on what is within your power." }
+      ],
+      amorFati: [
+        { title: "Love of Fate", author: "Marcus Aurelius", quote: "Accept the things to which fate binds you, and love the people with whom fate brings you together, but do so with all your heart.", translation: "Love whatever fate brings." }
+      ],
+      memento: [
+        { title: "Memento Mori", author: "Seneca", quote: "You live as if you were going to live forever. You do not think about your end. You squander time as if you drew from a full and abundant supply.", translation: "Remember that you must die." }
+      ],
+      anger: [
+        { title: "Mastering Anger", author: "Seneca", quote: "We are often more frightened than hurt; and we suffer more from imagination than from reality.", translation: "Control your perceptions." }
+      ],
+      resilience: [
+        { title: "The Obstacle is the Way", author: "Marcus Aurelius", quote: "The impediment to action advances action. What stands in the way becomes the way.", translation: "Turn obstacles into fuel." }
+      ],
+      virtue: [
+        { title: "Living with Virtue", author: "Marcus Aurelius", quote: "Waste no more time arguing about what a good man should be. Be one.", translation: "Be the change you wish to see." }
+      ],
+      adversity: [
+        { title: "Enduring Adversity", author: "Epictetus", quote: "It’s not what happens to you, but how you react to it that matters.", translation: "It’s not the event, but your judgment of it." }
+      ]
     };
 
     const randomQuotePool = [
       { author: "Marcus Aurelius", quote: "You have power over your mind — not outside events. Realize this, and you will find strength.", translation: "Master your mind." },
       { author: "Epictetus", quote: "It’s not what happens to you, but how you react to it that matters.", translation: "Control your response." },
-      { author: "Seneca", quote: "We suffer more often in imagination than in reality.", translation: "Do not torture yourself with worry." }
+      { author: "Seneca", quote: "We suffer more often in imagination than in reality.", translation: "Do not torture yourself with worry." },
+      { author: "Marcus Aurelius", quote: "The happiness of your life depends upon the quality of your thoughts.", translation: "Guard your thoughts." }
     ];
 
     function toggleSidebar() {
@@ -297,10 +314,13 @@
       const clearBtn = document.getElementById('clearDataBtn');
       
       if (clearBtn) {
-        clearBtn.disabled = savedPrompts.length === 0;
-        clearBtn.className = savedPrompts.length === 0 
-          ? "w-full bg-zinc-900 text-zinc-600 border border-zinc-800 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 cursor-not-allowed" 
-          : "w-full bg-zinc-950 hover:bg-red-900/30 text-red-400 border border-red-900/50 hover:border-red-500/50 py-2.5 rounded-xl text-sm transition-colors flex items-center justify-center gap-2";
+        if (savedPrompts.length === 0) {
+            clearBtn.disabled = true;
+            clearBtn.className = "w-full bg-zinc-900 text-zinc-600 border border-zinc-800 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 cursor-not-allowed transition-colors";
+        } else {
+            clearBtn.disabled = false;
+            clearBtn.className = "w-full bg-zinc-950 hover:bg-red-900/30 text-red-400 border border-red-900/50 hover:border-red-500/50 py-2.5 rounded-xl text-sm transition-colors flex items-center justify-center gap-2";
+        }
       }
 
       if (savedPrompts.length === 0) {
@@ -323,25 +343,35 @@
       closeSidebar(); 
       const item = savedPrompts[index];
       if (!item) return;
-      appendMessage('user', item.prompt || `Reviewed: "${item.name}"`);
-      appendMessage('bot', buildQuoteHTML(item.title, item.author, item.quote, item.translation));
+      if (item.prompt && item.prompt !== "Random Selection") {
+        appendMessage('user', item.prompt);
+      } else {
+        appendMessage('user', `Reviewed Saved Entry: "${item.name}"`);
+      }
+      const html = buildQuoteHTML(item.title, item.author, item.quote, item.translation, null);
+      appendMessage('bot', html);
     }
 
     function bookmarkExactVerse(promptText, title, author, quote, translation) {
       let name = prompt("Give this resolution entry a unique name:");
       if (!name || name.trim() === "") return;
       name = name.trim();
+
       if (savedPrompts.some(p => p.name.toLowerCase() === name.toLowerCase())) {
         alert("A configuration with this name already exists.");
         return;
       }
-      savedPrompts.push({name, prompt: promptText, title, author, quote, translation});
+
+      savedPrompts.push({
+        name: name, prompt: promptText, title: title, author: author, 
+        quote: quote, translation: translation
+      });
       localStorage.setItem('stoicSavedPrompts', JSON.stringify(savedPrompts));
       renderSavedPrompts();
     }
 
     function deleteSavedPrompt(index) {
-      if (confirm("Remove this entry?")) {
+      if (confirm("Remove this exact resolution layout from storage?")) {
         savedPrompts.splice(index, 1);
         localStorage.setItem('stoicSavedPrompts', JSON.stringify(savedPrompts));
         renderSavedPrompts();
@@ -353,7 +383,8 @@
         'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1400&q=60',
         'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&w=1400&q=60'
       ];
-      document.body.style.backgroundImage = `linear-gradient(rgba(9, 9, 11, 0.92), rgba(9, 9, 11, 0.95)), url('${backgroundImages[Math.floor(Math.random() * backgroundImages.length)]}')`;
+      const selectedImg = backgroundImages[Math.floor(Math.random() * backgroundImages.length)];
+      document.body.style.backgroundImage = `linear-gradient(rgba(9, 9, 11, 0.92), rgba(9, 9, 11, 0.95)), url('${selectedImg}')`;
     }
 
     function appendMessage(sender, html) {
@@ -366,112 +397,139 @@
       `;
       chat.appendChild(div);
       chat.scrollTop = chat.scrollHeight;
+      return div.querySelector('.message-bot') || div.querySelector('.message-user');
     }
 
     function matchIntentData(text) {
       const lower = text.toLowerCase();
-      if (/control|dichotomy/i.test(lower)) return wisdomDb.control[0];
-      if (/fate|amor/i.test(lower)) return wisdomDb.amorFati[0];
-      if (/death|memento/i.test(lower)) return wisdomDb.memento[0];
-      if (/anger/i.test(lower)) return wisdomDb.anger[0];
-      if (/resilien/i.test(lower)) return wisdomDb.resilience[0];
-      if (/virtue|character/i.test(lower)) return wisdomDb.virtue[0];
-      if (/adversity|obstacle/i.test(lower)) return wisdomDb.adversity[0];
-      
-      return randomQuotePool[Math.floor(Math.random() * randomQuotePool.length)];
+      let matchedArray = null;
+
+      if (/control|dichotomy|what i can control/i.test(lower)) matchedArray = wisdomDb.control;
+      else if (/fate|amor fati|accept/i.test(lower)) matchedArray = wisdomDb.amorFati;
+      else if (/death|memento mori|mortal/i.test(lower)) matchedArray = wisdomDb.memento;
+      else if (/anger|rage|irritat/i.test(lower)) matchedArray = wisdomDb.anger;
+      else if (/resilien|strong|endure/i.test(lower)) matchedArray = wisdomDb.resilience;
+      else if (/virtue|character|good man/i.test(lower)) matchedArray = wisdomDb.virtue;
+      else if (/adversity|obstacle|difficult|hardship/i.test(lower)) matchedArray = wisdomDb.adversity;
+
+      if (matchedArray) return matchedArray[Math.floor(Math.random() * matchedArray.length)];
+
+      const fallback = randomQuotePool[Math.floor(Math.random() * randomQuotePool.length)];
+      return { title: "Stoic Insight", author: fallback.author, quote: fallback.quote, translation: fallback.translation };
+    }
+
+    function toggleAudioLang() {
+      alert("English audio is currently active.");
+    }
+
+    function resetAllSpeakers() {
+        document.querySelectorAll('.speaker-icon').forEach(icon => {
+            icon.classList.remove('fa-volume-up', 'text-stone-400');
+            icon.classList.add('fa-volume-mute', 'text-zinc-400');
+        });
     }
 
     function toggleAudio(btn, text) {
       const icon = btn.querySelector('i');
-      if (icon.classList.contains('fa-volume-up')) {
-        window.speechSynthesis.cancel();
-        icon.classList.remove('fa-volume-up', 'text-stone-400');
-        icon.classList.add('fa-volume-mute', 'text-zinc-400');
-        return;
-      }
+      const isCurrentlyPlaying = icon.classList.contains('fa-volume-up');
       
       window.speechSynthesis.cancel();
-      document.querySelectorAll('.speaker-icon').forEach(i => {
-        i.classList.remove('fa-volume-up', 'text-stone-400');
-        i.classList.add('fa-volume-mute', 'text-zinc-400');
-      });
+      resetAllSpeakers();
+
+      if (isCurrentlyPlaying) return;
 
       icon.classList.remove('fa-volume-mute', 'text-zinc-400');
       icon.classList.add('fa-volume-up', 'text-stone-400');
 
       const msg = new SpeechSynthesisUtterance(text);
       msg.rate = appSettings.speechSpeed || 1.0;
-      if (appSettings.enVoiceURI) {
-        const voice = systemVoices.find(v => v.voiceURI === appSettings.enVoiceURI);
-        if (voice) msg.voice = voice;
+      
+      const targetVoiceURI = appSettings.enVoiceURI;
+      if (targetVoiceURI && systemVoices.length > 0) {
+        const selectedVoice = systemVoices.find(v => v.voiceURI === targetVoiceURI);
+        if (selectedVoice) msg.voice = selectedVoice;
       }
-      msg.onend = () => {
-        icon.classList.remove('fa-volume-up', 'text-stone-400');
-        icon.classList.add('fa-volume-mute', 'text-zinc-400');
-      };
+      
+      msg.onend = () => resetAllSpeakers();
       window.speechSynthesis.speak(msg);
     }
-
+    
     function buildQuoteHTML(title, author, quote, translation, associatedPrompt = null) {
+      let toolsHTML = '';
+      
+      const safeTitle = title.replace(/'/g, "\\'").replace(/"/g, "&quot;");
       const safeQuote = quote.replace(/'/g, "\\'").replace(/\n/g, "\\n");
-      const bookmarkBtn = associatedPrompt ? `
-        <button onclick="bookmarkExactVerse('${associatedPrompt.replace(/'/g,"\\'")}', '${title.replace(/'/g,"\\'")}', '${author}', '${safeQuote}', '${translation.replace(/'/g,"\\'")}')" 
+      const safeTrans = translation.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+      const safePrompt = associatedPrompt ? associatedPrompt.replace(/'/g, "\\'").replace(/"/g, "&quot;") : '';
+
+      let bookmarkBtn = associatedPrompt ? `
+        <button onclick="bookmarkExactVerse('${safePrompt}', '${safeTitle}', '${author}', '${safeQuote}', '${safeTrans}')" 
                 class="text-[11px] text-stone-300/80 hover:text-stone-300 flex items-center gap-1 bg-zinc-800/80 hover:bg-zinc-700/80 px-2.5 py-1 rounded-md transition-all border border-zinc-700/40">
           <i class="fas fa-bookmark text-[10px]"></i> Save Action
-        </button>` : '';
-
+        </button>
+      ` : '';
+      
+      toolsHTML = `
+        <div class="mt-3 pt-2 border-t border-zinc-800/60 flex justify-between items-center">
+          <div class="flex gap-2">
+             <button onclick="toggleAudio(this, '${safeQuote}')" class="hover:text-stone-400 transition-colors p-1" title="Play Audio">
+               <i class="fas fa-volume-mute speaker-icon text-zinc-400 text-lg"></i>
+             </button>
+          </div>
+          ${bookmarkBtn}
+        </div>
+      `;
+      
       return `
         <strong class="text-stone-400 block mb-2">${title} — ${author}</strong>
         <div class="stoic-quote">"${quote}"</div>
         <div class="text-zinc-300 italic border-l-2 border-stone-400/40 pl-3 mt-3 leading-relaxed">"${translation}"</div>
-        <div class="mt-3 pt-2 border-t border-zinc-800/60 flex justify-between items-center">
-          <button onclick="toggleAudio(this, '${safeQuote}')" class="hover:text-stone-400 transition-colors p-1" title="Play Audio">
-            <i class="fas fa-volume-mute speaker-icon text-zinc-400 text-lg"></i>
-          </button>
-          ${bookmarkBtn}
-        </div>
+        ${toolsHTML}
       `;
     }
 
     function sendMessage(e, explicitText = null) {
-      if (e) e.preventDefault();
+      if (e && e.preventDefault) e.preventDefault();
+      
       const input = document.getElementById('userInput');
-      const msg = explicitText || input.value.trim();
+      const msg = explicitText ? explicitText.trim() : input.value.trim();
       if (!msg) return;
 
       appendMessage('user', msg);
       if (!explicitText) input.value = '';
 
       const thinking = appendMessage('bot', '<span class="text-stone-400 font-medium animate-pulse">Reflecting with the Stoics...</span>');
+
       const matched = matchIntentData(msg);
+
       thinking.parentElement.remove();
-      appendMessage('bot', buildQuoteHTML(matched.title || "Stoic Insight", matched.author, matched.quote, matched.translation, msg));
+      appendMessage('bot', buildQuoteHTML(matched.title, matched.author, matched.quote, matched.translation, msg));
     }
 
     function sendPrompt(promptText) {
-      closeSidebar();
+      closeSidebar(); 
       setTimeout(() => sendMessage(null, promptText), 80);
     }
 
     function fetchRandomStoicQuote() {
-      closeSidebar();
-      appendMessage('user', "Random Stoic Quote");
-      const q = randomQuotePool[Math.floor(Math.random() * randomQuotePool.length)];
-      appendMessage('bot', buildQuoteHTML("Timeless Wisdom", q.author, q.quote, q.translation, "Random Selection"));
+      closeSidebar(); 
+      appendMessage('user', "Random Stoic Quote"); 
+      
+      const fallback = randomQuotePool[Math.floor(Math.random() * randomQuotePool.length)];
+      appendMessage('bot', buildQuoteHTML("Timeless Wisdom", fallback.author, fallback.quote, fallback.translation, "Random Selection"));
     }
 
     function getOvalHTML() {
       return `
         <div class="faint-overlay"></div>
         <div class="max-w-4xl mx-auto mt-6 p-8 rounded-3xl bg-zinc-900/80 border border-zinc-800/80 backdrop-blur-md text-center relative overflow-hidden shadow-2xl">
-          <div class="absolute inset-0 opacity-8 bg-cover bg-center mix-blend-luminosity pointer-events-none" 
+          <div class="absolute inset-0 opacity-10 bg-cover bg-center mix-blend-luminosity pointer-events-none" 
                style="background-image: url('Purple Cross.jpg');">
           </div>
           <div class="relative z-10 flex flex-col items-center justify-center gap-4">
             
             <div class="rounded-full p-1 bg-gradient-to-br from-stone-400 to-slate-600 shadow-lg">
-              <img src="Stoic.jpg" alt="Stoic Shield" 
-                   class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 border-stone-700/50 shadow-inner">
+              <div class="w-32 h-32 md:w-40 md:h-40 rounded-full bg-zinc-800 flex items-center justify-center text-6xl">🛡️</div>
             </div>
 
             <h3 class="text-xl font-bold text-zinc-100 tracking-tight">Welcome to Stoic Wisdom</h3>
@@ -491,16 +549,13 @@
       chat.innerHTML = getOvalHTML();
     }
 
-    function closeSidebar() {
-      const sidebar = document.getElementById('sidebar');
-      sidebar.className = "w-0 border-transparent opacity-0 flex flex-col h-full z-20 sidebar-transition overflow-hidden shrink-0";
-    }
-
     window.onload = () => {
       setupDynamicBackground();
       renderSavedPrompts();
       chat.innerHTML = getOvalHTML();
-      if (window.speechSynthesis.getVoices().length > 0) populateVoiceList();
+      if (window.speechSynthesis.getVoices().length > 0) {
+        populateVoiceList();
+      }
     };
   </script>
 </body>
