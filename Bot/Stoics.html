@@ -151,10 +151,7 @@
             <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-stone-500"></span>
           </span>
         </button>
-            <div class="rounded-full p-1 bg-gradient-to-br from-stone-400 to-slate-600 shadow-lg">
-              <img src="Stoic.jpg" alt="Stoic Shield" 
-                   class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 border-stone-700/50">
-            </div>
+        <div class="w-10 h-10 bg-gradient-to-br from-stone-400 to-slate-600 rounded-2xl flex items-center justify-center text-2xl font-bold text-white shadow-md">🛡️</div>
         <div class="hidden md:block">
           <div class="text-xl font-bold tracking-tight text-zinc-100">Inner Strength &amp; Virtue</div>
           <div class="text-xs text-stone-300/60">Master your mind. Endure with dignity.</div>
@@ -522,19 +519,18 @@
       appendMessage('bot', buildQuoteHTML("Timeless Wisdom", fallback.author, fallback.quote, fallback.translation, "Random Selection"));
     }
 
-   function getOvalHTML() {
+    function getOvalHTML() {
       return `
         <div class="faint-overlay"></div>
         <div class="max-w-4xl mx-auto mt-6 p-8 rounded-3xl bg-zinc-900/80 border border-zinc-800/80 backdrop-blur-md text-center relative overflow-hidden shadow-2xl">
-          <div class="absolute inset-0 opacity-8 bg-cover bg-center mix-blend-luminosity pointer-events-none" 
+          <div class="absolute inset-0 opacity-10 bg-cover bg-center mix-blend-luminosity pointer-events-none" 
                style="background-image: url('Purple Cross.jpg');">
           </div>
           <div class="relative z-10 flex flex-col items-center justify-center gap-4">
             
-            <!-- Main Welcome Shield - Using your uploaded image -->
             <div class="rounded-full p-1 bg-gradient-to-br from-stone-400 to-slate-600 shadow-lg">
               <img src="Stoic.jpg" alt="Stoic Shield" 
-                   class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 border-stone-700/50 shadow-inner">
+                   class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 border-stone-700/50">
             </div>
 
             <h3 class="text-xl font-bold text-zinc-100 tracking-tight">Welcome to Stoic Wisdom</h3>
