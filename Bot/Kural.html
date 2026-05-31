@@ -591,9 +591,9 @@
       try {
         const data = await getKuralData(matched.kuralNo);
         thinking.parentElement.remove();
-        const extractedTranslation = data.eng || data.eng_exp || data.translation || data.Translation || matched.translation;
-        const extractedLine = (data.line1 && data.line2) ? `${data.line1}\n${data.line2}` : (data.line || matched.line);
-        const title = data.chap_eng || data.chapter || matched.title;
+        const extractedTranslation = data.eng || matched.translation;
+        const extractedLine = (data.line1 && data.line2) ? `${data.line1}\n${data.line2}` : matched.line;
+        const title = data.chap_eng || matched.title;
         appendMessage('bot', buildVerseHTML(title, matched.kuralNo, extractedLine, extractedTranslation, msg));
       } catch (err) {
         thinking.parentElement.remove();
@@ -620,9 +620,9 @@
             try {
               const data = await getKuralData(kNo);
               thinking.parentElement.remove();
-              const extractedTranslation = data.eng || data.eng_exp || data.translation || data.Translation || "Translation unavailable.";
-              const extractedLine = (data.line1 && data.line2) ? `${data.line1}\n${data.line2}` : (data.line || "");
-              const title = data.chap_eng || data.chapter || "Direct Lookup";
+              const extractedTranslation = data.eng || "Translation unavailable.";
+              const extractedLine = (data.line1 && data.line2) ? `${data.line1}\n${data.line2}` : "";
+              const title = data.chap_eng || "Direct Lookup";
               appendMessage('bot', buildVerseHTML(title, kNo, extractedLine, extractedTranslation, "Direct Search"));
             } catch (err) {
               thinking.parentElement.remove();
@@ -644,9 +644,9 @@
       try {
         const data = await getKuralData(randomKural);
         loadingMsg.parentElement.remove();
-        const extractedTranslation = data.eng || data.eng_exp || data.translation || data.Translation || "Wisdom is unfolding.";
-        const extractedLine = (data.line1 && data.line2) ? `${data.line1}\n${data.line2}` : (data.line || "");
-        const title = data.chap_eng || data.chapter || "Random Insight";
+        const extractedTranslation = data.eng || "Wisdom is unfolding.";
+        const extractedLine = (data.line1 && data.line2) ? `${data.line1}\n${data.line2}` : "";
+        const title = data.chap_eng || "Random Insight";
         appendMessage('bot', buildVerseHTML(title, randomKural, extractedLine, extractedTranslation, "Random Selection"));
       } catch (e) {
         loadingMsg.parentElement.remove();
