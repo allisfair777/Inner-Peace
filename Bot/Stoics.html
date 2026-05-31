@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Stoic Resolution Guide</title>
+  <title>Stoic Wisdom Guide</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
   <style>
@@ -24,174 +24,539 @@
     .message-bot {
       background: #18181b;
       border-radius: 20px 20px 20px 6px;
-      border: 1px solid rgba(148, 163, 184, 0.1); /* Slate hint */
+      border: 1px solid rgba(120, 113, 108, 0.15);
     }
     .prompt-btn {
       padding: 11px 18px;
       margin-bottom: 8px;
       background: #27272a;
-      border-radius: 999px;
-      color: #e4e4e7;
-      font-size: 0.875rem;
-      transition: all 0.2s;
-      border: 1px solid transparent;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid rgba(255,255,255,0.03);
     }
     .prompt-btn:hover {
       background: #3f3f46;
-      border-color: rgba(148, 163, 184, 0.3);
+      transform: translateX(4px);
     }
-    .hide-scrollbar::-webkit-scrollbar {
-      display: none;
+    .faint-overlay {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 25%, rgba(120, 113, 108, 0.08), transparent 75%);
+      pointer-events: none;
+      z-index: 0;
     }
-    .hide-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
+    .oval-header {
+      border-radius: 9999px;
+      background: rgba(24, 24, 27, 0.95);
+    }
+    #chat {
+      scrollbar-width: thin;
+      scrollbar-color: #78716c #09090b;
+    }
+    .stoic-quote {
+      display: block;
+      color: #a1a1aa;
+      font-weight: 600;
+      margin-top: 6px;
+      margin-bottom: 6px;
+      line-height: 1.6;
+      font-size: 1.05em;
+    }
+    .sidebar-transition {
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease, border-color 0.3s ease;
     }
   </style>
 </head>
-<body class="h-screen flex overflow-hidden selection:bg-slate-500/30 text-zinc-100">
+<body class="h-screen w-screen text-gray-100 flex overflow-hidden bg-cover bg-center bg-no-repeat bg-fixed relative">
 
-  <main class="flex-1 flex flex-col relative h-full w-full">
-    <header class="flex-none h-16 flex items-center justify-between px-4 border-b border-zinc-800/50 bg-zinc-950/50 backdrop-blur-md z-20">
-      <div class="flex items-center gap-3">
-        <a href="https://allisfair777.github.io/Inner-Peace/WisdomIndex.html" class="text-zinc-400 hover:text-zinc-100 transition-colors">
-          <i class="fa-solid fa-arrow-left"></i>
-        </a>
-        <h1 class="font-semibold text-zinc-100 tracking-wide">The Stoics</h1>
+  <div id="settingsModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="bg-zinc-900 border border-zinc-700 w-full max-w-md rounded-3xl shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300" id="settingsContent">
+      <div class="p-5 border-b border-zinc-800 flex justify-between items-center bg-zinc-950/50">
+        <h2 class="text-lg font-bold text-zinc-100"><i class="fas fa-cog text-stone-400 mr-2"></i> Settings</h2>
+        <button onclick="closeSettings()" class="text-zinc-500 hover:text-red-400 transition-colors p-1">
+          <i class="fas fa-times text-lg"></i>
+        </button>
       </div>
-      <button onclick="newChat()" class="text-slate-400 hover:text-slate-300 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
-        <i class="fa-solid fa-plus text-xs"></i> New Entry
-      </button>
-    </header>
+      
+      <div class="p-6 space-y-6">
+        <div>
+          <h3 class="text-stone-400 text-xs font-semibold tracking-wider mb-3 uppercase">Voice & Audio</h3>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm text-zinc-400 mb-1">English Voice</label>
+              <select id="enVoiceSelect" onchange="saveSettings()" class="w-full bg-zinc-950 border border-zinc-700 text-zinc-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-stone-400"></select>
+            </div>
 
-    <div id="chat" class="flex-1 overflow-y-auto hide-scrollbar pb-32">
-      <div class="relative w-full h-[60vh] flex items-center justify-center p-6">
-        <div class="absolute inset-0 opacity-10 pointer-events-none" 
-             style="background-image: url('https://images.unsplash.com/photo-1560731671-5fb7317730e1?auto=format&fit=crop&w=1200&q=50'); background-size: cover; background-position: center;">
-        </div>
-        <div class="relative z-10 flex flex-col items-center justify-center gap-4">
-          
-          <div class="rounded-full p-1 bg-gradient-to-br from-slate-400 to-slate-700 shadow-lg">
-            <img src="https://images.unsplash.com/photo-1560731671-5fb7317730e1?auto=format&fit=crop&w=200&h=200&q=80" alt="Marcus Aurelius Bust" class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover grayscale">
-          </div>
-
-          <h3 class="text-xl font-bold text-zinc-100 tracking-tight">Wisdom of the Stoics</h3>
-          <p class="text-zinc-400 text-sm leading-relaxed max-w-2xl px-4 text-center">
-            Describe your current anxieties or challenges. I will draw from Epictetus, Seneca, and Marcus Aurelius to build actionable resolutions grounded in logic and what you can control.
-          </p>
-          <div class="text-xs text-slate-400/50 italic border-t border-zinc-800/80 pt-4 w-full mt-2 text-center">
-            "You have power over your mind - not outside events. Realize this, and you will find strength."
+            <div>
+              <label class="block text-sm text-zinc-400 mb-1 flex justify-between">
+                <span>Reading Speed</span>
+                <span id="speedValue" class="text-stone-400 font-medium">Normal (1.0x)</span>
+              </label>
+              <input type="range" id="speedSlider" min="0.5" max="1.5" step="0.1" value="1.0" oninput="updateSpeedLabel(); saveSettings()" class="w-full accent-stone-400">
+            </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-zinc-950 via-zinc-950/90 to-transparent z-20">
-      <div class="max-w-3xl mx-auto">
-        
-        <div class="flex gap-2 overflow-x-auto hide-scrollbar mb-3 px-1">
-          <button class="prompt-btn whitespace-nowrap" onclick="sendPrompt(this.innerText)">How do I deal with anxiety about the future?</button>
-          <button class="prompt-btn whitespace-nowrap" onclick="sendPrompt(this.innerText)">I'm facing a difficult transition.</button>
-          <button class="prompt-btn whitespace-nowrap" onclick="sendPrompt(this.innerText)">How do I let go of what I can't control?</button>
-        </div>
-
-        <div class="chat-container rounded-2xl border border-zinc-800/50 p-2 flex items-end gap-2 focus-within:border-slate-500/50 transition-colors shadow-2xl">
-          <textarea id="input" rows="1" class="w-full bg-transparent text-zinc-100 placeholder-zinc-500 text-base px-3 py-2 focus:outline-none resize-none max-h-32" placeholder="Consult the Stoics..."></textarea>
-          <button onclick="handleSend()" class="bg-zinc-100 hover:bg-white text-zinc-900 rounded-xl p-3 h-11 w-11 flex items-center justify-center transition-transform hover:scale-105 shrink-0">
-            <i class="fa-solid fa-arrow-up"></i>
+        <div>
+          <h3 class="text-stone-400 text-xs font-semibold tracking-wider mb-3 uppercase">Data Management</h3>
+          <button id="clearDataBtn" onclick="clearAllSavedData()" class="w-full bg-zinc-950 hover:bg-red-900/30 text-red-400 border border-red-900/50 hover:border-red-500/50 py-2.5 rounded-xl text-sm transition-colors flex items-center justify-center gap-2">
+            <i class="fas fa-trash-alt"></i> Clear Saved Actions
           </button>
         </div>
-        <div class="text-center mt-2">
-          <span class="text-[10px] text-zinc-500 font-medium">STOIC RESOLUTION PLANNER</span>
-        </div>
       </div>
     </div>
-  </main>
+  </div>
+
+  <div id="sidebar" class="w-0 border-transparent opacity-0 flex flex-col h-full z-20 sidebar-transition overflow-hidden shrink-0">
+    <div class="p-5 flex items-center justify-between border-b border-zinc-800 shrink-0 w-72">
+      <div class="font-semibold text-xl tracking-tight text-zinc-200">Stoic Wisdom Guide</div>
+      <button onclick="toggleSidebar()" class="text-zinc-400 hover:text-stone-400">
+        <i class="fas fa-chevron-left text-sm"></i>
+      </button>
+    </div>
+
+    <div class="p-4 shrink-0 w-72">
+      <button onclick="newChat()" class="w-full bg-stone-500 hover:bg-stone-600 text-white font-semibold py-3.5 rounded-2xl flex items-center justify-center gap-2 transition-all shadow-md">
+        <i class="fas fa-plus"></i> New Conversation
+      </button>
+    </div>
+
+    <div class="px-4 flex-1 overflow-y-auto pb-4 w-72">
+      <p class="text-stone-400/80 text-xs mb-3 px-3 font-semibold tracking-wider">QUICK PROMPTS</p>
+      <div onclick="sendPrompt('Dichotomy of Control')" class="prompt-btn text-sm text-zinc-300">Dichotomy of Control</div>
+      <div onclick="sendPrompt('Amor Fati')" class="prompt-btn text-sm text-zinc-300">Amor Fati</div>
+      <div onclick="sendPrompt('Memento Mori')" class="prompt-btn text-sm text-zinc-300">Memento Mori</div>
+      <div onclick="sendPrompt('Overcoming Anger')" class="prompt-btn text-sm text-zinc-300">Overcoming Anger</div>
+      <div onclick="sendPrompt('Resilience')" class="prompt-btn text-sm text-zinc-300">Resilience</div>
+      <div onclick="sendPrompt('Virtue & Character')" class="prompt-btn text-sm text-zinc-300">Virtue & Character</div>
+      <div onclick="sendPrompt('Dealing with Adversity')" class="prompt-btn text-sm text-zinc-300">Dealing with Adversity</div>
+      <div onclick="fetchRandomStoicQuote()" class="prompt-btn text-sm text-zinc-300">Random Quote</div>
+
+      <div class="mt-8">
+        <p class="text-stone-400/80 text-xs mb-3 px-3 font-semibold tracking-wider">SAVED ACTION SOLUTIONS</p>
+        <div id="saved-prompts-list" class="space-y-2"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex-1 flex flex-col chat-container relative h-full min-w-0">
+    
+    <div class="oval-header mx-4 mt-4 px-6 py-4 flex items-center justify-between border border-zinc-800/60 shadow-xl z-10">
+      <div class="flex items-center gap-4">
+        <button onclick="toggleSidebar()" class="relative w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-stone-300 rounded-3xl hover:bg-zinc-800 transition-all">
+          <i class="fas fa-bars text-lg"></i>
+          <span id="menuPulseDot" class="absolute top-1 right-2 flex h-2.5 w-2.5">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-stone-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-stone-500"></span>
+          </span>
+        </button>
+        <div class="w-10 h-10 bg-gradient-to-br from-stone-400 to-slate-600 rounded-2xl flex items-center justify-center text-2xl font-bold text-white shadow-md">🛡️</div>
+        <div class="hidden md:block">
+          <div class="text-xl font-bold tracking-tight text-zinc-100">Inner Strength &amp; Virtue</div>
+          <div class="text-xs text-stone-300/60">Master your mind. Endure with dignity.</div>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+
+        <button id="langToggleBtn" onclick="toggleAudioLang()" title="Toggle Audio" class="w-8 h-8 flex items-center justify-center text-xs font-bold text-stone-400 border border-stone-400/30 rounded-lg hover:bg-stone-400/10 transition-all ml-2">
+          EN
+        </button>
+
+        <button onclick="openSettings()" class="w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-stone-300 rounded-3xl hover:bg-zinc-800 transition-all ml-2">
+          <i class="fas fa-cog text-xl"></i>
+        </button>
+
+        <a href="https://allisfair777.github.io/Inner-Peace/WesternWisdom.html" class="w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-stone-300 rounded-3xl hover:bg-zinc-800 transition-all ml-2" title="Return to Wisdom Nexus">
+          <i class="fas fa-home text-xl"></i>
+        </a>
+      </div>
+    </div>
+
+    <div id="chat" class="flex-1 p-6 overflow-y-auto space-y-5 relative min-h-0">
+      </div>
+
+    <div class="p-5 border-t border-zinc-800/50 bg-zinc-950/80 z-10">
+      <form onsubmit="sendMessage(event)" class="relative max-w-4xl mx-auto">
+        <input id="userInput" type="text" autocomplete="off"
+               class="w-full bg-zinc-900 border border-zinc-800 rounded-3xl px-7 py-4.5 pr-16 focus:outline-none focus:border-stone-400 text-base placeholder-zinc-500 text-zinc-100 shadow-inner transition-all"
+               placeholder="Describe your situation or ask a question...">
+        <button type="submit" 
+                class="absolute right-3 top-1/2 -translate-y-1/2 bg-stone-500 hover:bg-stone-600 active:scale-95 text-white w-11 h-11 rounded-2xl flex items-center justify-center transition-all shadow-md">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </form>
+    </div>
+  </div>
 
   <script>
-    const input = document.getElementById('input');
     const chat = document.getElementById('chat');
+    let audioLang = 'en'; 
+    
+    // ================= SETTINGS LOGIC =================
+    let systemVoices = [];
+    let appSettings = JSON.parse(localStorage.getItem('stoicSettings')) || {
+      enVoiceURI: '',
+      speechSpeed: 1.0
+    };
 
-    input.addEventListener('input', function() {
-      this.style.height = 'auto';
-      this.style.height = (this.scrollHeight) + 'px';
-    });
+    function populateVoiceList() {
+      systemVoices = window.speechSynthesis.getVoices();
+      const enSelect = document.getElementById('enVoiceSelect');
+      
+      enSelect.innerHTML = '<option value="">Default English Voice</option>';
 
-    function sendPrompt(text) {
-      input.value = text;
-      handleSend();
+      systemVoices.forEach(voice => {
+        if (voice.lang.startsWith('en')) {
+          const option = document.createElement('option');
+          option.textContent = `${voice.name} (${voice.lang})`;
+          option.value = voice.voiceURI;
+          enSelect.appendChild(option);
+        }
+      });
+
+      if (appSettings.enVoiceURI) enSelect.value = appSettings.enVoiceURI;
+      document.getElementById('speedSlider').value = appSettings.speechSpeed;
+      updateSpeedLabel();
     }
 
-    function getWelcomeHTML() {
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = populateVoiceList;
+    }
+
+    function updateSpeedLabel() {
+      const val = parseFloat(document.getElementById('speedSlider').value);
+      let label = "Normal";
+      if (val < 1.0) label = "Slow";
+      if (val > 1.0) label = "Fast";
+      document.getElementById('speedValue').innerText = `${label} (${val.toFixed(1)}x)`;
+    }
+
+    function saveSettings() {
+      appSettings.enVoiceURI = document.getElementById('enVoiceSelect').value;
+      appSettings.speechSpeed = parseFloat(document.getElementById('speedSlider').value);
+      localStorage.setItem('stoicSettings', JSON.stringify(appSettings));
+    }
+
+    function openSettings() {
+      const modal = document.getElementById('settingsModal');
+      const content = document.getElementById('settingsContent');
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      content.classList.remove('scale-95');
+      if (systemVoices.length === 0) populateVoiceList(); 
+    }
+
+    function closeSettings() {
+      const modal = document.getElementById('settingsModal');
+      const content = document.getElementById('settingsContent');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+      content.classList.add('scale-95');
+    }
+
+    function clearAllSavedData() {
+      if (savedPrompts.length === 0) return; 
+      if(confirm("Are you sure you want to delete all your saved Action Solutions?")) {
+        localStorage.removeItem('stoicSavedPrompts');
+        savedPrompts = [];
+        renderSavedPrompts();
+        closeSettings();
+      }
+    }
+    // ================= END SETTINGS LOGIC =================
+
+    const wisdomDb = {
+      control: [
+        { title: "Dichotomy of Control", author: "Epictetus", quote: "Some things are in our control and others not. Things in our control are opinion, pursuit, desire, aversion, and, in a word, whatever are our own actions. Things not in our control are body, property, reputation, command, and, in one word, whatever are not our own actions.", translation: "Focus only on what is within your power." }
+      ],
+      amorFati: [
+        { title: "Love of Fate", author: "Marcus Aurelius", quote: "Accept the things to which fate binds you, and love the people with whom fate brings you together, but do so with all your heart.", translation: "Love whatever fate brings." }
+      ],
+      memento: [
+        { title: "Memento Mori", author: "Seneca", quote: "You live as if you were going to live forever. You do not think about your end. You squander time as if you drew from a full and abundant supply.", translation: "Remember that you must die." }
+      ],
+      anger: [
+        { title: "Mastering Anger", author: "Seneca", quote: "We are often more frightened than hurt; and we suffer more from imagination than from reality.", translation: "Control your perceptions." }
+      ],
+      resilience: [
+        { title: "The Obstacle is the Way", author: "Marcus Aurelius", quote: "The impediment to action advances action. What stands in the way becomes the way.", translation: "Turn obstacles into fuel." }
+      ],
+      virtue: [
+        { title: "Living with Virtue", author: "Marcus Aurelius", quote: "Waste no more time arguing about what a good man should be. Be one.", translation: "Be the change you wish to see." }
+      ],
+      adversity: [
+        { title: "Enduring Adversity", author: "Epictetus", quote: "It’s not what happens to you, but how you react to it that matters.", translation: "It’s not the event, but your judgment of it." }
+      ]
+    };
+
+    const randomQuotePool = [
+      { author: "Marcus Aurelius", quote: "You have power over your mind — not outside events. Realize this, and you will find strength.", translation: "Master your mind." },
+      { author: "Epictetus", quote: "It’s not what happens to you, but how you react to it that matters.", translation: "Control your response." },
+      { author: "Seneca", quote: "We suffer more often in imagination than in reality.", translation: "Do not torture yourself with worry." },
+      { author: "Marcus Aurelius", quote: "The happiness of your life depends upon the quality of your thoughts.", translation: "Guard your thoughts." }
+    ];
+
+    function toggleSidebar() {
+      const pulseDot = document.getElementById('menuPulseDot');
+      if (pulseDot) pulseDot.remove();
+
+      const sidebar = document.getElementById('sidebar');
+      if (sidebar.classList.contains('w-72')) {
+        sidebar.className = "w-0 border-transparent opacity-0 flex flex-col h-full z-20 sidebar-transition overflow-hidden shrink-0";
+      } else {
+        sidebar.className = "w-72 bg-zinc-950/95 border-r border-zinc-800 flex flex-col h-full z-20 sidebar-transition overflow-hidden shrink-0";
+      }
+    }
+
+    let savedPrompts = JSON.parse(localStorage.getItem('stoicSavedPrompts')) || [];
+
+    function renderSavedPrompts() {
+      const container = document.getElementById('saved-prompts-list');
+      const clearBtn = document.getElementById('clearDataBtn');
+      
+      if (clearBtn) {
+        if (savedPrompts.length === 0) {
+            clearBtn.disabled = true;
+            clearBtn.className = "w-full bg-zinc-900 text-zinc-600 border border-zinc-800 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 cursor-not-allowed transition-colors";
+        } else {
+            clearBtn.disabled = false;
+            clearBtn.className = "w-full bg-zinc-950 hover:bg-red-900/30 text-red-400 border border-red-900/50 hover:border-red-500/50 py-2.5 rounded-xl text-sm transition-colors flex items-center justify-center gap-2";
+        }
+      }
+
+      if (savedPrompts.length === 0) {
+        container.innerHTML = '<div class="text-zinc-600 text-xs px-3 italic">No configurations saved yet.</div>';
+        return;
+      }
+      container.innerHTML = savedPrompts.map((p, index) => `
+        <div class="prompt-btn text-sm flex justify-between items-center relative overflow-hidden group" title="${p.prompt || p.title}">
+          <div class="truncate flex-1 pr-2 py-0.5 text-zinc-300 hover:text-stone-300" onclick="loadSavedVerse(${index})">
+            ${p.name}
+          </div>
+          <button onclick="event.stopPropagation(); deleteSavedPrompt(${index})" class="text-zinc-500 hover:text-red-400 transition-colors px-1 z-10">
+            <i class="fas fa-trash-alt text-xs"></i>
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function loadSavedVerse(index) {
+      closeSidebar(); 
+      const item = savedPrompts[index];
+      if (!item) return;
+      if (item.prompt && item.prompt !== "Random Selection") {
+        appendMessage('user', item.prompt);
+      } else {
+        appendMessage('user', `Reviewed Saved Entry: "${item.name}"`);
+      }
+      const html = buildQuoteHTML(item.title, item.author, item.quote, item.translation, null);
+      appendMessage('bot', html);
+    }
+
+    function bookmarkExactVerse(promptText, title, author, quote, translation) {
+      let name = prompt("Give this resolution entry a unique name:");
+      if (!name || name.trim() === "") return;
+      name = name.trim();
+
+      if (savedPrompts.some(p => p.name.toLowerCase() === name.toLowerCase())) {
+        alert("A configuration with this name already exists.");
+        return;
+      }
+
+      savedPrompts.push({
+        name: name, prompt: promptText, title: title, author: author, 
+        quote: quote, translation: translation
+      });
+      localStorage.setItem('stoicSavedPrompts', JSON.stringify(savedPrompts));
+      renderSavedPrompts();
+    }
+
+    function deleteSavedPrompt(index) {
+      if (confirm("Remove this exact resolution layout from storage?")) {
+        savedPrompts.splice(index, 1);
+        localStorage.setItem('stoicSavedPrompts', JSON.stringify(savedPrompts));
+        renderSavedPrompts();
+      }
+    }
+
+    function setupDynamicBackground() {
+      const backgroundImages = [
+        'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1400&q=60',
+        'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&w=1400&q=60'
+      ];
+      const selectedImg = backgroundImages[Math.floor(Math.random() * backgroundImages.length)];
+      document.body.style.backgroundImage = `linear-gradient(rgba(9, 9, 11, 0.92), rgba(9, 9, 11, 0.95)), url('${selectedImg}')`;
+    }
+
+    function appendMessage(sender, html) {
+      const div = document.createElement('div');
+      div.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'} w-full`;
+      div.innerHTML = `
+        <div class="max-w-[82%] ${sender === 'user' ? 'message-user' : 'message-bot'} px-6 py-4 text-[15.5px] leading-relaxed shadow-md">
+          <div>${html}</div>
+        </div>
+      `;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+      return div.querySelector('.message-bot') || div.querySelector('.message-user');
+    }
+
+    function matchIntentData(text) {
+      const lower = text.toLowerCase();
+      let matchedArray = null;
+
+      if (/control|dichotomy|what i can control/i.test(lower)) matchedArray = wisdomDb.control;
+      else if (/fate|amor fati|accept/i.test(lower)) matchedArray = wisdomDb.amorFati;
+      else if (/death|memento mori|mortal/i.test(lower)) matchedArray = wisdomDb.memento;
+      else if (/anger|rage|irritat/i.test(lower)) matchedArray = wisdomDb.anger;
+      else if (/resilien|strong|endure/i.test(lower)) matchedArray = wisdomDb.resilience;
+      else if (/virtue|character|good man/i.test(lower)) matchedArray = wisdomDb.virtue;
+      else if (/adversity|obstacle|difficult|hardship/i.test(lower)) matchedArray = wisdomDb.adversity;
+
+      if (matchedArray) return matchedArray[Math.floor(Math.random() * matchedArray.length)];
+
+      const fallback = randomQuotePool[Math.floor(Math.random() * randomQuotePool.length)];
+      return { title: "Stoic Insight", author: fallback.author, quote: fallback.quote, translation: fallback.translation };
+    }
+
+    function toggleAudioLang() {
+      alert("English audio is currently active.");
+    }
+
+    function resetAllSpeakers() {
+        document.querySelectorAll('.speaker-icon').forEach(icon => {
+            icon.classList.remove('fa-volume-up', 'text-stone-400');
+            icon.classList.add('fa-volume-mute', 'text-zinc-400');
+        });
+    }
+
+    function toggleAudio(btn, text) {
+      const icon = btn.querySelector('i');
+      const isCurrentlyPlaying = icon.classList.contains('fa-volume-up');
+      
+      window.speechSynthesis.cancel();
+      resetAllSpeakers();
+
+      if (isCurrentlyPlaying) return;
+
+      icon.classList.remove('fa-volume-mute', 'text-zinc-400');
+      icon.classList.add('fa-volume-up', 'text-stone-400');
+
+      const msg = new SpeechSynthesisUtterance(text);
+      msg.rate = appSettings.speechSpeed || 1.0;
+      
+      const targetVoiceURI = appSettings.enVoiceURI;
+      if (targetVoiceURI && systemVoices.length > 0) {
+        const selectedVoice = systemVoices.find(v => v.voiceURI === targetVoiceURI);
+        if (selectedVoice) msg.voice = selectedVoice;
+      }
+      
+      msg.onend = () => resetAllSpeakers();
+      window.speechSynthesis.speak(msg);
+    }
+    
+    function buildQuoteHTML(title, author, quote, translation, associatedPrompt = null) {
+      let toolsHTML = '';
+      
+      const safeTitle = title.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+      const safeQuote = quote.replace(/'/g, "\\'").replace(/\n/g, "\\n");
+      const safeTrans = translation.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+      const safePrompt = associatedPrompt ? associatedPrompt.replace(/'/g, "\\'").replace(/"/g, "&quot;") : '';
+
+      let bookmarkBtn = associatedPrompt ? `
+        <button onclick="bookmarkExactVerse('${safePrompt}', '${safeTitle}', '${author}', '${safeQuote}', '${safeTrans}')" 
+                class="text-[11px] text-stone-300/80 hover:text-stone-300 flex items-center gap-1 bg-zinc-800/80 hover:bg-zinc-700/80 px-2.5 py-1 rounded-md transition-all border border-zinc-700/40">
+          <i class="fas fa-bookmark text-[10px]"></i> Save Action
+        </button>
+      ` : '';
+      
+      toolsHTML = `
+        <div class="mt-3 pt-2 border-t border-zinc-800/60 flex justify-between items-center">
+          <div class="flex gap-2">
+             <button onclick="toggleAudio(this, '${safeQuote}')" class="hover:text-stone-400 transition-colors p-1" title="Play Audio">
+               <i class="fas fa-volume-mute speaker-icon text-zinc-400 text-lg"></i>
+             </button>
+          </div>
+          ${bookmarkBtn}
+        </div>
+      `;
+      
       return `
-        <div class="relative w-full h-[60vh] flex items-center justify-center p-6">
-          <div class="absolute inset-0 opacity-10 pointer-events-none" 
-               style="background-image: url('https://images.unsplash.com/photo-1560731671-5fb7317730e1?auto=format&fit=crop&w=1200&q=50'); background-size: cover; background-position: center;">
+        <strong class="text-stone-400 block mb-2">${title} — ${author}</strong>
+        <div class="stoic-quote">"${quote}"</div>
+        <div class="text-zinc-300 italic border-l-2 border-stone-400/40 pl-3 mt-3 leading-relaxed">"${translation}"</div>
+        ${toolsHTML}
+      `;
+    }
+
+    function sendMessage(e, explicitText = null) {
+      if (e && e.preventDefault) e.preventDefault();
+      
+      const input = document.getElementById('userInput');
+      const msg = explicitText ? explicitText.trim() : input.value.trim();
+      if (!msg) return;
+
+      appendMessage('user', msg);
+      if (!explicitText) input.value = '';
+
+      const thinking = appendMessage('bot', '<span class="text-stone-400 font-medium animate-pulse">Reflecting with the Stoics...</span>');
+
+      const matched = matchIntentData(msg);
+
+      thinking.parentElement.remove();
+      appendMessage('bot', buildQuoteHTML(matched.title, matched.author, matched.quote, matched.translation, msg));
+    }
+
+    function sendPrompt(promptText) {
+      closeSidebar(); 
+      setTimeout(() => sendMessage(null, promptText), 80);
+    }
+
+    function fetchRandomStoicQuote() {
+      closeSidebar(); 
+      appendMessage('user', "Random Stoic Quote"); 
+      
+      const fallback = randomQuotePool[Math.floor(Math.random() * randomQuotePool.length)];
+      appendMessage('bot', buildQuoteHTML("Timeless Wisdom", fallback.author, fallback.quote, fallback.translation, "Random Selection"));
+    }
+
+    function getOvalHTML() {
+      return `
+        <div class="faint-overlay"></div>
+        <div class="max-w-4xl mx-auto mt-6 p-8 rounded-3xl bg-zinc-900/80 border border-zinc-800/80 backdrop-blur-md text-center relative overflow-hidden shadow-2xl">
+          <div class="absolute inset-0 opacity-10 bg-cover bg-center mix-blend-luminosity pointer-events-none" 
+               style="background-image: url('Purple Cross.jpg');">
           </div>
           <div class="relative z-10 flex flex-col items-center justify-center gap-4">
-            <div class="rounded-full p-1 bg-gradient-to-br from-slate-400 to-slate-700 shadow-lg">
-              <img src="https://images.unsplash.com/photo-1560731671-5fb7317730e1?auto=format&fit=crop&w=200&h=200&q=80" alt="Marcus Aurelius Bust" class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover grayscale">
+            
+            <div class="rounded-full p-1 bg-gradient-to-br from-stone-400 to-slate-600 shadow-lg">
+              <div class="w-32 h-32 md:w-40 md:h-40 rounded-full bg-zinc-800 flex items-center justify-center text-6xl">🛡️</div>
             </div>
-            <h3 class="text-xl font-bold text-zinc-100 tracking-tight">Wisdom of the Stoics</h3>
-            <p class="text-zinc-400 text-sm leading-relaxed max-w-2xl px-4 text-center">
-              Describe your current anxieties or challenges. I will draw from Epictetus, Seneca, and Marcus Aurelius to build actionable resolutions grounded in logic and what you can control.
+
+            <h3 class="text-xl font-bold text-zinc-100 tracking-tight">Welcome to Stoic Wisdom</h3>
+            <p class="text-zinc-400 text-sm leading-relaxed max-w-2xl px-4">
+              Share your challenges, emotions, or decisions. The Stoics will help you respond with clarity, courage, and virtue.
             </p>
+            <div class="text-xs text-stone-400/60 italic border-t border-zinc-800/80 pt-4 w-full mt-2">
+              "The obstacle is the way." — Marcus Aurelius
+            </div>
           </div>
         </div>
       `;
     }
 
     function newChat() {
-      chat.innerHTML = getWelcomeHTML();
+      closeSidebar(); 
+      chat.innerHTML = getOvalHTML();
     }
 
-    function handleSend() {
-      const text = input.value.trim();
-      if (!text) return;
-
-      // Remove welcome screen if it exists
-      if (chat.querySelector('.relative.w-full.h-\\[60vh\\]')) {
-        chat.innerHTML = '';
+    window.onload = () => {
+      setupDynamicBackground();
+      renderSavedPrompts();
+      chat.innerHTML = getOvalHTML();
+      if (window.speechSynthesis.getVoices().length > 0) {
+        populateVoiceList();
       }
-
-      // User message
-      const userDiv = document.createElement('div');
-      userDiv.className = 'flex justify-end mb-6 px-4 mt-4';
-      userDiv.innerHTML = `
-        <div class="message-user max-w-[85%] md:max-w-[75%] px-5 py-3.5 text-[15px] leading-relaxed shadow-sm">
-          ${text}
-        </div>
-      `;
-      chat.appendChild(userDiv);
-
-      input.value = '';
-      input.style.height = 'auto';
-      chat.scrollTop = chat.scrollHeight;
-
-      // Bot typing indicator placeholder
-      setTimeout(() => {
-        const botDiv = document.createElement('div');
-        botDiv.className = 'flex justify-start mb-6 px-4';
-        botDiv.innerHTML = `
-          <div class="message-bot max-w-[90%] md:max-w-[80%] px-5 py-4 text-[15px] leading-relaxed text-zinc-300 shadow-sm">
-            <i class="fa-solid fa-circle-notch fa-spin text-slate-500"></i> Synthesizing ledger...
-          </div>
-        `;
-        chat.appendChild(botDiv);
-        chat.scrollTop = chat.scrollHeight;
-        
-        // Mock response
-        setTimeout(() => {
-           botDiv.innerHTML = `
-            <div class="message-bot max-w-[90%] md:max-w-[80%] px-5 py-4 text-[15px] leading-relaxed text-zinc-300 shadow-sm border-l-2 border-slate-500">
-              The ledger will retrieve quotes locally here. You asked: "${text}".
-            </div>
-           `;
-           chat.scrollTop = chat.scrollHeight;
-        }, 800);
-
-      }, 300);
-    }
+    };
   </script>
 </body>
 </html>
