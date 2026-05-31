@@ -10,36 +10,42 @@
     body { background: linear-gradient(135deg, #0f172a, #1e2937); }
     .glass { background: rgba(255,255,255,0.08); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.1); }
     .portal-card { transition: all 0.3s ease; }
-    .portal-card:hover { transform: translateY(-8px) scale(1.03); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.2); }
+    .portal-card:hover { transform: translateY(-6px) scale(1.02); }
+    
+    /* Better mobile spacing */
+    @media (max-width: 640px) {
+      .container-padding { padding: 1.5rem 1rem; }
+      .icon-size { width: 72px; height: 72px; font-size: 2.25rem; }
+    }
   </style>
 </head>
 <body class="min-h-screen text-white">
-  <div class="max-w-4xl mx-auto p-8 pt-16">
-    <div class="text-center mb-16">
-      <h1 class="text-5xl font-bold tracking-tight mb-4">Wisdom Nexus</h1>
-      <p class="text-xl text-gray-400">Choose your guide for inner peace and practical wisdom</p>
+  <div class="max-w-4xl mx-auto container-padding pt-12 pb-12">
+    <div class="text-center mb-12">
+      <h1 class="text-4xl sm:text-5xl font-bold tracking-tight mb-3">Wisdom Nexus</h1>
+      <p class="text-lg text-gray-400 px-4">Choose your guide for inner peace and practical wisdom</p>
     </div>
 
-    <div class="grid md:grid-cols-2 gap-8">
+    <div class="grid md:grid-cols-2 gap-6 md:gap-8">
       <!-- Gita Card -->
-      <a href="Bot/Gita.html" class="portal-card glass p-10 rounded-3xl group">
-        <div class="w-20 h-20 bg-gradient-to-br from-amber-400 to-orange-500 rounded-3xl flex items-center justify-center text-6xl shadow-xl mb-8 text-zinc-950">ॐ</div>
-        <h2 class="text-3xl font-bold mb-3 text-amber-400">Bhagavad Gita</h2>
-        <p class="text-gray-400 leading-relaxed">Timeless counsel for the battlefield of life and dynamic transitions.</p>
+      <a href="Bot/Gita.html" class="portal-card glass p-8 md:p-10 rounded-3xl">
+        <div class="icon-size w-20 h-20 mx-auto md:mx-0 bg-gradient-to-br from-amber-400 to-orange-500 rounded-3xl flex items-center justify-center text-6xl shadow-xl mb-6 text-zinc-950">ॐ</div>
+        <h2 class="text-2xl md:text-3xl font-bold mb-3 text-amber-400 text-center md:text-left">Bhagavad Gita</h2>
+        <p class="text-gray-400 leading-relaxed text-center md:text-left">Timeless counsel for the battlefield of life and dynamic transitions.</p>
       </a>
 
       <!-- Thirukkural Card -->
-      <a href="Bot/Kural.html" class="portal-card glass p-10 rounded-3xl group">
-        <div class="w-20 h-20 bg-gradient-to-br from-emerald-400 to-teal-600 rounded-3xl flex items-center justify-center text-6xl shadow-xl mb-8 text-zinc-950">
+      <a href="Bot/Kural.html" class="portal-card glass p-8 md:p-10 rounded-3xl">
+        <div class="icon-size w-20 h-20 mx-auto md:mx-0 bg-gradient-to-br from-emerald-400 to-teal-600 rounded-3xl flex items-center justify-center text-5xl shadow-xl mb-6 text-zinc-950">
           <i class="fas fa-leaf"></i>
         </div>
-        <h2 class="text-3xl font-bold mb-3 text-emerald-400">Thirukkural</h2>
-        <p class="text-gray-400 leading-relaxed">Ethical clarity, societal dynamics, and practical daily wisdom.</p>
+        <h2 class="text-2xl md:text-3xl font-bold mb-3 text-emerald-400 text-center md:text-left">Thirukkural</h2>
+        <p class="text-gray-400 leading-relaxed text-center md:text-left">Ethical clarity, societal dynamics, and practical daily wisdom.</p>
       </a>
     </div>
 
-    <div class="text-center mt-16 text-gray-500 text-sm">
-      Focused guidance from two timeless sources of Eastern wisdom
+    <div class="text-center mt-12 text-gray-500 text-sm">
+      Two timeless sources of Eastern wisdom
     </div>
   </div>
 </body>
