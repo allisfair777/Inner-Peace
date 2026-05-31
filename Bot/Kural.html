@@ -562,7 +562,6 @@
       `;
     }
 
-    // UPDATED to use the more reliable Vercel API
     async function getKuralData(kuralNo) {
       const cacheKey = `kural_cache_${kuralNo}`;
       const cached = localStorage.getItem(cacheKey);
@@ -592,7 +591,6 @@
       try {
         const data = await getKuralData(matched.kuralNo);
         thinking.parentElement.remove();
-        // Fixed mapping to use data.eng and data.chap_eng from Vercel API
         const extractedTranslation = data.eng || matched.translation;
         const extractedLine = (data.line1 && data.line2) ? `${data.line1}\n${data.line2}` : matched.line;
         const title = data.chap_eng || matched.title;
@@ -610,18 +608,18 @@
 
     async function handleDirectSearch(e) {
       if (e.key === 'Enter') {
-        const val = e.target.value.trim();
+        const searchInput = document.getElementById('directSearch');
+        const val = searchInput.value.trim();
         const kNo = parseInt(val);
         
         if (!isNaN(kNo) && kNo >= 1 && kNo <= 1330) {
-            e.target.value = '';
+            searchInput.value = '';
             appendMessage('user', `Look up exact Kural: ${kNo}`);
             const thinking = appendMessage('bot', '<span class="text-emerald-400 font-medium animate-pulse">Retrieving specific couplet...</span>');
             
             try {
               const data = await getKuralData(kNo);
               thinking.parentElement.remove();
-              // Fixed mapping to use data.eng and data.chap_eng from Vercel API
               const extractedTranslation = data.eng || "Translation unavailable.";
               const extractedLine = (data.line1 && data.line2) ? `${data.line1}\n${data.line2}` : "";
               const title = data.chap_eng || "Direct Lookup";
@@ -646,7 +644,6 @@
       try {
         const data = await getKuralData(randomKural);
         loadingMsg.parentElement.remove();
-        // Fixed mapping to use data.eng and data.chap_eng from Vercel API
         const extractedTranslation = data.eng || "Wisdom is unfolding.";
         const extractedLine = (data.line1 && data.line2) ? `${data.line1}\n${data.line2}` : "";
         const title = data.chap_eng || "Random Insight";
@@ -668,7 +665,7 @@
           <div class="relative z-10 flex flex-col items-center justify-center gap-4">
             
             <div class="rounded-full p-1 bg-gradient-to-br from-emerald-400 to-teal-600 shadow-lg">
-              <img src="kural.jpg" alt="Thiruvalluvar" class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover">
+              <img src="Kural.jpg" alt="Thiruvalluvar" class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover">
             </div>
 
             <h3 class="text-xl font-bold text-zinc-100 tracking-tight">Wisdom of Thiruvalluvar</h3>
