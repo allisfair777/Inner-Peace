@@ -432,20 +432,20 @@
       const lower = text.toLowerCase();
       let matchedArray = null;
 
-      if (/faith|believe|trust/i.test(lower)) matchedArray = wisdomDb.faith;
-      else if (/love|charity|compassion/i.test(lower)) matchedArray = wisdomDb.love;
-      else if (/wisdom|proverb|knowledge/i.test(lower)) matchedArray = wisdomDb.wisdom;
-      else if (/fear|anxiety|worry|afraid/i.test(lower)) matchedArray = wisdomDb.fear;
-      else if (/peace|calm|still/i.test(lower)) matchedArray = wisdomDb.peace;
-      else if (/hope/i.test(lower)) matchedArray = wisdomDb.hope;
-      else if (/strength|strong|power/i.test(lower)) matchedArray = wisdomDb.strength;
+      if (/faith|believe|trust|doubt|skeptical|unsure|lost|questioning|god|cynical/i.test(lower)) matchedArray = wisdomDb.faith;
+      else if (/love|charity|compassion|forgive|hate|bitter|resent|enemy|relationship|marriage|broken/i.test(lower)) matchedArray = wisdomDb.love;
+      else if (/wisdom|proverb|knowledge|confused|decision|choice|guidance|direction|understand|advice/i.test(lower)) matchedArray = wisdomDb.wisdom;
+      else if (/fear|anxiety|worry|afraid|scared|panic|stress|overwhelmed|terror|nervous/i.test(lower)) matchedArray = wisdomDb.fear;
+      else if (/peace|calm|still|chaos|turmoil|restless|storm|quiet|noise/i.test(lower)) matchedArray = wisdomDb.peace;
+      else if (/hope|future|discouraged|depressed|despair|hopeless|darkness|light/i.test(lower)) matchedArray = wisdomDb.hope;
+      else if (/strength|strong|power|weak|tired|exhausted|burnout|give up|unable|burden|heavy/i.test(lower)) matchedArray = wisdomDb.strength;
 
       if (matchedArray) return matchedArray[Math.floor(Math.random() * matchedArray.length)];
 
       const fallback = randomVersePool[Math.floor(Math.random() * randomVersePool.length)];
       return { title: "Divine Insight", book: fallback.book, ch: fallback.ch, verse: fallback.verse, verseText: fallback.verseText, translation: fallback.translation };
     }
-
+    
     function toggleAudioLang() {
       alert("English audio is currently active.");
     }
