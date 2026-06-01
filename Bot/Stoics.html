@@ -419,13 +419,13 @@
       const lower = text.toLowerCase();
       let matchedArray = null;
 
-      if (/control|dichotomy|what i can control/i.test(lower)) matchedArray = wisdomDb.control;
-      else if (/fate|amor fati|accept/i.test(lower)) matchedArray = wisdomDb.amorFati;
-      else if (/death|memento mori|mortal/i.test(lower)) matchedArray = wisdomDb.memento;
-      else if (/anger|rage|irritat/i.test(lower)) matchedArray = wisdomDb.anger;
-      else if (/resilien|strong|endure/i.test(lower)) matchedArray = wisdomDb.resilience;
-      else if (/virtue|character|good man/i.test(lower)) matchedArray = wisdomDb.virtue;
-      else if (/adversity|obstacle|difficult|hardship/i.test(lower)) matchedArray = wisdomDb.adversity;
+      if (/control|helpless|unfair|traffic|boss|others|opinion|reputation|powerless|stuck|blame|manipulat/i.test(lower)) matchedArray = wisdomDb.control;
+      else if (/fate|amor fati|accept|destiny|meant to be|happened for a reason|embrace|reality|it is what it is/i.test(lower)) matchedArray = wisdomDb.amorFati;
+      else if (/death|memento mori|mortal|grief|loss|dying|short time|time is running out|aging|mortality/i.test(lower)) matchedArray = wisdomDb.memento;
+      else if (/anger|rage|irritat|mad|furious|annoy|frustrat|betray|insult|revenge|temper|livid/i.test(lower)) matchedArray = wisdomDb.anger;
+      else if (/resilien|strong|endure|quit|give up|exhausted|tired|burnout|persevere|keep going|tough|grit/i.test(lower)) matchedArray = wisdomDb.resilience;
+      else if (/virtue|character|good man|moral|ethic|right thing|honesty|integrity|guilt|shame|values/i.test(lower)) matchedArray = wisdomDb.virtue;
+      else if (/adversity|obstacle|difficult|hardship|struggle|fail|setback|tragedy|pain|challenge|disaster/i.test(lower)) matchedArray = wisdomDb.adversity;
 
       if (matchedArray) return matchedArray[Math.floor(Math.random() * matchedArray.length)];
       
