@@ -199,9 +199,7 @@
       enVoiceURI: '',
       speechSpeed: 1.0
     };
-    // Initialize local cache to prevent duplicate network requests
-    let stoicVerseCache = JSON.parse(localStorage.getItem('stoicVerseCache')) || {};
-
+    
     function populateVoiceList() {
       systemVoices = window.speechSynthesis.getVoices();
       const enSelect = document.getElementById('enVoiceSelect');
@@ -307,6 +305,11 @@
       } else {
         sidebar.className = "w-72 bg-zinc-950/95 border-r border-zinc-800 flex flex-col h-full z-20 sidebar-transition overflow-hidden shrink-0";
       }
+    }
+
+    function closeSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.className = "w-0 border-transparent opacity-0 flex flex-col h-full z-20 sidebar-transition overflow-hidden shrink-0";
     }
 
     let savedPrompts = JSON.parse(localStorage.getItem('stoicSavedPrompts')) || [];
@@ -415,9 +418,8 @@
       else if (/adversity|obstacle|difficult|hardship/i.test(lower)) matchedArray = wisdomDb.adversity;
 
       if (matchedArray) return matchedArray[Math.floor(Math.random() * matchedArray.length)];
-
-      const fallback = randomQuotePool[Math.floor(Math.random() * randomQuotePool.length)];
-      return { title: "Stoic Insight", author: fallback.author, quote: fallback.quote, translation: fallback.translation };
+      
+      return null; // Return null to trigger the live API
     }
 
     function toggleAudioLang() {
@@ -491,48 +493,29 @@
     }
 
     // ==========================================
-    // ASYNC API FETCHER & CACHE SYSTEM
+    // ASYNC API FETCHER 
     // ==========================================
-    async function getStoicVerseData(reference) {
-     // 1. Check Local Cache First
-     if (stoicVerseCache[reference]) {
-      console.log(`Loaded ${reference} from local cache.`);
-      return stoicVerseCache[reference];
-     }
-
-     // 2. Fetch from Free API (No Key Required)
-    try {
-     // We append ?translation=kjv as a default, but you can change or omit this
-     const response = await fetch(`API for Stoics TBD`);
-    
-     if (!response.ok) {
-       throw new Error(`API Network Error: ${response.status}`);
-     }
-
-     const data = await response.json();
-     
-     // 3. Normalize the API payload to match your buildQuoteHTML expectations
-     const verseData = {
-       title: data.reference,
-       author: "TBD",
-       quote: data.text.replace(/\n/g, ' ').trim(), // Clean up API line breaks
-       translation: data.translation_name || "KJV"
-     };
-
-     // 4. Save to Cache
-     stoicVerseCache[reference] = verseData;
-     localStorage.setItem('stoicVerseCache', JSON.stringify(stoicVerseCache));
- 
-     return verseData;
-
-    } catch (error) {
-      // 5. Log error and throw to trigger the local fallback in sendMessage
-      console.error("API fetch failed, preparing to use local fallback:", error);
-      throw error; 
+    async function getStoicVerseData() {
+      try {
+        const response = await fetch('https://api.themotivate365.com/stoic-quote');
+        if (!response.ok) {
+          throw new Error(`API Network Error: ${response.status}`);
+        }
+        const data = await response.json();
+        
+        return {
+          title: "Stoic Insight",
+          author: data.author || "Unknown Sage",
+          quote: data.quote || data.text, 
+          translation: "A moment of deep reflection."
+        };
+      } catch (error) {
+        console.error("API fetch failed, preparing to use local fallback:", error);
+        throw error; 
+      }
     }
-  }
 
-    function sendMessage(e, explicitText = null) {
+    async function sendMessage(e, explicitText = null) {
       if (e && e.preventDefault) e.preventDefault();
       
       const input = document.getElementById('userInput');
@@ -546,8 +529,20 @@
 
       const matched = matchIntentData(msg);
 
-      thinking.parentElement.remove();
-      appendMessage('bot', buildQuoteHTML(matched.title, matched.author, matched.quote, matched.translation, msg));
+      if (matched) {
+        thinking.parentElement.remove();
+        appendMessage('bot', buildQuoteHTML(matched.title, matched.author, matched.quote, matched.translation, msg));
+      } else {
+        try {
+          const apiData = await getStoicVerseData();
+          thinking.parentElement.remove();
+          appendMessage('bot', buildQuoteHTML(apiData.title, apiData.author, apiData.quote, apiData.translation, msg));
+        } catch (err) {
+          const fallback = randomQuotePool[Math.floor(Math.random() * randomQuotePool.length)];
+          thinking.parentElement.remove();
+          appendMessage('bot', buildQuoteHTML("Timeless Wisdom", fallback.author, fallback.quote, fallback.translation, msg));
+        }
+      }
     }
 
     function sendPrompt(promptText) {
@@ -555,12 +550,21 @@
       setTimeout(() => sendMessage(null, promptText), 80);
     }
 
-    function fetchRandomStoicQuote() {
+    async function fetchRandomStoicQuote() {
       closeSidebar(); 
       appendMessage('user', "Random Stoic Quote"); 
       
-      const fallback = randomQuotePool[Math.floor(Math.random() * randomQuotePool.length)];
-      appendMessage('bot', buildQuoteHTML("Timeless Wisdom", fallback.author, fallback.quote, fallback.translation, "Random Selection"));
+      const loadingMsg = appendMessage('bot', '<span class="text-stone-400 font-medium animate-pulse">Consulting the Stoics...</span>');
+
+      try {
+        const apiData = await getStoicVerseData();
+        loadingMsg.parentElement.remove();
+        appendMessage('bot', buildQuoteHTML(apiData.title, apiData.author, apiData.quote, apiData.translation, "Random Selection"));
+      } catch (err) {
+        const fallback = randomQuotePool[Math.floor(Math.random() * randomQuotePool.length)];
+        loadingMsg.parentElement.remove();
+        appendMessage('bot', buildQuoteHTML("Timeless Wisdom", fallback.author, fallback.quote, fallback.translation, "Random Selection"));
+      }
     }
 
     function getOvalHTML() {
