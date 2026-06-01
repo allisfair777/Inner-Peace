@@ -200,7 +200,7 @@
       speechSpeed: 1.0
     };
     // Initialize local cache to prevent duplicate network requests
-    let bibleVerseCache = JSON.parse(localStorage.getItem('bibleVerseCache')) || {};
+    let stoicVerseCache = JSON.parse(localStorage.getItem('stoicVerseCache')) || {};
 
     function populateVoiceList() {
       systemVoices = window.speechSynthesis.getVoices();
@@ -493,17 +493,17 @@
     // ==========================================
     // ASYNC API FETCHER & CACHE SYSTEM
     // ==========================================
-    async function getBibleVerseData(reference) {
+    async function getStoicVerseData(reference) {
      // 1. Check Local Cache First
-     if (bibleVerseCache[reference]) {
+     if (stoicVerseCache[reference]) {
       console.log(`Loaded ${reference} from local cache.`);
-      return bibleVerseCache[reference];
+      return stoicVerseCache[reference];
      }
 
      // 2. Fetch from Free API (No Key Required)
     try {
      // We append ?translation=kjv as a default, but you can change or omit this
-     const response = await fetch(`https://bible-api.com/${encodeURIComponent(reference)}`);
+     const response = await fetch(`API for Stoics TBD`);
     
      if (!response.ok) {
        throw new Error(`API Network Error: ${response.status}`);
@@ -514,14 +514,14 @@
      // 3. Normalize the API payload to match your buildQuoteHTML expectations
      const verseData = {
        title: data.reference,
-       author: "Holy Bible",
+       author: "TBD",
        quote: data.text.replace(/\n/g, ' ').trim(), // Clean up API line breaks
        translation: data.translation_name || "KJV"
      };
 
      // 4. Save to Cache
-     bibleVerseCache[reference] = verseData;
-     localStorage.setItem('bibleVerseCache', JSON.stringify(bibleVerseCache));
+     stoicVerseCache[reference] = verseData;
+     localStorage.setItem('stoicVerseCache', JSON.stringify(stoicVerseCache));
  
      return verseData;
 
