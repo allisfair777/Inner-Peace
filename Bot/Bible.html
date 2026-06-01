@@ -313,6 +313,11 @@
       }
     }
 
+    function closeSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.className = "w-0 border-transparent opacity-0 flex flex-col h-full z-20 sidebar-transition overflow-hidden shrink-0";
+    }
+
     let savedPrompts = JSON.parse(localStorage.getItem('bibleSavedPrompts')) || [];
 
     function renderSavedPrompts() {
@@ -425,7 +430,6 @@
     }
 
     function toggleAudioLang() {
-      // Currently only English, but keeping toggle for future
       alert("English audio is currently active.");
     }
 
@@ -514,7 +518,45 @@
       `;
     }
 
-    function sendMessage(e, explicitText = null) {
+    // ================= API FETCHING & CACHING =================
+    async function getBibleVerseData(reference) {
+      const cacheKey = `bible_cache_${reference.toLowerCase().replace(/\s+/g, '')}`;
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) return JSON.parse(cached);
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000); // 8-second timeout for API
+
+      try {
+        // We request the World English Bible (web) translation for modern readability
+        const res = await fetch(`https://bible-api.com/${encodeURIComponent(reference)}?translation=web`, {
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
+        if (!res.ok) throw new Error('API fetch failed');
+        const data = await res.json();
+        
+        if (!data.verses || data.verses.length === 0) throw new Error('No verses found');
+
+        const result = {
+          book: data.verses[0].book_name,
+          ch: data.verses[0].chapter,
+          verse: data.verses[0].verse,
+          verseText: data.text.trim(),
+          translation: data.translation_name || "World English Bible"
+        };
+        
+        localStorage.setItem(cacheKey, JSON.stringify(result));
+        return result;
+      } catch (error) {
+        clearTimeout(timeoutId);
+        throw error; // Will be caught by the sendMessage/fetchRandom fallback logic
+      }
+    }
+
+    // ================= UPDATED ASYNC SEND MESSAGE =================
+    async function sendMessage(e, explicitText = null) {
       if (e && e.preventDefault) e.preventDefault();
       
       const input = document.getElementById('userInput');
@@ -526,10 +568,36 @@
 
       const thinking = appendMessage('bot', '<span class="text-purple-400 font-medium animate-pulse">Seeking guidance in Scripture...</span>');
 
-      const matched = matchIntentData(msg);
+      try {
+        // 1. Determine target Reference from user's intent
+        // Check if user directly typed a verse like "John 3:16"
+        const isDirectRef = /([1-3]?\s*[A-Za-z]+)\s+(\d+):(\d+)/.test(msg);
+        let targetReference = msg;
+        let title = "Divine Insight";
+        
+        if (!isDirectRef) {
+          // If they typed a concept (e.g., "Faith"), match to a local reference to ask the API for.
+          const localMatch = matchIntentData(msg);
+          targetReference = `${localMatch.book} ${localMatch.ch}:${localMatch.verse}`;
+          title = localMatch.title || title;
+        } else {
+          title = "Scripture Search";
+        }
 
-      thinking.parentElement.remove();
-      appendMessage('bot', buildVerseHTML(matched.title, matched.book, matched.ch, matched.verse, matched.verseText, matched.translation, msg));
+        // 2. Await API Fetch
+        const apiData = await getBibleVerseData(targetReference);
+        
+        thinking.parentElement.remove();
+        appendMessage('bot', buildVerseHTML(title, apiData.book, apiData.ch, apiData.verse, apiData.verseText, apiData.translation, msg));
+
+      } catch (error) {
+        console.warn("API Error, falling back to local wisdomDb:", error);
+        
+        // 3. Native Fallback
+        const matched = matchIntentData(msg);
+        thinking.parentElement.remove();
+        appendMessage('bot', buildVerseHTML(matched.title, matched.book, matched.ch, matched.verse, matched.verseText, matched.translation, msg));
+      }
     }
 
     function sendPrompt(promptText) {
@@ -537,15 +605,26 @@
       setTimeout(() => sendMessage(null, promptText), 80);
     }
 
-    function fetchRandomBibleVerse() {
+    // ================= UPDATED RANDOM VERSE =================
+    async function fetchRandomBibleVerse() {
       closeSidebar(); 
       appendMessage('user', "Random Verse"); 
       
       const loadingMsg = appendMessage('bot', '<span class="text-purple-400 font-medium animate-pulse">Opening the Scriptures...</span>');
 
-      const fallback = randomVersePool[Math.floor(Math.random() * randomVersePool.length)];
-      loadingMsg.parentElement.remove();
-      appendMessage('bot', buildVerseHTML("Random Insight", fallback.book, fallback.ch, fallback.verse, fallback.verseText, fallback.translation, "Random Selection"));
+      try {
+        const fallback = randomVersePool[Math.floor(Math.random() * randomVersePool.length)];
+        const targetReference = `${fallback.book} ${fallback.ch}:${fallback.verse}`;
+        
+        const apiData = await getBibleVerseData(targetReference);
+        loadingMsg.parentElement.remove();
+        appendMessage('bot', buildVerseHTML("Random Insight", apiData.book, apiData.ch, apiData.verse, apiData.verseText, apiData.translation, "Random Selection"));
+      } catch (error) {
+        console.warn("API Error, falling back to local pool:", error);
+        const fallback = randomVersePool[Math.floor(Math.random() * randomVersePool.length)];
+        loadingMsg.parentElement.remove();
+        appendMessage('bot', buildVerseHTML("Random Insight", fallback.book, fallback.ch, fallback.verse, fallback.verseText, fallback.translation, "Random Selection"));
+      }
     }
 
     function getOvalHTML() {
