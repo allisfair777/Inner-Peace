@@ -453,12 +453,12 @@
       const lower = text.toLowerCase();
       let matchedArray = null;
 
-      if (/karma|action|deeds|work/i.test(lower)) matchedArray = wisdomDb.karma;
-      else if (/bhakti|devotion|worship|love/i.test(lower)) matchedArray = wisdomDb.bhakti;
-      else if (/gnana|jnana|knowledge|intellect/i.test(lower)) matchedArray = wisdomDb.gnana;
-      else if (/anxiety|anxious|worry|panic|fear/i.test(lower)) matchedArray = wisdomDb.anxiety;
-      else if (/equanimity|balance|peace|calm|still/i.test(lower)) matchedArray = wisdomDb.balance;
-      else if (/depression|depress|sad|grief|sorrow|loss/i.test(lower)) matchedArray = wisdomDb.depression;
+      if (/karma|action|deeds|work|duty|dharma|job|career|result|outcome|success|fail|lazy|procrastinat/i.test(lower)) matchedArray = wisdomDb.karma;
+      else if (/bhakti|devotion|worship|love|surrender|faith|god|universe|trust|connection|divine/i.test(lower)) matchedArray = wisdomDb.bhakti;
+      else if (/gnana|jnana|knowledge|intellect|truth|understand|confusion|lost|doubt|clarity|wisdom|meaning/i.test(lower)) matchedArray = wisdomDb.gnana;
+      else if (/anxiety|anxious|worry|panic|fear|stress|overwhelm|nervous|uncertain|future|scared/i.test(lower)) matchedArray = wisdomDb.anxiety;
+      else if (/equanimity|balance|peace|calm|still|unattached|let go|attachment|desire|craving|steady|craving/i.test(lower)) matchedArray = wisdomDb.balance;
+      else if (/depression|depress|sad|grief|sorrow|loss|hopeless|give up|despair|meaningless|empty/i.test(lower)) matchedArray = wisdomDb.depression;
 
       if (matchedArray) return matchedArray[Math.floor(Math.random() * matchedArray.length)];
 
