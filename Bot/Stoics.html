@@ -151,7 +151,9 @@
             <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-stone-500"></span>
           </span>
         </button>
-        <div class="w-10 h-10 bg-gradient-to-br from-stone-400 to-slate-600 rounded-2xl flex items-center justify-center text-2xl font-bold text-white shadow-md">🛡️</div>
+        <div class="w-10 h-10 bg-gradient-to-br from-stone-400 to-slate-600 rounded-2xl flex items-center justify-center text-xl font-bold shadow-md text-zinc-200">
+          <i class="fas fa-building-columns"></i>
+        </div>
         <div class="hidden md:block">
           <div class="text-xl font-bold tracking-tight text-zinc-100">Inner Strength &amp; Virtue</div>
           <div class="text-xs text-stone-300/60">Master your mind. Endure with dignity.</div>
@@ -419,13 +421,13 @@
       const lower = text.toLowerCase();
       let matchedArray = null;
 
-      if (/control|helpless|unfair|traffic|boss|others|opinion|reputation|powerless|stuck|blame|manipulat/i.test(lower)) matchedArray = wisdomDb.control;
-      else if (/fate|amor fati|accept|destiny|meant to be|happened for a reason|embrace|reality|it is what it is/i.test(lower)) matchedArray = wisdomDb.amorFati;
-      else if (/death|memento mori|mortal|grief|loss|dying|short time|time is running out|aging|mortality/i.test(lower)) matchedArray = wisdomDb.memento;
-      else if (/anger|rage|irritat|mad|furious|annoy|frustrat|betray|insult|revenge|temper|livid/i.test(lower)) matchedArray = wisdomDb.anger;
-      else if (/resilien|strong|endure|quit|give up|exhausted|tired|burnout|persevere|keep going|tough|grit/i.test(lower)) matchedArray = wisdomDb.resilience;
-      else if (/virtue|character|good man|moral|ethic|right thing|honesty|integrity|guilt|shame|values/i.test(lower)) matchedArray = wisdomDb.virtue;
-      else if (/adversity|obstacle|difficult|hardship|struggle|fail|setback|tragedy|pain|challenge|disaster/i.test(lower)) matchedArray = wisdomDb.adversity;
+      if (/control|dichotomy|what i can control/i.test(lower)) matchedArray = wisdomDb.control;
+      else if (/fate|amor fati|accept/i.test(lower)) matchedArray = wisdomDb.amorFati;
+      else if (/death|memento mori|mortal/i.test(lower)) matchedArray = wisdomDb.memento;
+      else if (/anger|rage|irritat/i.test(lower)) matchedArray = wisdomDb.anger;
+      else if (/resilien|strong|endure/i.test(lower)) matchedArray = wisdomDb.resilience;
+      else if (/virtue|character|good man/i.test(lower)) matchedArray = wisdomDb.virtue;
+      else if (/adversity|obstacle|difficult|hardship/i.test(lower)) matchedArray = wisdomDb.adversity;
 
       if (matchedArray) return matchedArray[Math.floor(Math.random() * matchedArray.length)];
       
@@ -587,7 +589,7 @@
           <div class="relative z-10 flex flex-col items-center justify-center gap-4">
             
             <div class="rounded-full p-1 bg-gradient-to-br from-stone-400 to-slate-600 shadow-lg">
-              <img src="Stoics.jpg" alt="Stoic Shield" 
+              <img src="Stoics.jpg" alt="Stoic Wisdom" 
                    class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 border-stone-700/50">
             </div>
 
