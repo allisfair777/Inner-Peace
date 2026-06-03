@@ -286,46 +286,40 @@
     // ================= END SETTINGS LOGIC =================
 
     const wisdomDb = {
-      virtue: [
-        { title: "The Power of Virtue", kuralNo: 31, line: "சிறப்புஈனும் செல்வமும் ஈனும் அறத்தினூஉங்கு\nஆக்கம் எவனோ உயிர்க்கு.", translation: "Virtue yields honor and wealth; what greater source of good can there be for a living being?" },
-        { title: "The Power of Aram", kuralNo: 31, line: "Specialness and wealth are both born of virtue; What greater source of good can there be?", translation: "Virtue brings true prosperity." },
-        { title: "Purity of Mind", kuralNo: 34, line: "Spotless be thou in mind! This only merits virtue's name; All else, mere pomp and idle sound.", translation: "True virtue is a clean conscience." },
-        { title: "Speaking Truth", kuralNo: 291, line: "If a man speak the truth with all his heart, he is superior to those who do penance and give alms.", translation: "Honesty is the highest spiritual practice." },
-        { title: "Avoiding Envy", kuralNo: 35, line: "அழுக்காறு அவாவெகுளி இன்னாச்சொல் நான்கும்\nஇழுக்கா இயன்றது அறம்.", translation: "Virtue is that life which moves on without envy, greed, anger, or harsh words." }
-      ],
-      wealth: [
-        { title: "Continuous Effort", kuralNo: 595, line: "வெள்ளத் தனைய மலர்நீட்டம் மாந்தர்தம்\nஉள்ளத் தனையது உயர்வு.", translation: "With rising flood the rising lotus flower its stem unwinds; The dignity of men is measured by their minds." },
-        { title: "Perseverance", kuralNo: 619, line: "தெய்வத்தான் ஆகா தெனினும் முயற்சிதன்\nமெய்வருத்தக் கூலி தரும்.", translation: "Though the gods be against it, industry will pay the wages of physical labor." },
-        { title: "Relentless Effort", kuralNo: 611, line: "Yield not to the weakness of saying, 'It is too difficult'; Effort will yield the greatness that achieves it.", translation: "Hard work conquers all obstacles." },
-        { title: "The Value of Action", kuralNo: 616, line: "Effort brings fortune's sure increase; Its absence brings to nothingness and peace.", translation: "Action creates wealth; inaction destroys it." },
-        { title: "Even if Fate Fails", kuralNo: 619, line: "தெய்வத்தான் ஆகா தெனினும் முயற்சிதன்\nமெய்வருத்தக் கூலி தரும்.", translation: "Even if fate blocks the reward, the labor of one's body will pay its own wages." }
-      ],
-      love: [
-        { title: "The Supremacy of Love", kuralNo: 71, line: "அன்பிற்கும் உண்டோ அடைக்கும்தாழ் ஆர்வலர்\nபுன்கணீர் பூசல் தரும்.", translation: "Is there any fastening that can shut in love? Tears of the affectionate will publish the love that is within." },
-        { title: "The Core of Life", kuralNo: 78, line: "The soul that feels no love is a barren tree bearing no fruit in a desert land.", translation: "Love is what makes life flourish." },
-        { title: "Compassionate Hearts", kuralNo: 71, line: "The loveless to themselves belong alone; The loving men are others' to the very bone.", translation: "True love is entirely selfless." },
-        { title: "Grace and Compassion", kuralNo: 241, line: "அருட்செல்வம் செல்வத்துட் செல்வம் பொருட்செல்வம்\nபூரியார் கண்ணும் உள.", translation: "The wealth of compassion is the wealth of wealths; for material wealth is found even with the base." }
-      ],
-      anxiety: [
-        { title: "Overcoming Fear", kuralNo: 621, line: "இடுக்கண் வருங்கால் நகுக அதனை\nஅடுத்தூர்வது அஃதொப்ப தில்.", translation: "When troubles come, laugh at them. There is nothing like a smile to overcome sorrow." },
-        { title: "Overcoming Worry", kuralNo: 621, line: "When troubles come, smile! There is nothing like a smile to overcome them.", translation: "Face adversity with a positive spirit." },
-        { title: "Steady Focus", kuralNo: 597, line: "Let not your mind be troubled, though your task be hard; The end is glorious if you persevere.", translation: "Keep your eyes on the goal, not the stress." },
-        { title: "The Weapon of Defense", kuralNo: 421, line: "அறிவு அற்றம் காக்கும் கருவி செறுவார்க்கும்\nஉள்அழிக்கலாகா அரண்.", translation: "Wisdom is a weapon that wards off destruction; it is an inner fortress that enemies cannot destroy." }
-      ],
-      equanimity: [
-        { title: "Balance in all things", kuralNo: 111, line: "தகுதி எனவொன்று நன்றே பகுதியால்\nபாற்பட்டு ஒழுகப் பெறின்.", translation: "That equity which consists in acting with equal regard to each of the three divisions of men (friends, enemies and strangers) is a supreme virtue." },
-        { title: "Righteous Conduct", kuralNo: 131, line: "ஒழுக்கம் விழுப்பம் தரலான் ஒழுக்கம்\nஉயிரினும் ஓம்பப் படும்.", translation: "Righteous conduct leads to high status; therefore, it should be guarded more jealously than life itself." },
-        { title: "Impartiality", kuralNo: 111, line: "The justice of the wise is an even balance; it inclines neither to this side nor to that.", translation: "Remain objective and fair." },
-        { title: "Unshaken Mind", kuralNo: 625, line: "Though a flood of troubles comes upon him, the wise man remains unshaken like a rock.", translation: "Be the calm amidst the storm." },
-        { title: "Listening to the Wise", kuralNo: 423, line: "எப்பொருள் யார்யார்வாய்க் கேட்பினும் அப்பொருள்\nமெய்ப்பொருள் காண்ப தறிவு.", translation: "True wisdom perceives the core meaning of words, no matter who speaks them." }
-      ],
-      depression: [
-        { title: "Hope and Action", kuralNo: 629, line: "இன்பம் விழையான் இடும்பை இயல்பென்பான்\nதுன்பம் உறுதல் இலன்.", translation: "He who does not long for pleasure, and looks upon sorrow as natural, will not be troubled by adversity." },
-        { title: "Hope in Darkness", kuralNo: 629, line: "He who rejoices not in joy, will not be distressed by sorrow.", translation: "Detachment protects the mind from despair." },
-        { title: "The Strength Within", kuralNo: 598, line: "There is no higher wealth than the strength of a man's own mind.", translation: "Your inner resilience is your greatest asset." },
-        { title: "Even if Fate Fails", kuralNo: 619, line: "தெய்வத்தான் ஆகா தெனினும் முயற்சிதன்\nமெய்வருத்தக் கூலி தரும்.", translation: "Even if fate blocks the reward, the labor of one's body will pay its own wages." }
-      ]
-    };
+  virtue: [
+    { title: "The Power of Virtue", kuralNo: 31, line: "சிறப்புஈனும் செல்வமும் ஈனும் அறத்தினூஉங்கு\nஆக்கம் எவனோ உயிர்க்கு.", translation: "Virtue yields honor and wealth; what greater source of good can there be for a living being?" },
+    { title: "Purity of Mind", kuralNo: 34, line: "மனத்துக்கண் மாசிலன் ஆதல் அனைத்தறன்\nஆகுல நீர பிற.", translation: "True virtue is a clean conscience. All else is mere pomp and idle sound." },
+    { title: "Speaking Truth", kuralNo: 291, line: "உள்ளத்தால் பொய்யா தொழுகின் உலகத்தார்\nஉள்ளத்து ளெல்லாம் உளன்.", translation: "If a man speak the truth with all his heart, he is superior to those who do penance and give alms." },
+    { title: "Avoiding Envy", kuralNo: 35, line: "அழுக்காறு அவாவெகுளி இன்னாச்சொல் நான்கும்\nஇழுக்கா இயன்றது அறம்.", translation: "Virtue is that life which moves on without envy, greed, anger, or harsh words." }
+  ],
+  wealth: [
+    { title: "Continuous Effort", kuralNo: 595, line: "வெள்ளத் தனைய மலர்நீட்டம் மாந்தர்தம்\nஉள்ளத் தனையது உயர்வு.", translation: "With rising flood the rising lotus flower its stem unwinds; The dignity of men is measured by their minds." },
+    { title: "Relentless Effort", kuralNo: 611, line: "அருமை உடைத்தென்று அசாவாமை வேண்டும்\nபெருமை முயற்சி தரும்.", translation: "Yield not to the weakness of saying, 'It is too difficult'; Effort will yield the greatness that achieves it." },
+    { title: "The Value of Action", kuralNo: 616, line: "முயற்சி திருவினை ஆக்கும் முயற்றின்மை\nஇன்மை புகுத்தி விடும்.", translation: "Effort brings fortune's sure increase; Its absence brings to nothingness and peace." },
+    { title: "Perseverance", kuralNo: 619, line: "தெய்வத்தான் ஆகா தெனினும் முயற்சிதன்\nமெய்வருத்தக் கூலி தரும்.", translation: "Even if fate blocks the reward, the labor of one's body will pay its own wages." }
+  ],
+  love: [
+    { title: "The Supremacy of Love", kuralNo: 71, line: "அன்பிற்கும் உண்டோ அடைக்கும்தாழ் ஆர்வலர்\nபுன்கணீர் பூசல் தரும்.", translation: "Is there any fastening that can shut in love? Tears of the affectionate will publish the love that is within." },
+    { title: "The Core of Life", kuralNo: 78, line: "அன்பகத் தில்லா உயிர்வாழ்க்கை வன்பாற்கண்\nவற்றல் மரந்தளிர்த் தற்று.", translation: "The soul that feels no love is a barren tree bearing no fruit in a desert land." },
+    { title: "Grace and Compassion", kuralNo: 241, line: "அருட்செல்வம் செல்வத்துட் செல்வம் பொருட்செல்வம்\nபூரியார் கண்ணும் உள.", translation: "The wealth of compassion is the wealth of wealths; for material wealth is found even with the base." }
+  ],
+  anxiety: [
+    { title: "Overcoming Fear", kuralNo: 621, line: "இடுக்கண் வருங்கால் நகுக அதனை\nஅடுத்தூர்வது அஃதொப்ப தில்.", translation: "When troubles come, laugh at them. There is nothing like a smile to overcome sorrow." },
+    { title: "Steady Focus", kuralNo: 597, line: "சிதைவிடத்து ஒல்கார் உரவோர் புதைஅம்பின்\nபட்டுப்பா டூன்றும் களிறு.", translation: "Let not your mind be troubled, though your task be hard; The end is glorious if you persevere." },
+    { title: "The Weapon of Defense", kuralNo: 421, line: "அறிவு அற்றம் காக்கும் கருவி செறுவார்க்கும்\nஉள்அழிக்கலாகா அரண்.", translation: "Wisdom is a weapon that wards off destruction; it is an inner fortress that enemies cannot destroy." }
+  ],
+  equanimity: [
+    { title: "Balance in all things", kuralNo: 111, line: "தகுதி எனவொன்று நன்றே பகுதியால்\nபாற்பட்டு ஒழுகப் பெறின்.", translation: "That equity which consists in acting with equal regard to each of the three divisions of men (friends, enemies and strangers) is a supreme virtue." },
+    { title: "Righteous Conduct", kuralNo: 131, line: "ஒழுக்கம் விழுப்பம் தரலான் ஒழுக்கம்\nஉயிரினும் ஓம்பப் படும்.", translation: "Righteous conduct leads to high status; therefore, it should be guarded more jealously than life itself." },
+    { title: "Unshaken Mind", kuralNo: 625, line: "அடுக்கி வரினும் அழிவிலான் உற்ற\nஇடுக்கண் இடுக்கண் படும்.", translation: "Though a flood of troubles comes upon him, the wise man remains unshaken like a rock." },
+    { title: "Listening to the Wise", kuralNo: 423, line: "எப்பொருள் யார்யார்வாய்க் கேட்பினும் அப்பொருள்\nமெய்ப்பொருள் காண்ப தறிவு.", translation: "True wisdom perceives the core meaning of words, no matter who speaks them." }
+  ],
+  depression: [
+    { title: "Hope and Action", kuralNo: 629, line: "இன்பம் விழையான் இடும்பை இயல்பென்பான்\nதுன்பம் உறுதல் இலன்.", translation: "He who does not long for pleasure, and looks upon sorrow as natural, will not be troubled by adversity." },
+    { title: "The Strength Within", kuralNo: 598, line: "உள்ளம் உடைமை உடைமை பொருளுடைமை\nநில்லாது நீங்கி விடும்.", translation: "There is no higher wealth than the strength of a man's own mind." },
+    { title: "Perseverance", kuralNo: 619, line: "தெய்வத்தான் ஆகா தெனினும் முயற்சிதன்\nமெய்வருத்தக் கூலி தரும்.", translation: "Even if fate blocks the reward, the labor of one's body will pay its own wages." }
+  ]
+};
 
     const randomVersePool = [
       { kuralNo: 391, line: "கற்க கசடறக் கற்பவை கற்றபின்\nநிற்க அதற்குத் தக.", translation: "Let a man learn thoroughly whatever he may learn, and let his conduct be worthy of his learning." },
