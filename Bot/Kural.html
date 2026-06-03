@@ -653,7 +653,7 @@
               thinking.parentElement.remove();
               // Fixed mapping to use data.eng and data.chap_eng from Vercel API
               const extractedTranslation = data.eng || "Translation unavailable.";
-              const extractedLine = (data.line1 && data.line2) ? `${data.line1}\n${data.line2}` : "";
+              const extractedLine = (data.line1 && data.line2) ? `${data.line1}\n${data.line2}` : (data.tam || data.tamil || "");
               const title = data.chap_eng || "Direct Lookup";
               appendMessage('bot', buildVerseHTML(title, kNo, extractedLine, extractedTranslation, "Direct Search"));
             } catch (err) {
@@ -678,7 +678,7 @@
         loadingMsg.parentElement.remove();
         // Fixed mapping to use data.eng and data.chap_eng from Vercel API
         const extractedTranslation = data.eng || "Wisdom is unfolding.";
-        const extractedLine = (data.line1 && data.line2) ? `${data.line1}\n${data.line2}` : "";
+        const extractedLine = (data.line1 && data.line2) ? `${data.line1}\n${data.line2}` : (data.tam || data.tamil || "");
         const title = data.chap_eng || "Random Insight";
         appendMessage('bot', buildVerseHTML(title, randomKural, extractedLine, extractedTranslation, "Random Selection"));
       } catch (e) {
