@@ -634,8 +634,17 @@
       try {
         const data = await getVerseData(matched.ch, matched.verse);
         thinking.parentElement.remove();
+        
         const extractedTranslation = data.siva?.et || data.purohit?.et || data.tej?.ht || matched.translation;
-        const extractedSlok = data.slok || matched.slok || "";
+        
+        // Default to your local database slok (if one exists for that intent)
+        let extractedSlok = matched.slok || ""; 
+        
+        // Only accept the API data if it actually contains Devanagari characters
+        if (data.slok && /[\u0900-\u097F]/.test(data.slok)) {
+          extractedSlok = data.slok;
+        }
+
         appendMessage('bot', buildVerseHTML(matched.title, matched.ch, matched.verse, extractedSlok, extractedTranslation, msg));
       } catch (err) {
         thinking.parentElement.remove();
