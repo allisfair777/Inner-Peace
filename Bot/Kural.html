@@ -613,21 +613,20 @@
         const data = await getKuralData(matched.kuralNo);
         thinking.parentElement.remove();
         
+        // 1. Start with your trusted local data
+        let finalTamil = matched.line; 
+        
+        // 2. ONLY check the API if it contains actual Tamil characters
+        // If it's English, this regex test returns false, and we skip the overwrite
+        if (data.line1 && /[\u0B80-\u0BFF]/.test(data.line1)) {
+           finalTamil = `${data.line1}\n${data.line2}`;
+        }
+        
+        // 3. Render using the result
         const extractedTranslation = data.eng || matched.translation;
         const title = data.chap_eng || matched.title;
         
-        // Default to your perfectly formatted local database
-        let extractedLine = matched.line; 
-        
-        // Only accept the API data if it actually contains Tamil characters
-        if (data.line1 && data.line2) {
-          const apiLine = `${data.line1}\n${data.line2}`;
-          if (/[\u0B80-\u0BFF]/.test(apiLine)) { 
-            extractedLine = apiLine;
-          }
-        }
-        
-        appendMessage('bot', buildVerseHTML(title, matched.kuralNo, extractedLine, extractedTranslation, msg));
+        appendMessage('bot', buildVerseHTML(title, matched.kuralNo, finalTamil, extractedTranslation, msg));
       } catch (err) {
         thinking.parentElement.remove();
         appendMessage('bot', buildVerseHTML(matched.title, matched.kuralNo, matched.line, matched.translation, msg));

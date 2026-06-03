@@ -635,17 +635,19 @@
         const data = await getVerseData(matched.ch, matched.verse);
         thinking.parentElement.remove();
         
+        // 1. Source of Truth: Start with your local trusted slok
+        let finalSlok = matched.slok || ""; 
+        
+        // 2. The Gatekeeper: Verify the API return is actually Devanagari script
+        // We check for the presence of Devanagari characters (\u0900-\u097F)
+        if (data.slok && /[\u0900-\u097F]/.test(data.slok)) {
+          finalSlok = data.slok;
+        }
+        
+        // 3. Fallback translation: Use API translation only if it exists
         const extractedTranslation = data.siva?.et || data.purohit?.et || data.tej?.ht || matched.translation;
         
-        // Default to your local database slok (if one exists for that intent)
-        let extractedSlok = matched.slok || ""; 
-        
-        // Only accept the API data if it actually contains Devanagari characters
-        if (data.slok && /[\u0900-\u097F]/.test(data.slok)) {
-          extractedSlok = data.slok;
-        }
-
-        appendMessage('bot', buildVerseHTML(matched.title, matched.ch, matched.verse, extractedSlok, extractedTranslation, msg));
+        appendMessage('bot', buildVerseHTML(matched.title, matched.ch, matched.verse, finalSlok, extractedTranslation, msg));
       } catch (err) {
         thinking.parentElement.remove();
         appendMessage('bot', buildVerseHTML(matched.title, matched.ch, matched.verse, matched.slok, matched.translation, msg));
