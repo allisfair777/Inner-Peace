@@ -158,7 +158,12 @@
         </div>
       </div>
       <div class="flex items-center gap-3">
-
+ <div class="relative hidden sm:block mx-1">
+     <input id="headerSearchInput" type="text" placeholder="Search scripture..." 
+           class="bg-zinc-950 border border-zinc-800 focus:border-purple-500 text-zinc-200 pl-4 pr-9 py-1.5 rounded-full text-xs focus:outline-none transition-all w-36 focus:w-52"
+           onkeydown="if(event.key === 'Enter') executeHeaderSearch()">
+     <i class="fas fa-search absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 text-xs pointer-events-none"></i>
+ </div>
         <button id="langToggleBtn" onclick="toggleAudioLang()" title="Toggle Audio" class="w-8 h-8 flex items-center justify-center text-xs font-bold text-purple-500 border border-purple-500/30 rounded-lg hover:bg-purple-500/10 transition-all ml-2">
           EN
         </button>
@@ -572,6 +577,80 @@
       }
     }
 
+function executeHeaderSearch() {
+  const searchInput = document.getElementById('headerSearchInput');
+  const query = searchInput.value.trim().toLowerCase();
+  if (!query) return;
+
+  // Clear input after search is initiated
+  searchInput.value = '';
+
+  // 1. Post the user's search intent to the chat timeline
+  appendMessage('user', `<i class="fas fa-search mr-2 text-purple-400"></i> Search: "${query}"`);
+
+  let results = [];
+
+  // 2. Scan through all categories inside the local wisdom database
+  if (typeof wisdomDb !== 'undefined') {
+    for (const category in wisdomDb) {
+      wisdomDb[category].forEach(item => {
+        // Collect all text attributes to inspect (handles verses, quotes, translations, titles)
+        const matchText = `
+          ${item.title || ''} 
+          ${item.book || ''} 
+          ${item.verseText || item.quote || item.text || ''} 
+          ${item.translation || ''} 
+          ${category || ''}
+        `.toLowerCase();
+
+        if (matchText.includes(query)) {
+          // Avoid pushing duplicate entries if the text matches across multiple checks
+          const isDuplicate = results.some(r => 
+            (r.verseText && r.verseText === item.verseText) || 
+            (r.quote && r.quote === item.quote)
+          );
+          if (!isDuplicate) results.push(item);
+        }
+      });
+    }
+  }
+
+  // 3. Render Search Responses in the active chat interface
+  if (results.length === 0) {
+    appendMessage('bot', `
+      <div class="text-zinc-400">
+        <i class="fas fa-exclamation-circle mr-2 text-zinc-500"></i> No entries matched your search for <strong>"${query}"</strong>. Try keywords like 'peace', 'fear', or specific book names.
+      </div>
+    `);
+  } else {
+    let resultsHTML = `
+      <div class="mb-3 font-bold text-purple-400 border-b border-zinc-800/60 pb-2">
+        <i class="fas fa-search-plus mr-2"></i> Found ${results.length} result(s) matching "${query}":
+      </div>
+      <div class="space-y-5 mt-2 max-h-[400px] overflow-y-auto pr-1">
+    `;
+
+    results.forEach(item => {
+      // Determine field strings based on what is available in the dataset item object
+      const title = item.title || item.book || "Wisdom Entry";
+      const mainText = item.verseText || item.quote || item.text || "";
+      const subText = item.translation || "";
+      const locationInfo = (item.book && item.ch) ? ` (${item.book} ${item.ch}:${item.verse})` : "";
+
+      resultsHTML += `
+        <div class="p-3.5 bg-zinc-950/50 rounded-xl border border-zinc-800/40 shadow-sm">
+          <strong class="text-purple-400 block text-xs tracking-wide uppercase mb-1">${title}${locationInfo}</strong>
+          <div class="text-gray-200 text-sm leading-relaxed">"${mainText}"</div>
+          ${subText ? `<div class="text-zinc-400 italic text-xs mt-1.5 border-l border-zinc-700/50 pl-2">"${subText}"</div>` : ''}
+        </div>
+      `;
+    });
+
+    resultsHTML += `</div>`;
+    appendMessage('bot', resultsHTML);
+  }
+}
+    
     // ================= UPDATED ASYNC SEND MESSAGE =================
     async function sendMessage(e, explicitText = null) {
       if (e && e.preventDefault) e.preventDefault();
