@@ -6,79 +6,63 @@
   <title>Eastern Wisdom</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  
   <style>
-    body {
-      background: linear-gradient(135deg, #0f172a, #1e2937);
-    }
+    body { background: linear-gradient(135deg, #0f172a, #1e2937); }
+    .glass { background: rgba(255,255,255,0.08); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.1); }
+    .portal-card { transition: all 0.3s ease; }
+    .portal-card:hover { transform: translateY(-4px) scale(1.02); }
     
-    .glass {
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    .portal-card {
-      transition: all 0.3s ease;
-    }
-    
-    .portal-card:hover {
-      transform: translateY(-4px) scale(1.02);
-    }
-
     @media (max-width: 640px) {
-      .container-padding {
-        padding: 1.25rem 1rem;
-      }
-      .icon-size {
-        width: 68px;
-        height: 68px;
-      }
+      .container-padding { padding: 1.25rem 1rem; }
+      .icon-size { width: 68px; height: 68px; }
     }
   </style>
 </head>
 <body class="min-h-screen text-white">
-  <div class="max-w-4xl mx-auto container-padding pt-10 pb-16">
-    
-    <!-- Navigation -->
-    <div class="flex justify-end items-center gap-5 mb-8">
-      <!-- Western Wisdom -->
+  <div class="max-w-4xl mx-auto container-padding pt-10 pb-10">
+    <!-- Top Right Wisdom Nexus Badge -->
+    <!-- Title + Nexus Badge on same line -->
+      <div class="flex justify-end mb-6">
+        <a 
+  href="localhost:3000/landing" 
+  target="_blank"
+  class="fixed top-6 left-6 z-50 flex h-12 w-12 items-center justify-center rounded-2xl bg-zinc-900 border border-zinc-700 hover:border-teal-500 text-3xl hover:scale-110 transition-all shadow-xl"
+  title="Return to Wisdom Landing"
+>
+  🌍
+</a>
       <a href="WesternWisdom.html" 
-         class="inline-flex h-11 items-center gap-2 px-5 py-2.5 text-sm font-medium text-amber-400/80 hover:text-amber-300 border border-amber-500/30 hover:border-amber-500/50 rounded-2xl transition-all backdrop-blur-md">
+         class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-amber-400/80 hover:text-amber-300 border border-amber-500/30 hover:border-amber-500/50 rounded-2xl transition-all backdrop-blur-md">
         <span>Western Wisdom</span>
       </a>
-
-      <!-- Home Button -->
-      <a href="index.html" 
-         class="flex h-11 w-11 items-center justify-center rounded-2xl bg-zinc-900 border border-amber-500/30 hover:border-amber-500/50 text-2xl hover:scale-110 transition-all shadow-xl" 
-         title="Return to Home">
-        🌍
-      </a>
     </div>
     
-    <!-- Title -->
-    <div class="text-center mb-12">
-      <h1 class="text-5xl md:text-6xl font-bold tracking-tight mb-3">Eastern Wisdom</h1>
-      <p class="text-gray-400 text-lg">Explore Timeless Guides for Inner Peace</p>
+    <div class="text-center mb-10">
+      <h1 class="text-4xl font-bold tracking-tight mb-2">Eastern Wisdom</h1>
+      <p class="text-gray-400 text-base">Explore Guides for Inner Peace</p>
     </div>
 
-    <!-- Cards Grid -->
-    <div class="grid md:grid-cols-2 gap-6 md:gap-8">
-      
-      <!-- Bhagavad Gita -->
-      <a href="Bot/Gita.html" class="portal-card glass p-8 md:p-10 rounded-3xl group">
-        <div class="w-20 h-20 mx-auto bg-gradient-to-br from-amber-400 to-orange-500 rounded-3xl flex items-center justify-center text-[3.2rem] font-black leading-none shadow-2xl mb-6 text-zinc-950">
-          ॐ
-        </div>
-        <h2 class="text-3xl font-bold mb-3 text-amber-400 text-center">Bhagavad Gita</h2>
-        <p class="text-gray-400 text-base leading-relaxed text-center">
-          Timeless counsel for the battlefield of life
-        </p>
-      </a>
+    <div class="grid md:grid-cols-2 gap-5 md:gap-8">
+    <!-- Gita Card -->
+    <a href="Bot/Gita.html" class="portal-card glass p-6 md:p-10 rounded-3xl">
+      <div class="w-20 h-20 mx-auto bg-gradient-to-br from-amber-400 to-orange-500 rounded-3xl flex items-center justify-center text-[2.85rem] md:text-[3.75rem] font-black leading-none shadow-2xl mb-5 text-zinc-950 drop-shadow-[0_4px_6px_rgba(0,0,0,0.3)]" style="font-family: 'Devanagari MT', 'Kohinoor Devanagari', Arial, sans-serif;">ॐ&#xFE0E;</div>
+      <h2 class="text-2xl md:text-3xl font-bold mb-2 text-amber-400 text-center">Bhagavad Gita</h2>
+      <p class="text-gray-400 text-sm md:text-base leading-relaxed text-center">Timeless counsel for the battlefield of life</p>
+    </a>
 
-      <!-- Thirukkural -->
-      <a href="Bot/Kural.html" class="portal-card glass p-8 md:p-10 rounded-3xl group">
-        <div class="w-20 h-20 mx-auto bg-gradient-to-br from-emerald-400 to-teal-600 rounded-3xl flex items-center justify-center text-5xl shadow-2xl mb-6 text-zinc-950">
-          <i class="fas fa-leaf"></i>
-        </div>
-        <h2 class="text-3xl font-bold
+    <!-- Thirukkural Card -->
+    <a href="Bot/Kural.html" class="portal-card glass p-6 md:p-10 rounded-3xl">
+      <div class="w-20 h-20 mx-auto bg-gradient-to-br from-emerald-400 to-teal-600 rounded-3xl flex items-center justify-center text-5xl shadow-2xl mb-5 text-zinc-950">
+        <i class="fas fa-leaf"></i>
+      </div>
+      <h2 class="text-2xl md:text-3xl font-bold mb-2 text-emerald-400 text-center">Thirukkural</h2>
+      <p class="text-gray-400 text-sm md:text-base leading-relaxed text-center">Practical daily ethics and worldly wisdom</p>
+    </a>
+    </div>
+<!--
+    <div class="text-center mt-10 text-gray-500 text-xs">
+      Two timeless sources of Eastern wisdom
+    </div>
+-->
+</body>
+</html>
